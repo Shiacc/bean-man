@@ -1,0 +1,87 @@
+name: 未签名 IPA（给真机自签用）
+
+# 用途：没有 Mac、也没有 $99 开发者账号时，先在真机上跑起来。
+# 产物是一个**未签名**的 .ipa，用 Sideloadly / AltStore 在 Windows 上
+# 拿免费 Apple ID 签一下就能装（签一次 7 天，到期重签）。
+#
+# 触发：手动。默认不会跑，避免白烧 macOS 分钟。
+
+on:
+  workflow_dispatch:
+    inputs:
+      configuration:
+        description: "构建配置"
+        required: true
+        default: Release
+        type: choice
+        options: [Release, Debug]
+
+jobs:
+  ipa:
+    name: 打包未签名 IPA
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 生成工程
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: 编译（真机架构，不签名）
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project BeanMan.xcodeproj \
+            -scheme BeanMan \
+            -configuration ${{ inputs.configuration }} \
+            -destination "generic/platform=iOS" \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            ONLY_ACTIVE_ARCH=NO \
+            2>&1 | tee build.log | xcbeautify --renderer github-actions
+
+      # 未签名 IPA = Payload/ 目录 + .app，zip 起来改后缀
+      - name: 打成 .ipa
+        run: |
+          APP="build/DerivedData/Build/Products/${{ inputs.configuration }}-iphoneos/BeanMan.app"
+          if [ ! -d "$APP" ]; then
+            echo "::error::找不到 $APP，编译可能失败了"
+            ls -R build/DerivedData/Build/Products | head -50
+            exit 1
+          fi
+          rm -rf Payload && mkdir -p Payload
+          cp -R "$APP" Payload/
+          zip -qry "BeanMan-unsigned-${{ inputs.configuration }}.ipa" Payload
+          ls -lh *.ipa
+
+      - name: 上传 IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: BeanMan-unsigned-ipa
+          path: BeanMan-unsigned-*.ipa
+          retention-days: 14
+
+      - name: 失败时摘错
+        if: failure()
+        run: |
+          {
+            echo "## 编译错误"
+            echo '```'
+            grep -E "error: " build.log | head -60 || echo "看 xcodebuild-log 产物"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: 上传日志
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipa-build-log
+          path: build.log
+          if-no-files-found: ignore
+          retention-days: 7

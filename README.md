@@ -13,6 +13,7 @@
 - [小动物总谱](Design/Animals/00-小动物总谱.md) · [风格规范](Design/Animals/_风格规范.md)
 - [**没有 Mac 怎么编译、怎么上线**](Docs/03-无Mac编译与上线.md) — GitHub Actions 编译/截图、API Key 签名、TestFlight、上架清单
 - [**上架操作清单**](Docs/04-上架操作清单.md) — 从注册开发者账号到 TestFlight 内测的分步操作 + 中国区备案提醒
+- [**真机测试**](Docs/05-真机测试.md) — 没有 Mac / 没有开发者账号时，怎么把 App 装进 iPhone（Sideloadly 自签 / TestFlight / Xcode 三条路）
 
 ---
 
