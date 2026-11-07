@@ -75,6 +75,10 @@ BeanMan/
     SRS/SRSAlgorithm.swift   简化 SM-2，纯函数
     Study/StudyRepository.swift  队列生成 / 今日计数 / 评分写回 / 打卡日集合
     WrongBook/WrongBookService.swift  错词派生规则 / 快照 / 专项复习队列 / 移出与恢复
+    ImportExport/CSVParser.swift      手写 CSV 解析（BOM / CRLF / 引号 / 字段内换行）
+    ImportExport/DeckImporter.swift   表头别名、逐行校验、去重、建词库
+    ImportExport/BackupService.swift  JSON 备份导出 / 恢复 / 重置进度
+    Notification/NotificationService.swift  每日本地提醒（固定 identifier，先删后加）
     Speech/SpeechService.swift   AVSpeechSynthesizer 封装
   Support/
     DayKey.swift             yyyy-MM-dd、startOfDay、连续打卡
@@ -100,6 +104,10 @@ BeanMan/
     Study/StudySummaryView.swift   学习完成（T-02-03）
     WrongBook/WrongBookView.swift  错词本列表（筛选 / 搜索 / 滑动移出 / 空状态）
     WrongBook/WordDetailView.swift 词条详情：释义、例句、学习状态、移出/放回
+    Deck/DeckListView.swift        词库列表：设为当前 / 删除 / 进入详情
+    Deck/DeckDetailView.swift      词表、搜索、删词、设为当前、词条速览
+    Deck/ImportView.swift          导入：选 CSV 文件或粘贴文本，显示逐行跳过原因
+    Settings/SettingsView.swift    计划 / 提醒 / 发音 / 导出恢复 / 重置 / 关于
     Debug/DesignGalleryView.swift  设计验收页：气泡 / 动物 / 引导动画 / 素材自检
   Resources/
     Assets.xcassets/Animals/…     动物图（Juzi.imageset 三档尺寸）
@@ -108,6 +116,7 @@ BeanManTests/
   StudyRepositoryTests.swift 队列 / 限额 / 写回 / 打卡
   HintCenterTests.swift      提示只显示一次 / 冷却 / 抢占 / 重置
   WrongBookServiceTests.swift 错词派生规则 / 移出恢复 / 专项队列排序
+  ImportExportTests.swift    CSV 解析 / 列名别名 / 去重 / 无效行 / 备份往返 / 重置
 Design/
   beanman-ios-今日与学习卡-v1.png  Figma 稿截图
   Preview/bubbles.{html,png}       气泡与引导的像素对照图（HTML 1:1 复刻 SwiftUI 数值）
@@ -132,6 +141,11 @@ Scripts/
 - [ ] 设置 → 设计验收：气泡 5 种语气、4 个尾巴方向、20 只动物表情矩阵、引导动画演示、素材自检
 - [ ] 学习时点「不认识 / 模糊」→ 今日页「错词本 N 个」+1；点进去能按「待复习 / 全部 / 已移出」筛选、搜索、滑动移出、点开详情看学习状态
 - [ ] 错词本底部「复习这 N 个错词」进入专项复习，完成页标题是「这轮错词过完了」
+- [ ] 词库页能看到示例词库和词数，点进去能搜「abandon」、滑动删词、右上角「设为当前」
+- [ ] 词库页右上角导入：粘贴一段 `word,meaning` 两列的表格，点「开始导入」后提示「导入 N 个」
+- [ ] 导入时混入空单词 / 空释义的行，报告里会逐行列出「第 N 行：……」
+- [ ] 设置 → 导出备份会存出一个 JSON；改动几个词后再「从备份恢复」，提示跳过已存在的词库
+- [ ] 设置 → 重置学习进度：勾选确认后，今日页待复习与新词回到初始额度
 
 ---
 

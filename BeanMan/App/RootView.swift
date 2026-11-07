@@ -38,13 +38,11 @@ struct RootView: View {
                 case .today:
                     TodayView()
                 case .decks:
-                    ComingSoonView(title: "词库", note: "导入 CSV、查看词条、搜索都会放在这里")
+                    DeckListView()
                 case .stats:
                     ComingSoonView(title: "统计", note: "连续打卡、正确率、7 天柱状图")
                 case .settings:
-                    NavigationStack {
-                        SettingsStubView()
-                    }
+                    SettingsView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
