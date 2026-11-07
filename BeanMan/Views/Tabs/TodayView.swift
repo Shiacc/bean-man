@@ -16,6 +16,7 @@ struct TodayView: View {
     @State private var isStudying = false
     @State private var isShowingWrongBook = false
     @State private var isShowingQuiz = false
+    @State private var isShowingAchievements = false
 
     /// 引导目标的位置（全局坐标），由 `.captureFrame` 上报
     @State private var frames: [String: CGRect] = [:]
@@ -38,6 +39,10 @@ struct TodayView: View {
                     .padding(.horizontal, Theme.Spacing.screenH)
                 taskCard
                     .padding(.horizontal, Theme.Spacing.screenH)
+                if !viewModel.insight.insights.isEmpty || viewModel.hasRecommendations {
+                    insightCard
+                        .padding(.horizontal, Theme.Spacing.screenH)
+                }
                 statTiles
                     .padding(.horizontal, Theme.Spacing.screenH)
                     .captureFrame(HintID.todayStatTiles)
@@ -79,6 +84,9 @@ struct TodayView: View {
         }
         .sheet(isPresented: $isShowingQuiz) {
             QuizView()
+        }
+        .sheet(isPresented: $isShowingAchievements) {
+            NavigationStack { AchievementsView() }
         }
     }
 
@@ -132,6 +140,13 @@ struct TodayView: View {
                 .foregroundStyle(Theme.Palette.textTertiary)
                 .padding(.top, 8)
 
+            if viewModel.counts.new > 0, let note = viewModel.dailyNewLimitNote {
+                Text(note)
+                    .font(.system(size: 11))
+                    .foregroundStyle(Theme.Palette.warning)
+                    .padding(.top, 6)
+            }
+
             Button {
                 if viewModel.hasAnyDueOrNew {
                     isStudying = true
@@ -149,6 +164,55 @@ struct TodayView: View {
         .padding(Theme.Spacing.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .cardStyle()
+    }
+
+    // MARK: - 小豆的分析
+
+    private var insightCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 6) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 12, weight: .semibold))
+                Text("小豆的分析")
+                    .font(.system(size: 11, weight: .semibold))
+            }
+            .foregroundStyle(Theme.Palette.brand)
+
+            if let insight = viewModel.insight.insights.first {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(insight.title)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(Theme.Palette.textPrimary)
+                    Text(insight.detail)
+                        .font(Theme.Font.bodySmall)
+                        .foregroundStyle(Theme.Palette.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+
+            if !viewModel.insight.recommendations.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("这 \(viewModel.insight.recommendations.count) 个词今天会一起出现")
+                        .font(Theme.Font.caption)
+                        .foregroundStyle(Theme.Palette.textTertiary)
+
+                    ForEach(viewModel.insight.recommendations) { item in
+                        HStack(spacing: 8) {
+                            Text(item.word)
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundStyle(Theme.Palette.textPrimary)
+                            Text(item.reason)
+                                .font(.system(size: 11))
+                                .foregroundStyle(Theme.Palette.textSecondary)
+                            Spacer(minLength: 0)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Theme.Palette.brandTint, in: RoundedRectangle(cornerRadius: Theme.Radius.tile, style: .continuous))
     }
 
     // MARK: - 三连统计
@@ -185,6 +249,11 @@ struct TodayView: View {
                       title: viewModel.deckName,
                       subtitle: "\(viewModel.totalWordCount) 词") {
                 router?.tab = .decks
+            }
+            ActionRow(icon: "rosette",
+                      title: "成就与里程碑",
+                      subtitle: "已解锁 \(AchievementCenter.shared.unlockedCount) / \(Achievement.allCases.count)") {
+                isShowingAchievements = true
             }
         }
     }

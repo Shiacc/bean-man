@@ -64,7 +64,10 @@ final class StudyViewModel {
             if let items {
                 queue = items
             } else {
-                queue = try StudyRepository.buildQueue(context: context)
+                let configured = (try? AppSettingsStore.settings(in: context))?.dailyNewLimit ?? 20
+                let limit = TierGate.maxDailyNew(isPro: PurchaseService.shared.isPro,
+                                                 requested: configured)
+                queue = try StudyRepository.buildQueue(context: context, newLimitOverride: limit)
             }
         } catch {
             queue = []

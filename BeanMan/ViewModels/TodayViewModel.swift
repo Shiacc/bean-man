@@ -16,7 +16,11 @@ final class TodayViewModel {
     var learnedWordCount: Int = 0
     /// 错词本里还有多少个词（今日页入口角标）。
     var wrongCount: Int = 0
+    /// 小豆的分析结果（洞察 + 推荐词）
+    var insight = InsightSnapshot.empty
+
     var hasAnyDueOrNew: Bool { counts.total > 0 }
+    var hasRecommendations: Bool { !insight.recommendations.isEmpty }
 
     var xiaodouMoment: XiaodouMoment {
         if counts.total == 0 { return .todayDone(streak: streak) }
@@ -34,8 +38,12 @@ final class TodayViewModel {
     private var planTotal: Int { counts.learnedToday + counts.total }
 
     func refresh(context: ModelContext) {
+        let isPro = PurchaseService.shared.isPro
+        let configuredNewLimit = (try? AppSettingsStore.settings(in: context))?.dailyNewLimit ?? 20
+        let newLimit = TierGate.maxDailyNew(isPro: isPro, requested: configuredNewLimit)
+
         do {
-            counts = try StudyRepository.todayCounts(context: context)
+            counts = try StudyRepository.todayCounts(context: context, newLimitOverride: newLimit)
             deckName = (try StudyRepository.currentDeck(context: context)?.name) ?? "还没有词库"
 
             let startOfToday = DayKey.startOfDay(Date())
@@ -52,13 +60,29 @@ final class TodayViewModel {
             learnedWordCount = words.filter { $0.reviewState != nil }.count
 
             wrongCount = try WrongBookService.visibleCount(context: context)
+
+            insight = (try? InsightEngine.snapshot(context: context)) ?? .empty
+
+            // 当天到期词清零、且今天确实学过 → 解锁「清空到期」
+            if counts.due == 0 && counts.learnedToday > 0 {
+                AchievementCenter.shared.markClearedDue()
+            }
+            AchievementCenter.shared.check(context: context)
         } catch {
             counts = TodayCounts()
+            insight = .empty
         }
     }
 
     /// 今天已经评过的张数（accuracy 的分母）。
     private(set) var answered: Int = 0
+
+    /// 免费版被额度卡住时，今日页要提示一句。
+    var dailyNewLimitNote: String? {
+        guard !PurchaseService.shared.isPro else { return nil }
+        let configured = 20
+        return "免费版每天最多 \(TierGate.maxDailyNew(isPro: false, requested: configured)) 个新词"
+    }
 
     var streakText: String { streak > 0 ? "\(streak) 天" : "—" }
     var accuracyText: String { answered > 0 ? "\(accuracy)%" : "—" }

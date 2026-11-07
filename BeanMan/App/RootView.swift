@@ -31,6 +31,7 @@ struct RootView: View {
     @Environment(\.modelContext) private var context
     @State private var router = AppRouter()
     @State private var isOnboardingPresented = false
+    @State private var achievements = AchievementCenter.shared
 
     var body: some View {
         VStack(spacing: 0) {
@@ -52,8 +53,18 @@ struct RootView: View {
         }
         .background(Theme.Palette.bg)
         .environment(router)
+        .overlay {
+            if let achievement = achievements.celebrating {
+                AchievementCelebrationView(achievement: achievement) {
+                    achievements.dismissCelebration()
+                }
+                .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: achievements.celebrating)
         .task {
             BeanManStore.bootstrap(context)
+            PurchaseService.shared.start()
             // 首次启动：设置存在但没走完引导，就把引导顶上来
             if let settings = try? AppSettingsStore.current(in: context) {
                 #if DEBUG

@@ -248,11 +248,15 @@ struct ImportView: View {
 
     private func run(_ text: String) {
         let target = appendToCurrent ? currentDeck : nil
+        let isPro = PurchaseService.shared.isPro
+        let allWords = (try? context.fetchCount(FetchDescriptor<Word>())) ?? 0
+        let budget = TierGate.remainingWordSlots(currentWordCount: allWords, isPro: isPro)
         do {
             let result = try DeckImporter.importCSV(text: text,
                                                     deckName: deckName,
                                                     appendingTo: target,
-                                                    context: context)
+                                                    context: context,
+                                                    maxNewWords: budget)
             report = result
             onImported(result.deckID)
             pastedText = ""

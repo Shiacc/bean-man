@@ -139,12 +139,14 @@ enum DeckImporter {
     // MARK: - 落库
 
     /// 导入 CSV 文本。`deck` 为 nil 时新建词库，否则追加。
+    /// `maxNewWords` 给免费版用：超过这个数就先停下，把剩余行记成一条 issue。
     @discardableResult
     static func importCSV(text: String,
                           deckName: String,
                           appendingTo deck: Deck? = nil,
                           context: ModelContext,
-                          now: Date = Date()) throws -> ImportReport {
+                          now: Date = Date(),
+                          maxNewWords: Int? = nil) throws -> ImportReport {
         let table: CSVTable
         do {
             table = try CSVParser.parse(text)
@@ -179,8 +181,15 @@ enum DeckImporter {
         var imported = 0
         var duplicates = 0
         var invalid = parsed.issues.count
+        var issues = parsed.issues
+        var capped = false
+        let budget = maxNewWords.map { max(0, $0) } ?? Int.max
 
         for entry in parsed.entries {
+            if imported >= budget {
+                capped = true
+                break
+            }
             let normalized = Word.normalize(entry.word)
             if seen.contains(normalized) {
                 duplicates += 1
@@ -204,6 +213,14 @@ enum DeckImporter {
             targetDeck.words.append(word)
             nextIndex += 1
             imported += 1
+        }
+
+        if capped {
+            let remaining = parsed.entries.count - imported - duplicates
+            if remaining > 0 {
+                issues.append(ImportIssue(row: parsed.entries.count - remaining + 2,
+                                          reason: "免费版最多 \(FreeTier.wordLimit) 个词，剩下 \(remaining) 行没有导入"))
+            }
         }
 
         if imported == 0 && duplicates == 0 {
@@ -230,7 +247,7 @@ enum DeckImporter {
                             imported: imported,
                             skippedDuplicate: duplicates,
                             skippedInvalid: invalid,
-                            issues: parsed.issues)
+                            issues: issues)
     }
 
     static func nextDeckSortIndex(_ context: ModelContext) -> Int {

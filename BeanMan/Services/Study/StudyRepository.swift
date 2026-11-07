@@ -6,18 +6,21 @@ struct QueueItem: Identifiable, Equatable {
     let id: UUID          // 直接用 word.id，做 ForEach 的稳定 id
     let word: Word
     let isNew: Bool
+    /// 小豆额外推进来的重点词：不受每日新词/复习额度限制，但中考勤。
+    var isRecommended: Bool = false
 
     static func == (lhs: QueueItem, rhs: QueueItem) -> Bool {
-        lhs.id == rhs.id && lhs.isNew == rhs.isNew
+        lhs.id == rhs.id && lhs.isNew == rhs.isNew && lhs.isRecommended == rhs.isRecommended
     }
 }
 
-/// 今日任务的两个数字。
+/// 今日任务的数字。
 struct TodayCounts {
     var due: Int = 0          // 还剩多少到期词
     var new: Int = 0          // 还能学多少新词
     var learnedToday: Int = 0 // 今天已经评过多少张
-    var total: Int { due + new }
+    var recommended: Int = 0  // 小豆额外推进来的重点词
+    var total: Int { due + new + recommended }
 }
 
 /// 所有涉及 SwiftData 查询的地方都集中在这里：
@@ -39,14 +42,18 @@ enum StudyRepository {
 
     // MARK: - 今日队列
 
-    /// 生成今日学习队列：到期的复习词在前，新词在后，各自按剩余额度截断。
+    /// 生成今日学习队列：到期的复习词在前，新词在后，各自按剩余额度截断；
+    /// 最后追加小豆推荐的错词（最多 3 个，不占额度）。
     static func buildQueue(context: ModelContext,
                            now: Date = Date(),
-                           calendar: Calendar = .current) throws -> [QueueItem] {
+                           calendar: Calendar = .current,
+                           newLimitOverride: Int? = nil,
+                           includeRecommended: Bool = true) throws -> [QueueItem] {
 
         guard let deck = try currentDeck(context: context) else { return [] }
         let settings = try AppSettingsStore.settings(in: context)
-        let newLimit = settings?.dailyNewLimit ?? 20
+        let configuredNewLimit = settings?.dailyNewLimit ?? 20
+        let newLimit = newLimitOverride ?? configuredNewLimit
         let reviewLimit = settings?.dailyReviewLimit ?? 100
 
         let deckID = deck.id
@@ -100,17 +107,43 @@ enum StudyRepository {
             newItems.append(QueueItem(id: word.id, word: word, isNew: true))
         }
 
-        return dueItems + newItems
+        // 小豆推荐：错得多、又不是今天到期的词。只补充，不顶替任何额度。
+        var recommended: [QueueItem] = []
+        if includeRecommended {
+            let queuedIDs = Set(dueItems.map(\.id)).union(newItems.map(\.id))
+            let dueIDs = Set(dueStates.map(\.wordID))
+            let picked = states
+                .filter { !$0.isSuspended && !$0.isWrongBookHidden }
+                .filter { $0.lapses > 0 && !dueIDs.contains($0.wordID) && !queuedIDs.contains($0.wordID) }
+                .sorted { lhs, rhs in
+                    if lhs.lapses != rhs.lapses { return lhs.lapses > rhs.lapses }
+                    return lhs.dueDate < rhs.dueDate
+                }
+                .prefix(3)
+
+            for state in picked {
+                guard let word = wordByID[state.wordID] else { continue }
+                recommended.append(QueueItem(id: word.id,
+                                             word: word,
+                                             isNew: false,
+                                             isRecommended: true))
+            }
+        }
+
+        return dueItems + newItems + recommended
     }
 
     /// 只算数字，不建队列（今日页用，避免把整库词都读进内存）。
     static func todayCounts(context: ModelContext,
                             now: Date = Date(),
-                            calendar: Calendar = .current) throws -> TodayCounts {
+                            calendar: Calendar = .current,
+                            newLimitOverride: Int? = nil,
+                            includeRecommended: Bool = true) throws -> TodayCounts {
 
         guard let deck = try currentDeck(context: context) else { return TodayCounts() }
         let settings = try AppSettingsStore.settings(in: context)
-        let newLimit = settings?.dailyNewLimit ?? 20
+        let configuredNewLimit = settings?.dailyNewLimit ?? 20
+        let newLimit = newLimitOverride ?? configuredNewLimit
         let reviewLimit = settings?.dailyReviewLimit ?? 100
 
         let deckID = deck.id
@@ -136,9 +169,21 @@ enum StudyRepository {
         let dueQuota = max(0, reviewLimit - reviewDoneToday)
         let newQuota = max(0, newLimit - newUsedToday)
 
+        // 推荐词：错得多、今天又不到期，且不在今天的到期/新词配额里
+        var recommendedCount = 0
+        if includeRecommended {
+            let dueIDs = Set(states.filter { !$0.isSuspended && $0.dueDate <= startOfToday }.map(\.wordID))
+            let newIDs = Set(words.filter { !learnedWordIDs.contains($0.id) }.map(\.id))
+            recommendedCount = min(3, states.filter {
+                !$0.isSuspended && !$0.isWrongBookHidden && $0.lapses > 0
+                    && !dueIDs.contains($0.wordID) && !newIDs.contains($0.wordID)
+            }.count)
+        }
+
         return TodayCounts(due: min(dueCount, dueQuota),
                            new: min(newAvailable, newQuota),
-                           learnedToday: todaysRecords.count)
+                           learnedToday: todaysRecords.count,
+                           recommended: recommendedCount)
     }
 
     // MARK: - 评分写回

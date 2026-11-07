@@ -37,6 +37,8 @@ private struct SettingsForm: View {
     @State private var notice: String?
     @State private var errorMessage: String?
     @State private var reminderDenied = false
+    @State private var isShowingPaywall = false
+    @State private var purchase = PurchaseService.shared
 
     var body: some View {
         Form {
@@ -95,6 +97,32 @@ private struct SettingsForm: View {
             }
 
             Section {
+                if purchase.isPro {
+                    LabeledContent("豆卡单词 Pro", value: "已解锁（买断）")
+                } else {
+                    Button {
+                        isShowingPaywall = true
+                    } label: {
+                        Label("解锁全部功能", systemImage: "sparkles")
+                    }
+                    LabeledContent("免费额度", value: "1 个词库 · 500 词 · 每日 20 新词")
+                }
+
+                NavigationLink {
+                    AchievementsView()
+                } label: {
+                    Label("成就与里程碑", systemImage: "rosette")
+                }
+            } header: {
+                Text("升级")
+            } footer: {
+                Text(purchase.isPro
+                     ? "一次性买断，恢复购买可在更换设备后用同一个 Apple ID 找回。"
+                     : "免费版功能完整，只在词库数量、词条总数和每日新词上有限制。")
+                    .font(Theme.Font.caption)
+            }
+
+            Section {
                 Button {
                     prepareExport()
                 } label: {
@@ -137,6 +165,9 @@ private struct SettingsForm: View {
         .background(Theme.Palette.bg)
         .onAppear {
             SpeechService.shared.accent = settings.voiceAccent
+        }
+        .sheet(isPresented: $isShowingPaywall) {
+            PaywallView(reason: .manual) { isShowingPaywall = false }
         }
         .fileExporter(isPresented: $isExporting,
                       document: exportDocument,

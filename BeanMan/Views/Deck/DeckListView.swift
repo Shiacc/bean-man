@@ -11,6 +11,10 @@ struct DeckListView: View {
     @State private var isImporting = false
     @State private var pendingDelete: Deck?
     @State private var errorMessage: String?
+    @State private var upgradeReason: UpgradeReason?
+    @State private var purchase = PurchaseService.shared
+
+    private var customDeckCount: Int { decks.filter { !$0.isBuiltIn }.count }
 
     var body: some View {
         NavigationStack {
@@ -26,7 +30,7 @@ struct DeckListView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        isImporting = true
+                        startImport()
                     } label: {
                         Image(systemName: "square.and.arrow.down")
                     }
@@ -37,6 +41,9 @@ struct DeckListView: View {
                 ImportView { newDeckID in
                     selectedDeckID = newDeckID
                 }
+            }
+            .sheet(item: $upgradeReason) { reason in
+                PaywallView(reason: reason) { upgradeReason = nil }
             }
             .alert("删除词库？", isPresented: Binding(
                 get: { pendingDelete != nil },
@@ -90,9 +97,15 @@ struct DeckListView: View {
                     .font(Theme.Font.caption)
                     .foregroundStyle(Theme.Palette.textSecondary)
             } footer: {
-                Text("点词库可以查看词条；左右滑动可以设为当前或删除。")
-                    .font(Theme.Font.caption)
-                    .foregroundStyle(Theme.Palette.textTertiary)
+                if purchase.isPro {
+                    Text("点词库可以查看词条；左右滑动可以设为当前或删除。")
+                        .font(Theme.Font.caption)
+                        .foregroundStyle(Theme.Palette.textTertiary)
+                } else {
+                    Text("免费版可建 \(FreeTier.deckLimit) 个自建词库、共 \(FreeTier.wordLimit) 个词条；点词库可以查看词条，左右滑动可设为当前或删除。")
+                        .font(Theme.Font.caption)
+                        .foregroundStyle(Theme.Palette.textTertiary)
+                }
             }
         }
         .listStyle(.insetGrouped)
@@ -105,13 +118,23 @@ struct DeckListView: View {
             XiaodouSpeech(line: "还没有词库，先导入一个？",
                           detail: "支持 CSV 文件，或者直接粘贴表格",
                           edge: .top)
-            Button("导入词库") { isImporting = true }
+            Button("导入词库") { startImport() }
                 .buttonStyle(PrimaryButtonStyle())
         }
         .padding(Theme.Spacing.screenH)
     }
 
     // MARK: - 数据
+
+    /// 建词库前先过免费额度。
+    private func startImport() {
+        if TierGate.canCreateDeck(existingCustomDecks: customDeckCount,
+                                  isPro: purchase.isPro) {
+            isImporting = true
+        } else {
+            upgradeReason = .deckLimit
+        }
+    }
 
     private var totalWords: Int {
         decks.reduce(0) { $0 + $1.words.count }
