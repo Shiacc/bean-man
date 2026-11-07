@@ -16,6 +16,8 @@ final class TodayViewModel {
     var learnedWordCount: Int = 0
     /// 错词本里还有多少个词（今日页入口角标）。
     var wrongCount: Int = 0
+    /// 生词本里收藏了多少个词。
+    var favoriteCount: Int = 0
     /// 小豆的分析结果（洞察 + 推荐词）
     var insight = InsightSnapshot.empty
 
@@ -58,6 +60,7 @@ final class TodayViewModel {
             let words = try context.fetch(FetchDescriptor<Word>())
             totalWordCount = words.count
             learnedWordCount = words.filter { $0.reviewState != nil }.count
+            favoriteCount = words.filter(\.isFavorite).count
 
             wrongCount = try WrongBookService.visibleCount(context: context)
 

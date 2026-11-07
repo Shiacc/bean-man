@@ -17,6 +17,7 @@ struct TodayView: View {
     @State private var isShowingWrongBook = false
     @State private var isShowingQuiz = false
     @State private var isShowingAchievements = false
+    @State private var isShowingFavorites = false
     @State private var isReviewingDanmaku = false
 
     /// 引导目标的位置（全局坐标），由 `.captureFrame` 上报
@@ -88,6 +89,9 @@ struct TodayView: View {
         }
         .sheet(isPresented: $isShowingAchievements) {
             NavigationStack { AchievementsView() }
+        }
+        .sheet(isPresented: $isShowingFavorites) {
+            FavoritesView()
         }
         .fullScreenCover(isPresented: $isReviewingDanmaku) {
             DanmakuReviewView()
@@ -258,6 +262,11 @@ struct TodayView: View {
                       title: "弹幕复习",
                       subtitle: "滚动过一遍，点一下就暂停") {
                 isReviewingDanmaku = true
+            }
+            ActionRow(icon: "star",
+                      title: "生词本",
+                      subtitle: viewModel.favoriteCount > 0 ? "\(viewModel.favoriteCount) 个" : "暂无") {
+                isShowingFavorites = true
             }
             ActionRow(icon: "rosette",
                       title: "成就与里程碑",

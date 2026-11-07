@@ -92,8 +92,8 @@ final class QuizViewModel {
     }
 
     private func writeBackAsWrong(question: QuizQuestion, context: ModelContext) {
-        guard let word = (try? context.fetch(FetchDescriptor<Word>()))
-            .first(where: { $0.id == question.wordID }) else { return }
+        guard let words = try? context.fetch(FetchDescriptor<Word>()),
+              let word = words.first(where: { $0.id == question.wordID }) else { return }
 
         let item = QueueItem(id: word.id, word: word, isNew: word.reviewState == nil)
         do {
