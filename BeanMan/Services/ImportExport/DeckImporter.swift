@@ -169,8 +169,7 @@ enum DeckImporter {
             let trimmed = deckName.trimmingCharacters(in: .whitespacesAndNewlines)
             let newDeck = Deck(name: trimmed.isEmpty ? "导入的词库" : trimmed,
                                summary: "从 CSV 导入",
-                               sortIndex: nextDeckSortIndex(context),
-                               isBuiltIn: false)
+                               sortIndex: nextDeckSortIndex(context))
             context.insert(newDeck)
             targetDeck = newDeck
         }

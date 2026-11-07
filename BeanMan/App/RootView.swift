@@ -40,7 +40,7 @@ struct RootView: View {
                 case .decks:
                     DeckListView()
                 case .stats:
-                    ComingSoonView(title: "统计", note: "连续打卡、正确率、7 天柱状图")
+                    StatsView()
                 case .settings:
                     SettingsView()
                 }

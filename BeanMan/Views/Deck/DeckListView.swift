@@ -118,7 +118,7 @@ struct DeckListView: View {
     }
 
     private func dueCount(_ deck: Deck) -> Int {
-        let today = DayKey.startOfDay(for: Date())
+        let today = DayKey.startOfDay(Date())
         return deck.words.reduce(0) { partial, word in
             guard let state = word.reviewState,
                   !state.isSuspended,

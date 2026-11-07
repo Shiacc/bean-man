@@ -131,7 +131,7 @@ struct DeckDetailView: View {
     }
 
     private var dueCount: Int {
-        let today = DayKey.startOfDay(for: Date())
+        let today = DayKey.startOfDay(Date())
         return deck.words.filter { word in
             guard let state = word.reviewState else { return false }
             return !state.isSuspended && state.dueDate <= today
