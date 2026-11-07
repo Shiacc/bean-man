@@ -1,0 +1,40 @@
+# ---- Xcode 生成物 / 本地产物 ----
+DerivedData/
+build/
+*.ipa
+*.dSYM.zip
+*.dia
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.xcarchive
+
+# 用 XcodeGen 生成工程时，取消下面两行的注释（工程文件不进仓库）
+# BeanMan.xcodeproj/
+# BeanMan.xcworkspace/
+
+# ---- 密钥与签名：永远不进仓库 ----
+Secrets/
+*.p12
+*.p8
+*.cer
+*.mobileprovision
+AuthKey_*.p8
+GoogleService-Info.plist
+Secrets.xcconfig
+*.key
+
+# ---- 系统 / 编辑器 ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# ---- 本地临时 ----
+/tmp/
+*.log
