@@ -1,4 +1,4 @@
-﻿import SwiftUI
+import SwiftUI
 import SwiftData
 import UIKit
 
@@ -130,6 +130,10 @@ struct OnboardingView: View {
                     }
                     .font(Theme.Font.body)
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(Theme.Palette.surface,
+                            in: RoundedRectangle(cornerRadius: Theme.Radius.tile, style: .continuous))
             }
 
             VStack(alignment: .leading, spacing: 8) {
@@ -143,6 +147,10 @@ struct OnboardingView: View {
                     }
                     .font(Theme.Font.body)
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(Theme.Palette.surface,
+                            in: RoundedRectangle(cornerRadius: Theme.Radius.tile, style: .continuous))
                 Text("到期词一般不会超。上限只是防止某天堆几百个复习。")
                     .font(Theme.Font.caption)
                     .foregroundStyle(Theme.Palette.textTertiary)
