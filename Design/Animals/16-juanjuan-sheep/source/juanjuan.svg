@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 卷卷 · 小羊 v1.0 ｜ 豆卡单词
+       wool #E8E2D5 / woolShade #D8D0BF / face #F6EFE4 / ear #D8D0BF / outline #3A2A22 -->
+  <!-- 腿 -->
+  <g fill="#D8D0BF" stroke="#3A2A22" stroke-width="10" stroke-linejoin="round">
+    <path d="M 424 880 L 424 940 L 480 940 L 480 880 Z"/>
+    <path d="M 544 880 L 544 940 L 600 940 L 600 880 Z"/>
+  </g>
+  <!-- 羊毛：一圈圆堆出来的云（每个圆都描边，读起来就是「一卷一卷」） -->
+  <g fill="#E8E2D5" stroke="#3A2A22" stroke-width="11">
+    <circle cx="512" cy="640" r="196"/>
+    <circle cx="342" cy="700" r="104"/>
+    <circle cx="682" cy="700" r="104"/>
+    <circle cx="376" cy="812" r="96"/>
+    <circle cx="648" cy="812" r="96"/>
+    <circle cx="452" cy="856" r="92"/>
+    <circle cx="572" cy="856" r="92"/>
+  </g>
+
+
+  <!-- 耳朵 -->
+  <ellipse cx="330" cy="470" rx="60" ry="38" transform="rotate(-18 330 470)"
+           fill="#D8D0BF" stroke="#3A2A22" stroke-width="11"/>
+  <ellipse cx="694" cy="470" rx="60" ry="38" transform="rotate(18 694 470)"
+           fill="#D8D0BF" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 脸 -->
+  <path d="M 512 350 C 616 350 690 424 690 512 C 690 600 616 662 512 662
+           C 408 662 334 600 334 512 C 334 424 408 350 512 350 Z"
+        fill="#F6EFE4" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 额头羊毛 -->
+  <g fill="#E8E2D5" stroke="#3A2A22" stroke-width="10">
+    <circle cx="446" cy="392" r="52"/>
+    <circle cx="512" cy="374" r="58"/>
+    <circle cx="580" cy="392" r="52"/>
+  </g>
+
+  <!-- 眼 -->
+  <g>
+    <ellipse cx="446" cy="512" rx="36" ry="40" fill="#3A2A22"/>
+    <ellipse cx="580" cy="512" rx="36" ry="40" fill="#3A2A22"/>
+    <circle cx="434" cy="498" r="11" fill="#FFFFFF"/>
+    <circle cx="568" cy="498" r="11" fill="#FFFFFF"/>
+  </g>
+
+  <!-- 鼻子与嘴 -->
+  <path d="M 496 566 C 496 552 528 552 528 566 C 528 578 512 586 512 586
+           C 512 586 496 578 496 566 Z" fill="#3A2A22"/>
+  <path d="M 512 586 L 512 600 M 512 600 C 500 616 484 610 478 600 M 512 600 C 524 616 540 610 546 600"
+        fill="none" stroke="#3A2A22" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.55">
+    <ellipse cx="392" cy="566" rx="38" ry="20"/>
+    <ellipse cx="634" cy="566" rx="38" ry="20"/>
+  </g>
+</svg>
