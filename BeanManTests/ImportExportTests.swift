@@ -67,6 +67,12 @@ final class DeckImporterTests: XCTestCase {
         container = BeanManStore.makeContainer(inMemory: true)
         context = ModelContext(container)
         BeanManStore.bootstrap(context)
+        // 示例词库里本来就有 abandon / quiet / tidy 这些词，留着会让断言数到两个。
+        // 先把内置词库删掉，测试只针对导入结果。
+        for deck in try context.fetch(FetchDescriptor<Deck>()) where deck.isBuiltIn {
+            context.delete(deck)
+        }
+        try context.save()
     }
 
     override func tearDown() async throws {

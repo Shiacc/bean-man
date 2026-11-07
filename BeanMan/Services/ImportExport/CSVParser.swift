@@ -48,6 +48,13 @@ enum CSVParser {
             body.removeFirst()
         }
 
+        // Swift 的 String 把 "\r\n" 当成**一个** Character（grapheme cluster），
+        // 直接逐字符比较 "\r" / "\n" 都匹配不上，会整段塞进字段里。
+        // 所以先把换行统一成 "\n" 再扫。
+        body = body
+            .replacingOccurrences(of: "\r\n", with: "\n")
+            .replacingOccurrences(of: "\r", with: "\n")
+
         let chars = Array(body)
         var rows: [[String]] = []
         var row: [String] = []
@@ -86,7 +93,12 @@ enum CSVParser {
                 field = ""
                 index += 1
             case "\r":
-                // CRLF：吃掉 \r，交给 \n 收行；单独出现的 \r 也当换行处理
+                // 上面的归一化已经处理掉了；留着防御未来别处调用时漏改
+                row.append(field)
+                field = ""
+                rows.append(row)
+                row = []
+                line += 1
                 index += 1
             case "\n":
                 row.append(field)
