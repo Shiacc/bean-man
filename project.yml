@@ -39,6 +39,8 @@ targets:
           - UIInterfaceOrientationPortrait
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
+        # 无网络传输、无自定义加密：声明后上传时不再每次回答出口合规问题
+        ITSAppUsesNonExemptEncryption: false
         # 本地通知：首次使用时用 UNUserNotificationCenter 请求授权，不需要 Info.plist key
     settings:
       base:

@@ -1,8 +1,8 @@
 name: iOS 构建与单测
 
-# 用途：在没有 Mac 的开发机上验证「能不能编译、单测过不过」。
-# 触发：push 到 main、或手动 Run workflow。
-# 前提：仓库要镜像到 GitHub（Gitee 没有 macOS runner），见 README「CI 编译验证」。
+# 用途：在没有 Mac 的开发机上验证「能不能编译、单测过不过」，并截出模拟器首页。
+# 触发：push 到 main、PR、手动 Run workflow。
+# 前提：仓库要镜像到 GitHub（Gitee 没有 macOS runner），见 Docs/03-无Mac编译与上线.md。
 
 on:
   push:
@@ -12,9 +12,9 @@ on:
 
 jobs:
   build:
-    name: xcodebuild build + test
+    name: 编译 + 单测
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 40
 
     steps:
       - name: 检出代码
@@ -29,28 +29,17 @@ jobs:
       - name: 挑一个可用的模拟器
         id: sim
         run: |
-          UDID=$(xcrun simctl list devices available -j | python3 -c "
-import json, sys
-data = json.load(sys.stdin)['devices']
-for runtime, devices in data.items():
-    if 'iOS' not in runtime:
-        continue
-    for d in devices:
-        if d.get('isAvailable'):
-            print(d['udid'])
-            sys.exit(0)
-sys.exit(1)
-")
+          UDID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for rt,v in d.items() if 'iOS' in rt for x in v if x.get('isAvailable')))")
           echo "使用模拟器 $UDID"
           echo "udid=$UDID" >> "$GITHUB_OUTPUT"
 
-      - name: 编译
+      - name: 编译（模拟器版，不签名）
         run: |
           set -o pipefail
           xcodebuild build \
             -project BeanMan.xcodeproj \
             -scheme BeanMan \
-            -destination 'generic/platform=iOS Simulator' \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
             -derivedDataPath build/DerivedData \
             CODE_SIGNING_ALLOWED=NO \
             | xcbeautify --renderer github-actions
@@ -66,6 +55,14 @@ sys.exit(1)
             CODE_SIGNING_ALLOWED=NO \
             | xcbeautify --renderer github-actions
 
+      - name: 上传模拟器 App
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-simulator
+          path: build/DerivedData/Build/Products/Debug-iphonesimulator/BeanMan.app
+          retention-days: 7
+
       - name: 上传测试报告
         if: always()
         uses: actions/upload-artifact@v4
@@ -73,3 +70,63 @@ sys.exit(1)
           name: test-results
           path: build/DerivedData/Logs/Test/*.xcresult
           if-no-files-found: ignore
+          retention-days: 14
+
+  screenshots:
+    name: 模拟器截图
+    needs: build
+    runs-on: macos-15
+    timeout-minutes: 25
+    # 截图是可选的：即使失败也不该让主流程变红，但结果仍可下载
+    continue-on-error: true
+
+    steps:
+      - name: 检出代码（取 Info.plist 里的 bundle id）
+        uses: actions/checkout@v4
+
+      - name: 下载模拟器 App
+        uses: actions/download-artifact@v4
+        with:
+          name: app-simulator
+          path: app
+
+      - name: 挑一个可用的模拟器
+        id: sim
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for rt,v in d.items() if 'iOS' in rt for x in v if x.get('isAvailable')))")
+          echo "使用模拟器 $UDID"
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+
+      - name: 启动模拟器并截图
+        run: |
+          set -x
+          UDID="${{ steps.sim.outputs.udid }}"
+          mkdir -p shots
+
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+
+          # 状态栏做成 9:41，截图更像设计稿
+          xcrun simctl status_bar "$UDID" override \
+            --time "9:41" --batteryState charged --batteryLevel 100 \
+            --cellularMode active --cellularBars 4 --wifiBars 3 || true
+
+          xcrun simctl install "$UDID" app/BeanMan.app
+          xcrun simctl launch "$UDID" com.yourname.beanman || echo "启动失败，截桌面"
+
+          sleep 5
+          xcrun simctl io "$UDID" screenshot shots/01-today.png || true
+
+          # 如果启动崩了，把崩溃日志抓出来（比看截图有用）
+          xcrun simctl spawn "$UDID" log show --last 2m --style compact \
+            --predicate 'process == "BeanMan"' 2>/dev/null | tail -60 \
+            > shots/app-log.txt || true
+
+      - name: 上传截图
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: shots/
+          if-no-files-found: warn
+          retention-days: 14

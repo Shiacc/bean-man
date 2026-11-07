@@ -1,0 +1,141 @@
+name: 发布到 TestFlight
+
+# 用途：在没有 Mac 的情况下，Archive → 导出 IPA → 上传 TestFlight。
+# 触发：手动（Actions 页面 Run workflow）。
+#
+# 需要的仓库 Secrets（Settings → Secrets and variables → Actions）：
+#   ASC_KEY_ID       App Store Connect API Key 的 Key ID（10 位）
+#   ASC_ISSUER_ID    Issuer ID（UUID）
+#   ASC_KEY_P8       .p8 文件全文（含 BEGIN/END PRIVATE KEY 两行）
+#   APPLE_TEAM_ID    10 位团队 ID
+#
+# 详见 Docs/03-无Mac编译与上线.md §5。
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: "构建号（留空则用 run_number）"
+        required: false
+        type: string
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Archive → IPA → TestFlight
+    runs-on: macos-15
+    timeout-minutes: 60
+
+    env:
+      SCHEME: BeanMan
+      BUNDLE_ID: com.yourname.beanman
+      BUILD_NUMBER: ${{ inputs.build_number || github.run_number }}
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 检查 Secrets 是否齐全
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          missing=""
+          [ -z "$ASC_KEY_ID" ]     && missing="$missing ASC_KEY_ID"
+          [ -z "$ASC_ISSUER_ID" ]  && missing="$missing ASC_ISSUER_ID"
+          [ -z "$ASC_KEY_P8" ]     && missing="$missing ASC_KEY_P8"
+          [ -z "$APPLE_TEAM_ID" ]  && missing="$missing APPLE_TEAM_ID"
+          if [ -n "$missing" ]; then
+            echo "::error::缺少 Secrets:$missing —— 见 Docs/03-无Mac编译与上线.md §5.2"
+            exit 1
+          fi
+          echo "Secrets 齐全"
+
+      - name: 写入 API Key 与工程
+        run: |
+          brew install xcodegen xcbeautify
+          xcodegen generate
+          mkdir -p "$RUNNER_TEMP/keys"
+          printf '%s\n' "${{ secrets.ASC_KEY_P8 }}" > "$RUNNER_TEMP/keys/AuthKey.p8"
+          chmod 600 "$RUNNER_TEMP/keys/AuthKey.p8"
+          xcodebuild -version
+
+      - name: Archive
+        run: |
+          set -o pipefail
+          xcodebuild archive \
+            -project BeanMan.xcodeproj \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath build/BeanMan.xcarchive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/keys/AuthKey.p8" \
+            -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" \
+            -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}" \
+            DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            | xcbeautify --renderer github-actions
+
+      - name: 导出 IPA
+        run: |
+          cat > ExportOptions.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>        <string>app-store-connect</string>
+            <key>teamID</key>        <string>${{ secrets.APPLE_TEAM_ID }}</string>
+            <key>signingStyle</key>  <string>automatic</string>
+            <key>uploadSymbols</key> <true/>
+            <key>destination</key>   <string>export</string>
+          </dict>
+          </plist>
+          EOF
+
+          xcodebuild -exportArchive \
+            -archivePath build/BeanMan.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist ExportOptions.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/keys/AuthKey.p8" \
+            -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" \
+            -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}"
+
+          ls -lh build/export
+
+      - name: 上传到 TestFlight
+        run: |
+          IPA=$(ls build/export/*.ipa | head -n1)
+          echo "上传 $IPA（build $BUILD_NUMBER）"
+          xcrun altool --upload-app \
+            -f "$IPA" \
+            -t ios \
+            --apiKey "${{ secrets.ASC_KEY_ID }}" \
+            --apiIssuer "${{ secrets.ASC_ISSUER_ID }}" \
+            --verbose
+
+      - name: 保存 IPA 与符号表
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipa-${{ env.BUILD_NUMBER }}
+          path: |
+            build/export/*.ipa
+            build/export/*.dSYM.zip
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: 成功提示
+        if: success()
+        run: |
+          echo "### 已上传 TestFlight" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 构建号：\`$BUILD_NUMBER\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 处理通常需要 5–15 分钟，之后在 App Store Connect → TestFlight 里添加测试员。" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 内测（最多 100 人）不需要审核；外测首个构建需要 Beta 审核。" >> "$GITHUB_STEP_SUMMARY"

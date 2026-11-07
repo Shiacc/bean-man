@@ -11,6 +11,7 @@
 - [产品需求文档 PRD v0.2](Docs/02-PRD-豆卡单词-v0.2.md) — 功能规格、算法规格、交互规范、验收标准（AC-01…AC-52）
 - [阶段一：产品结构与数据模型](Docs/01-阶段1-产品结构与数据模型.md) — 分层、文件树、6 个 @Model、导入契约
 - [小动物总谱](Design/Animals/00-小动物总谱.md) · [风格规范](Design/Animals/_风格规范.md)
+- [**没有 Mac 怎么编译、怎么上线**](Docs/03-无Mac编译与上线.md) — GitHub Actions 编译/截图、API Key 签名、TestFlight、上架清单
 
 ---
 
@@ -175,7 +176,32 @@ git add -A && git commit -m "feat: 词库页" && git push
 
 ---
 
-## 五、已知待办
+## 五、没有 Mac 怎么编译、怎么上线
+
+这台机器是 Windows，**编不了 iOS**（`xcodebuild` 只有 macOS 版）。三条路，详见 [Docs/03-无Mac编译与上线.md](Docs/03-无Mac编译与上线.md)：
+
+| 方案 | 能做什么 | 成本 |
+|---|---|---|
+| **GitHub Actions（主力）** | 编译、单测、模拟器截图、打 IPA、传 TestFlight | 公开仓库免费；私有仓库约 200 分钟/月 |
+| 云 Mac（按小时） | 实时预览、断点、调签名 | ¥5–15/小时 |
+| 买 Mac mini | 什么都能做 | ¥2000–3500 一次性 |
+
+**第一步（今天就能做）：把仓库镜像到 GitHub，让 CI 把编译错误吐出来。**
+
+```bash
+git remote add github git@github.com:shiack/beanman.git
+git push -u github main
+```
+
+之后每次 push 会自动跑 `.github/workflows/ios-build.yml`：生成工程 → 编译 → 跑单测 → 装进模拟器截一张今日页 → 上传 artifact。
+Actions 页面的 **Artifacts → screenshots** 就是不用 Mac 也能看到的界面。
+
+签名和上传也不用 Mac：在 App Store Connect 建一个 **API Key**（`.p8`），把 4 个值放进 GitHub Secrets，
+手动跑 `.github/workflows/release-testflight.yml` 就能出 IPA 并推到 **TestFlight**——iPhone 上装 TestFlight 就能真机试用，这是「没有 Mac 的真机调试渠道」。
+
+---
+
+## 六、已知待办
 
 - 词库页（导入 CSV/JSON、搜索、导出）、统计页（7 天柱状图）、设置页（计划/提醒/发音/数据管理）
 - 本地通知（UNUserNotificationCenter，`Info.plist` 不需要额外权限 key，但首次要请求授权）
