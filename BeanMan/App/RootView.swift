@@ -30,6 +30,7 @@ enum AppTab: Int, CaseIterable, Identifiable {
 struct RootView: View {
     @Environment(\.modelContext) private var context
     @State private var router = AppRouter()
+    @State private var isOnboardingPresented = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -53,6 +54,15 @@ struct RootView: View {
         .environment(router)
         .task {
             BeanManStore.bootstrap(context)
+            // 首次启动：设置存在但没走完引导，就把引导顶上来
+            if let settings = try? AppSettingsStore.current(in: context), !settings.onboardingCompleted {
+                isOnboardingPresented = true
+            }
+        }
+        .fullScreenCover(isPresented: $isOnboardingPresented) {
+            OnboardingView {
+                isOnboardingPresented = false
+            }
         }
     }
 
