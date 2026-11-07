@@ -130,8 +130,14 @@ final class DeckImporterTests: XCTestCase {
     }
 
     func testAppendsToExistingDeck() throws {
-        let decks = try context.fetch(FetchDescriptor<Deck>(sortBy: [SortDescriptor(\.sortIndex)]))
-        let deck = try XCTUnwrap(decks.first)
+        // 自己建一个词库：setUp 里已经把内置示例词库删掉了
+        let deck = Deck(name: "已有词库", summary: "", sortIndex: 0)
+        context.insert(deck)
+        let existing = Word(deckID: deck.id, word: "keep", meaning: "保留")
+        context.insert(existing)
+        deck.words.append(existing)
+        try context.save()
+
         let before = deck.words.count
 
         let report = try DeckImporter.importCSV(text: "word,meaning\nzzztest,测试词\n",
