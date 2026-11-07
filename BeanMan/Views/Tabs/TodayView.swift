@@ -45,8 +45,8 @@ struct TodayView: View {
                     .padding(.horizontal, Theme.Spacing.screenH)
             }
             .padding(.top, 12)
-            // 底部自绘 TabBar 是浮在内容上的，留出它 + home indicator 的高度
-            .padding(.bottom, 108)
+            // 底部 TabBar 在 VStack 里、不浮在内容上，这里只需常规留白
+            .padding(.bottom, 24)
         }
         .background(Theme.Palette.bg)
         .task {

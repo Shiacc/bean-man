@@ -25,6 +25,8 @@ struct OnboardingView: View {
     @State private var accent: VoiceAccent = .american
     @State private var reminderDenied = false
     @State private var hasLoaded = false
+    /// 「自定义」被显式选中时才展开滑杆，避免和 10/20/30 同时出现
+    @State private var usesCustomNew = false
 
     private let newOptions = [10, 20, 30]
 
@@ -55,6 +57,7 @@ struct OnboardingView: View {
             hasLoaded = true
             dailyNew = settings.dailyNewLimit
             dailyReview = settings.dailyReviewLimit
+            usesCustomNew = !newOptions.contains(settings.dailyNewLimit)
             reminderEnabled = settings.reminderEnabled
             accent = settings.voiceAccent
             reminderTime = Calendar.current.date(from: DateComponents(hour: settings.reminderHour,
@@ -106,34 +109,51 @@ struct OnboardingView: View {
                     ForEach(newOptions, id: \.self) { option in
                         Button {
                             dailyNew = option
+                            usesCustomNew = false
                         } label: {
                             Text("\(option)")
                                 .font(Theme.Font.cardTitle)
-                                .foregroundStyle(dailyNew == option ? Color.white : Theme.Palette.textPrimary)
+                                .foregroundStyle(dailyNew == option && !usesCustomNew ? Color.white : Theme.Palette.textPrimary)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 18)
-                                .background(dailyNew == option ? Theme.Palette.brand : Theme.Palette.surface,
+                                .background(dailyNew == option && !usesCustomNew ? Theme.Palette.brand : Theme.Palette.surface,
                                             in: RoundedRectangle(cornerRadius: Theme.Radius.tile, style: .continuous))
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel("每天 \(option) 个新词")
                     }
+
+                    Button {
+                        usesCustomNew = true
+                    } label: {
+                        Text("自定义")
+                            .font(Theme.Font.button)
+                            .foregroundStyle(usesCustomNew ? Color.white : Theme.Palette.textPrimary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 22)
+                            .background(usesCustomNew ? Theme.Palette.brand : Theme.Palette.surface,
+                                        in: RoundedRectangle(cornerRadius: Theme.Radius.tile, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("自定义每天新词数")
                 }
 
-                Stepper(value: $dailyNew, in: 5...60, step: 5) {
-                    HStack {
-                        Text("自定义")
-                        Spacer()
-                        Text("\(dailyNew) 个")
-                            .foregroundStyle(Theme.Palette.textSecondary)
-                            .monospacedDigit()
+                if usesCustomNew {
+                    Stepper(value: $dailyNew, in: 5...60, step: 5) {
+                        HStack {
+                            Text("每天新词")
+                            Spacer()
+                            Text("\(dailyNew) 个")
+                                .foregroundStyle(Theme.Palette.textSecondary)
+                                .monospacedDigit()
+                        }
+                        .font(Theme.Font.body)
                     }
-                    .font(Theme.Font.body)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Theme.Palette.surface,
+                                in: RoundedRectangle(cornerRadius: Theme.Radius.tile, style: .continuous))
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(Theme.Palette.surface,
-                            in: RoundedRectangle(cornerRadius: Theme.Radius.tile, style: .continuous))
             }
 
             VStack(alignment: .leading, spacing: 8) {
