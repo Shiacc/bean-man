@@ -26,15 +26,15 @@ enum AppTab: Int, CaseIterable, Identifiable {
 }
 
 /// 根视图：自定义底部标签栏（与 Figma `DS/TabBar` 对齐）。
-/// 第二阶段会把词库 / 统计 / 设置三个页替换成真实实现，现在先占位。
+/// 四个页面都已是真实实现；`AppRouter` 通过环境注入，供子页面切换标签。
 struct RootView: View {
     @Environment(\.modelContext) private var context
-    @State private var tab: AppTab = .today
+    @State private var router = AppRouter()
 
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
-                switch tab {
+                switch router.tab {
                 case .today:
                     TodayView()
                 case .decks:
@@ -50,6 +50,7 @@ struct RootView: View {
             tabBar
         }
         .background(Theme.Palette.bg)
+        .environment(router)
         .task {
             BeanManStore.bootstrap(context)
         }
@@ -64,21 +65,21 @@ struct RootView: View {
             HStack(spacing: 0) {
                 ForEach(AppTab.allCases) { item in
                     Button {
-                        tab = item
+                        router.tab = item
                     } label: {
                         VStack(spacing: 6) {
                             Image(systemName: item.icon)
                                 .font(.system(size: 20, weight: .regular))
                             Text(item.title)
-                                .font(.system(size: 11, weight: tab == item ? .medium : .regular))
+                                .font(.system(size: 11, weight: router.tab == item ? .medium : .regular))
                         }
-                        .foregroundStyle(tab == item ? Theme.Palette.brand : Theme.Palette.textTertiary)
+                        .foregroundStyle(router.tab == item ? Theme.Palette.brand : Theme.Palette.textTertiary)
                         .frame(maxWidth: .infinity)
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(Text(item.title))
-                    .accessibilityAddTraits(tab == item ? [.isSelected] : [])
+                    .accessibilityAddTraits(router.tab == item ? [.isSelected] : [])
                 }
             }
             .padding(.top, 10)

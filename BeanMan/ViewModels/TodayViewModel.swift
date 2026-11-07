@@ -12,6 +12,8 @@ final class TodayViewModel {
     var accuracy: Int = 0          // 0...100，今天为止
     var deckName: String = ""
     var totalWordCount: Int = 0
+    /// 已经学过（有复习状态）的词数 —— 测试页至少要 4 个才出得了题。
+    var learnedWordCount: Int = 0
     /// 错词本里还有多少个词（今日页入口角标）。
     var wrongCount: Int = 0
     var hasAnyDueOrNew: Bool { counts.total > 0 }
@@ -47,6 +49,7 @@ final class TodayViewModel {
 
             let words = try context.fetch(FetchDescriptor<Word>())
             totalWordCount = words.count
+            learnedWordCount = words.filter { $0.reviewState != nil }.count
 
             wrongCount = try WrongBookService.visibleCount(context: context)
         } catch {

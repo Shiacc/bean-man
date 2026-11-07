@@ -64,7 +64,8 @@ open BeanMan.xcodeproj     # ⌘R 运行，⌘U 测试
 BeanMan/
   App/
     BeanManApp.swift         @main，建 SwiftData 容器
-    RootView.swift           自定义底部 TabBar + 三个占位页
+    RootView.swift           自定义底部 TabBar
+    AppRouter.swift          标签切换路由（今日页跳词库用）
   Models/
     Models.swift             6 个 @Model：Deck / Word / ReviewState / StudyRecord / StudySession / AppSettings
   Persistence/
@@ -80,6 +81,8 @@ BeanMan/
     ImportExport/BackupService.swift  JSON 备份导出 / 恢复 / 重置进度
     Notification/NotificationService.swift  每日本地提醒（固定 identifier，先删后加）
     Speech/SpeechService.swift   AVSpeechSynthesizer 封装
+    Stats/StatsService.swift     统计快照：打卡 / 7 天数据 / 掌握度 / 正确率
+    Quiz/QuizService.swift       抽题（4:3:3）、判分、可复现随机源
   Support/
     DayKey.swift             yyyy-MM-dd、startOfDay、连续打卡
     DueText.swift            「逾期 2 天」「明天」「11 月 9 日」这类相对时间
@@ -98,6 +101,8 @@ BeanMan/
     TodayViewModel.swift     今日页数字
     StudyViewModel.swift     学习会话状态机
     WrongBookViewModel.swift 错词本的筛选 / 搜索 / 移出恢复
+    StatsViewModel.swift     统计页快照
+    QuizViewModel.swift      测试流程（选题 / 判分 / 成绩）
   Views/
     Tabs/TodayView.swift           今日页（Figma T-01-01 / T-01-02）
     Study/StudyView.swift          学习卡正面/背面（T-02-01 / T-02-02）
@@ -107,6 +112,8 @@ BeanMan/
     Deck/DeckListView.swift        词库列表：设为当前 / 删除 / 进入详情
     Deck/DeckDetailView.swift      词表、搜索、删词、设为当前、词条速览
     Deck/ImportView.swift          导入：选 CSV 文件或粘贴文本，显示逐行跳过原因
+    Tabs/StatsView.swift           统计页：打卡 / 掌握度 / 7 天堆叠柱状图
+    Quiz/QuizView.swift            测试页：看词选义 / 看义拼词 / 听音选义
     Settings/SettingsView.swift    计划 / 提醒 / 发音 / 导出恢复 / 重置 / 关于
     Debug/DesignGalleryView.swift  设计验收页：气泡 / 动物 / 引导动画 / 素材自检
   Resources/
@@ -146,6 +153,9 @@ Scripts/
 - [ ] 导入时混入空单词 / 空释义的行，报告里会逐行列出「第 N 行：……」
 - [ ] 设置 → 导出备份会存出一个 JSON；改动几个词后再「从备份恢复」，提示跳过已存在的词库
 - [ ] 设置 → 重置学习进度：勾选确认后，今日页待复习与新词回到初始额度
+- [ ] 今日页「测试一下」：学过 4 个词后能出题，三种题型轮流出现，拼写题输入后回车判分，成绩页给正确率环
+- [ ] 统计页：打卡天数、今日已学 / 待复习、累计词数、正确率、掌握度，7 天柱状图能区分新词与复习
+- [ ] 今日页「词库」那行能跳到词库标签（不是死按钮）
 
 ---
 
@@ -227,10 +237,9 @@ Actions 页面的 **Artifacts → screenshots** 就是不用 Mac 也能看到的
 
 ## 六、已知待办
 
-- 词库页（导入 CSV/JSON、搜索、导出）、统计页（7 天柱状图）、设置页（计划/提醒/发音/数据管理）
-- 本地通知（UNUserNotificationCenter，`Info.plist` 不需要额外权限 key，但首次要请求授权）
+- 首次引导页（4 步：每日计划 / 提醒时间 / 口音 / 用示例词库还是导入），`AppSettings.onboardingCompleted` 字段已就位
 - 生词本「手动收藏」入口（`Word.isFavorite` 字段在，还没有列表页；错词本已做）
-- 测试题（三种题型）
-- 首次引导页
 - 其余 19 只小动物（02 团子 … 20 小柚）的立绘、表情与 imageset
 - 学习完成页的小动物庆祝动画（现在只有勾选图标 + 小豆一句话）
+- 测试页还没写单测（`QuizService` 是纯函数，补 `QuizServiceTests` 成本很低）
+- iCloud 同步 / FSRS / Anki 导入（PRD 里明确不做，留到 1.x 之后再说）

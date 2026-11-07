@@ -9,10 +9,13 @@ import SwiftData
 @MainActor
 struct TodayView: View {
     @Environment(\.modelContext) private var context
+    /// 由 `RootView` 注入；直接预览时为 nil，所以写成可选
+    @Environment(AppRouter.self) private var router: AppRouter?
 
     @State private var viewModel = TodayViewModel()
     @State private var isStudying = false
     @State private var isShowingWrongBook = false
+    @State private var isShowingQuiz = false
 
     /// 引导目标的位置（全局坐标），由 `.captureFrame` 上报
     @State private var frames: [String: CGRect] = [:]
@@ -64,11 +67,17 @@ struct TodayView: View {
         .onChange(of: isShowingWrongBook) { _, showing in
             if !showing { viewModel.refresh(context: context) }
         }
+        .onChange(of: isShowingQuiz) { _, showing in
+            if !showing { viewModel.refresh(context: context) }
+        }
         .fullScreenCover(isPresented: $isStudying) {
             StudyView()
         }
         .sheet(isPresented: $isShowingWrongBook) {
             WrongBookView()
+        }
+        .sheet(isPresented: $isShowingQuiz) {
+            QuizView()
         }
     }
 
@@ -166,10 +175,15 @@ struct TodayView: View {
                       subtitle: viewModel.wrongCount > 0 ? "\(viewModel.wrongCount) 个" : "暂无") {
                 isShowingWrongBook = true
             }
+            ActionRow(icon: "checkmark.circle",
+                      title: "测试一下",
+                      subtitle: viewModel.learnedWordCount >= 4 ? "选择题 · 拼写 · 听音" : "学过 4 个词后可用") {
+                isShowingQuiz = true
+            }
             ActionRow(icon: "book.closed",
                       title: viewModel.deckName,
                       subtitle: "\(viewModel.totalWordCount) 词") {
-                // 词库页在第二阶段实现
+                router?.tab = .decks
             }
         }
     }
