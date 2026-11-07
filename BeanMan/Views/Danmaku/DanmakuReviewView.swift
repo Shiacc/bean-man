@@ -175,6 +175,18 @@ struct DanmakuReviewView: View {
                 chip(text: viewModel.speedText)
             }
 
+            Menu {
+                ForEach(DanmakuReviewViewModel.Scope.allCases) { scope in
+                    Button {
+                        viewModel.setScope(scope, context: context)
+                    } label: {
+                        Text(scope.title)
+                    }
+                }
+            } label: {
+                chip(text: viewModel.scope.title)
+            }
+
             Spacer()
 
             Button {

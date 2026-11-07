@@ -171,9 +171,8 @@ final class AchievementCenter {
                          forKey: unlockedKeyPrefix + achievement.rawValue + ".unlockedAt")
             newly.append(achievement)
         }
-        if celebrating == nil, let first = newly.first {
-            celebrating = first
-        }
+        // 有新的就顶掉旧的；没有新的就把庆祝收起来，避免残留一个已经过时的弹层
+        celebrating = newly.first
         return newly.count
     }
 

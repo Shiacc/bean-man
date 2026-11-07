@@ -101,7 +101,12 @@ enum SeedLibrary {
     static func installIfNeeded(in context: ModelContext) throws -> Deck? {
         let decks = try context.fetch(FetchDescriptor<Deck>())
         if let existing = decks.first(where: { $0.isBuiltIn }) { return existing }
+        return try install(in: context)
+    }
 
+    /// 无条件再装一份内置词库（用户删掉之后想找回时用）。
+    @discardableResult
+    static func install(in context: ModelContext) throws -> Deck {
         let deck = Deck(name: name, summary: summary, isBuiltIn: true, sortIndex: 0)
         context.insert(deck)
 

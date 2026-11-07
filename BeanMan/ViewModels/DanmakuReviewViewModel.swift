@@ -51,12 +51,30 @@ final class DanmakuReviewViewModel {
         var next: Theme { self == .dark ? .light : .dark }
     }
 
+    /// 滚哪些词
+    enum Scope: String, CaseIterable, Identifiable {
+        case all
+        case wrongWords
+        case newWords
+
+        var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .all: return "全部"
+            case .wrongWords: return "只看错词"
+            case .newWords: return "只看生词"
+            }
+        }
+    }
+
     /// 0.5× / 1× / 1.5× / 2×
     static let speedOptions: [Double] = [0.5, 1.0, 1.5, 2.0]
 
     private(set) var lines: [Line] = []
     private(set) var theme: Theme = .dark
     private(set) var speed: Double = 1.0
+    private(set) var scope: Scope = .all
     private(set) var isPaused = false
     private(set) var errorMessage: String?
 
@@ -91,7 +109,16 @@ final class DanmakuReviewViewModel {
             let learned = all
                 .filter { $0.reviewState != nil }
                 .sorted { ($0.reviewState?.dueDate ?? now) < ($1.reviewState?.dueDate ?? now) }
-            let source = learned.isEmpty ? all : learned
+
+            let source: [Word]
+            switch scope {
+            case .all:
+                source = learned.isEmpty ? all : learned
+            case .wrongWords:
+                source = all.filter { $0.reviewState?.isWrongWord ?? false }
+            case .newWords:
+                source = all.filter { $0.reviewState == nil }
+            }
 
             lines = source.map {
                 Line(id: $0.id,
@@ -100,11 +127,33 @@ final class DanmakuReviewViewModel {
                      partOfSpeech: $0.partOfSpeech,
                      meaning: $0.meaning)
             }
-            errorMessage = lines.isEmpty ? "这个词库还没有词" : nil
+            if lines.isEmpty {
+                errorMessage = emptyMessage
+            } else {
+                errorMessage = nil
+            }
             restorePosition()
         } catch {
             lines = []
             errorMessage = "读取词库失败"
+        }
+    }
+
+    /// 切筛选：重新取词并从头开始（位置只对同一个集合有意义）。
+    func setScope(_ next: Scope, context: ModelContext) {
+        guard next != scope else { return }
+        scope = next
+        accumulated = 0
+        resumedAt = Date()
+        isPaused = false
+        load(context: context)
+    }
+
+    private var emptyMessage: String {
+        switch scope {
+        case .all: return "这个词库还没有词"
+        case .wrongWords: return "还没有错词"
+        case .newWords: return "没有待学的新词"
         }
     }
 

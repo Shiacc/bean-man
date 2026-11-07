@@ -24,8 +24,10 @@ final class TierGateTests: XCTestCase {
         XCTAssertEqual(TierGate.remainingWordSlots(currentWordCount: 480, isPro: false), 20)
         XCTAssertEqual(TierGate.remainingWordSlots(currentWordCount: 600, isPro: false), 0)
         XCTAssertEqual(TierGate.allowedWordCount(requested: 100, currentWordCount: 480, isPro: false), 20)
+        // 「还能不能加」只看还有没有剩余槽位；加多少由 allowedWordCount 截断
         XCTAssertTrue(TierGate.canAddWords(currentWordCount: 400, adding: 100, isPro: false))
-        XCTAssertFalse(TierGate.canAddWords(currentWordCount: 480, adding: 100, isPro: false))
+        XCTAssertTrue(TierGate.canAddWords(currentWordCount: 480, adding: 100, isPro: false))
+        XCTAssertFalse(TierGate.canAddWords(currentWordCount: 500, adding: 100, isPro: false))
         // Pro 永远够
         XCTAssertEqual(TierGate.remainingWordSlots(currentWordCount: 10_000, isPro: true), Int.max)
         XCTAssertTrue(TierGate.canAddWords(currentWordCount: 10_000, adding: 999, isPro: true))

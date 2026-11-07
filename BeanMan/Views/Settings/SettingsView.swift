@@ -27,6 +27,8 @@ struct SettingsView: View {
 private struct SettingsForm: View {
     @Bindable var settings: AppSettings
 
+    @Query private var decks: [Deck]
+
     @Environment(\.modelContext) private var context
 
     @State private var isExporting = false
@@ -140,6 +142,14 @@ private struct SettingsForm: View {
                 } label: {
                     Label("重置学习进度", systemImage: "arrow.counterclockwise")
                 }
+
+                Button {
+                    restoreBuiltInLibrary()
+                } label: {
+                    Label(hasBuiltInLibrary ? "内置词库已在" : "恢复内置词库",
+                          systemImage: "books.vertical")
+                }
+                .disabled(hasBuiltInLibrary)
             } header: {
                 Text("数据")
             } footer: {
@@ -280,6 +290,20 @@ private struct SettingsForm: View {
     }
 
     // MARK: - 备份
+
+    private var hasBuiltInLibrary: Bool {
+        decks.contains(where: \.isBuiltIn)
+    }
+
+    private func restoreBuiltInLibrary() {
+        do {
+            let deck = try SeedLibrary.install(in: context)
+            settings.selectedDeckID = deck.id
+            try context.save()
+        } catch {
+            errorMessage = "恢复内置词库失败：\(error.localizedDescription)"
+        }
+    }
 
     private func prepareExport() {
         do {
