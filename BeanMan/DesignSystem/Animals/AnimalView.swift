@@ -24,6 +24,18 @@ struct AnimalView: View {
     @State private var breathing = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    init(animal: Animal,
+         size: CGFloat = 96,
+         expression: AnimalExpression = .normal,
+         animated: Bool = true,
+         breathe: Bool = false) {
+        self.animal = animal
+        self.size = size
+        self.expression = expression
+        self.animated = animated
+        self.breathe = breathe
+    }
+
     private var showsBlink: Bool {
         animated && !reduceMotion && expression == .normal && animal.isAvailable(.blink)
     }

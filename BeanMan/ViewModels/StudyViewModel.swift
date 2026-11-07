@@ -7,10 +7,8 @@ import SwiftData
 @Observable
 final class StudyViewModel {
 
-    enum Kind: String {
-        case today
-        case wrongBook
-    }
+    /// 这次会话是什么类型：今日任务 / 错词本专项复习。
+    private(set) var kind: StudyKind = .today
 
     private(set) var queue: [QueueItem] = []
     private(set) var index: Int = 0
@@ -55,9 +53,12 @@ final class StudyViewModel {
 
     // MARK: - 生命周期
 
-    func start(context: ModelContext, items: [QueueItem]? = nil) {
+    func start(context: ModelContext,
+               kind: StudyKind = .today,
+               items: [QueueItem]? = nil) {
         guard !started else { return }
         started = true
+        self.kind = kind
         startedAt = Date()
         do {
             if let items {
@@ -69,7 +70,7 @@ final class StudyViewModel {
             queue = []
             errorMessage = "没能生成今日任务，请稍后再试"
         }
-        let session = StudySession(kind: "today",
+        let session = StudySession(kind: kind.rawValue,
                                    startedAt: startedAt,
                                    dayKey: DayKey.string(for: startedAt))
         context.insert(session)

@@ -12,6 +12,7 @@ struct TodayView: View {
 
     @State private var viewModel = TodayViewModel()
     @State private var isStudying = false
+    @State private var isShowingWrongBook = false
 
     /// 引导目标的位置（全局坐标），由 `.captureFrame` 上报
     @State private var frames: [String: CGRect] = [:]
@@ -60,8 +61,14 @@ struct TodayView: View {
         .onChange(of: isStudying) { _, studying in
             if !studying { viewModel.refresh(context: context) }
         }
+        .onChange(of: isShowingWrongBook) { _, showing in
+            if !showing { viewModel.refresh(context: context) }
+        }
         .fullScreenCover(isPresented: $isStudying) {
             StudyView()
+        }
+        .sheet(isPresented: $isShowingWrongBook) {
+            WrongBookView()
         }
     }
 
@@ -116,7 +123,11 @@ struct TodayView: View {
                 .padding(.top, 8)
 
             Button {
-                isStudying = true
+                if viewModel.hasAnyDueOrNew {
+                    isStudying = true
+                } else {
+                    isShowingWrongBook = true
+                }
             } label: {
                 Text(viewModel.hasAnyDueOrNew ? "开始学习" : "复习错词")
             }
@@ -150,10 +161,10 @@ struct TodayView: View {
 
     private var actions: some View {
         VStack(spacing: 12) {
-            ActionRow(icon: "square.and.pencil",
-                      title: "再复习 5 个错词",
-                      subtitle: nil) {
-                isStudying = true
+            ActionRow(icon: "text.badge.xmark",
+                      title: "错词本",
+                      subtitle: viewModel.wrongCount > 0 ? "\(viewModel.wrongCount) 个" : "暂无") {
+                isShowingWrongBook = true
             }
             ActionRow(icon: "book.closed",
                       title: viewModel.deckName,

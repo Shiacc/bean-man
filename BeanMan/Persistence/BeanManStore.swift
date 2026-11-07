@@ -85,6 +85,16 @@ enum BeanManStore {
                 context.insert(state)
             }
 
+            // 演示错词本：前 6 个词各错 1–3 次（最近一次判成不认识/模糊），其中 1 个演示「已移出」
+            for (offset, word) in words.prefix(6).enumerated() {
+                guard let state = word.reviewState else { continue }
+                state.lapses = offset % 3 + 1
+                state.lastRatingRaw = offset % 2 == 0 ? Rating.again.rawValue : Rating.hard.rawValue
+                if offset == 5 {
+                    state.wrongBookHiddenAt = today
+                }
+            }
+
             // 连续 7 天打卡
             for offset in 0..<7 {
                 guard let day = calendar.date(byAdding: .day, value: -offset, to: today) else { continue }

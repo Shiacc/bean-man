@@ -44,6 +44,12 @@ struct HintOverlay: View {
     private let holePadding: CGFloat = 8
     private let holeRadius: CGFloat = 18
 
+    init(target: CGRect, copy: HintCopy, onDismiss: @escaping () -> Void) {
+        self.target = target
+        self.copy = copy
+        self.onDismiss = onDismiss
+    }
+
     var body: some View {
         GeometryReader { geo in
             // target 是用 `.global` 坐标系量出来的；overlay 可能挂在屏幕里任意位置，

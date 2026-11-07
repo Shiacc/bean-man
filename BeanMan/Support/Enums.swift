@@ -34,6 +34,20 @@ enum StudyPhase: String, Codable {
     case relearning
 }
 
+/// 一次学习会话的类型。写进 `StudySession.kindRaw`，统计页按它区分来源。
+enum StudyKind: String, CaseIterable {
+    case today
+    case wrongBook
+
+    /// 完成页标题。
+    var summaryTitle: String {
+        switch self {
+        case .today:     return "今天的词过完了"
+        case .wrongBook: return "这轮错词过完了"
+        }
+    }
+}
+
 /// 发音口音。
 enum VoiceAccent: String, Codable, CaseIterable, Identifiable {
     case american

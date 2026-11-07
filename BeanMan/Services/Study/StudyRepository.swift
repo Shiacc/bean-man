@@ -186,6 +186,12 @@ enum StudyRepository {
         target.lapses = outcome.lapses
         target.phase = outcome.phase
         target.lastReviewedAt = now
+        target.lastRatingRaw = rating.rawValue
+
+        // 又被判成「不认识 / 模糊」：如果是用户手动移出错词本的，自动放回去。
+        if rating.needsReviewList {
+            target.wrongBookHiddenAt = nil
+        }
 
         let record = StudyRecord(wordID: word.id,
                                  deckID: word.deckID,

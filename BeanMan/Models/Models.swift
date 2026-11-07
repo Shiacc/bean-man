@@ -128,6 +128,13 @@ final class ReviewState {
     var phaseRaw: String
     var isSuspended: Bool
 
+    /// 最近一次评分（`Rating.rawValue`）。nil 表示升级前的老数据。
+    /// 错词本是**派生状态**，靠 `lapses` + 这个字段算出来，不单独建表（PRD §5.6）。
+    var lastRatingRaw: Int?
+
+    /// 用户手动「移出错词本」的时间。再次被判为不认识/模糊时清空，自动回到错词本。
+    var wrongBookHiddenAt: Date?
+
     var word: Word?
 
     init(id: UUID = UUID(),
@@ -140,7 +147,9 @@ final class ReviewState {
          lastReviewedAt: Date? = nil,
          lapses: Int = 0,
          phase: StudyPhase = .new,
-         isSuspended: Bool = false) {
+         isSuspended: Bool = false,
+         lastRatingRaw: Int? = nil,
+         wrongBookHiddenAt: Date? = nil) {
         self.id = id
         self.wordID = wordID
         self.deckID = deckID
@@ -152,12 +161,33 @@ final class ReviewState {
         self.lapses = lapses
         self.phaseRaw = phase.rawValue
         self.isSuspended = isSuspended
+        self.lastRatingRaw = lastRatingRaw
+        self.wrongBookHiddenAt = wrongBookHiddenAt
     }
 
     var phase: StudyPhase {
         get { StudyPhase(rawValue: phaseRaw) ?? .new }
         set { phaseRaw = newValue.rawValue }
     }
+
+    /// 最近一次评分。老数据可能没有这个值。
+    var lastRating: Rating? {
+        guard let lastRatingRaw else { return nil }
+        return Rating(rawValue: lastRatingRaw)
+    }
+
+    /// 是否算「错词」。
+    ///
+    /// 规则（PRD F6）：不认识过（`lapses > 0`）或最近一次评为不认识/模糊。
+    /// 挂起的词不进错词本。
+    var isWrongWord: Bool {
+        guard !isSuspended else { return false }
+        if lapses > 0 { return true }
+        return lastRating?.needsReviewList ?? false
+    }
+
+    /// 是否被用户手动移出错词本。
+    var isWrongBookHidden: Bool { wrongBookHiddenAt != nil }
 }
 
 // MARK: - StudyRecord

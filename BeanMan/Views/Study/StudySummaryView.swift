@@ -8,10 +8,24 @@ struct StudySummaryView: View {
     let answered: Int
     let accuracy: Int
     let elapsed: String
+    /// 完成页标题。今日任务是「今天的词过完了」，错词本是另一句。
+    var title: String = "今天的词过完了"
     let onClose: () -> Void
 
     @State private var streak = 0
     @State private var perWordText = "—"
+
+    init(answered: Int,
+         accuracy: Int,
+         elapsed: String,
+         title: String = "今天的词过完了",
+         onClose: @escaping () -> Void) {
+        self.answered = answered
+        self.accuracy = accuracy
+        self.elapsed = elapsed
+        self.title = title
+        self.onClose = onClose
+    }
 
     var body: some View {
         ScrollView {
@@ -23,7 +37,7 @@ struct StudySummaryView: View {
                     .background(Circle().fill(Theme.Palette.brandTint))
                     .padding(.top, 60)
 
-                Text("今天的词过完了")
+                Text(title)
                     .font(Theme.Font.cardTitle)
                     .foregroundStyle(Theme.Palette.textPrimary)
                     .padding(.top, 24)

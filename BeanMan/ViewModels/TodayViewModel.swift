@@ -12,6 +12,8 @@ final class TodayViewModel {
     var accuracy: Int = 0          // 0...100，今天为止
     var deckName: String = ""
     var totalWordCount: Int = 0
+    /// 错词本里还有多少个词（今日页入口角标）。
+    var wrongCount: Int = 0
     var hasAnyDueOrNew: Bool { counts.total > 0 }
 
     var xiaodouMoment: XiaodouMoment {
@@ -45,6 +47,8 @@ final class TodayViewModel {
 
             let words = try context.fetch(FetchDescriptor<Word>())
             totalWordCount = words.count
+
+            wrongCount = try WrongBookService.visibleCount(context: context)
         } catch {
             counts = TodayCounts()
         }

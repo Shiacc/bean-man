@@ -72,10 +72,12 @@ BeanMan/
   Services/
     SRS/SRSAlgorithm.swift   简化 SM-2，纯函数
     Study/StudyRepository.swift  队列生成 / 今日计数 / 评分写回 / 打卡日集合
+    WrongBook/WrongBookService.swift  错词派生规则 / 快照 / 专项复习队列 / 移出与恢复
     Speech/SpeechService.swift   AVSpeechSynthesizer 封装
   Support/
     DayKey.swift             yyyy-MM-dd、startOfDay、连续打卡
-    Enums.swift              Rating / StudyPhase / VoiceAccent
+    DueText.swift            「逾期 2 天」「明天」「11 月 9 日」这类相对时间
+    Enums.swift              Rating / StudyPhase / StudyKind / VoiceAccent
   DesignSystem/
     Theme.swift              颜色 / 圆角 / 间距 / 字号（取自 Figma 变量集合）
     Components/Components.swift  小豆卡、统计卡、按钮、进度条、四档评分、快捷行
@@ -89,10 +91,13 @@ BeanMan/
   ViewModels/
     TodayViewModel.swift     今日页数字
     StudyViewModel.swift     学习会话状态机
+    WrongBookViewModel.swift 错词本的筛选 / 搜索 / 移出恢复
   Views/
     Tabs/TodayView.swift           今日页（Figma T-01-01 / T-01-02）
     Study/StudyView.swift          学习卡正面/背面（T-02-01 / T-02-02）
     Study/StudySummaryView.swift   学习完成（T-02-03）
+    WrongBook/WrongBookView.swift  错词本列表（筛选 / 搜索 / 滑动移出 / 空状态）
+    WrongBook/WordDetailView.swift 词条详情：释义、例句、学习状态、移出/放回
     Debug/DesignGalleryView.swift  设计验收页：气泡 / 动物 / 引导动画 / 素材自检
   Resources/
     Assets.xcassets/Animals/…     动物图（Juzi.imageset 三档尺寸）
@@ -100,6 +105,7 @@ BeanManTests/
   SRSAlgorithmTests.swift    算法 7 组断言
   StudyRepositoryTests.swift 队列 / 限额 / 写回 / 打卡
   HintCenterTests.swift      提示只显示一次 / 冷却 / 抢占 / 重置
+  WrongBookServiceTests.swift 错词派生规则 / 移出恢复 / 专项队列排序
 Design/
   beanman-ios-今日与学习卡-v1.png  Figma 稿截图
   Preview/bubbles.{html,png}       气泡与引导的像素对照图（HTML 1:1 复刻 SwiftUI 数值）
@@ -122,6 +128,8 @@ Scripts/
 - [ ] 深色模式下卡片、文字、按钮都正常
 - [ ] 首次进今日页会弹一次引导（挖洞 + 脉冲环 + 说明），点「知道了」后不再出现
 - [ ] 设置 → 设计验收：气泡 5 种语气、4 个尾巴方向、20 只动物表情矩阵、引导动画演示、素材自检
+- [ ] 学习时点「不认识 / 模糊」→ 今日页「错词本 N 个」+1；点进去能按「待复习 / 全部 / 已移出」筛选、搜索、滑动移出、点开详情看学习状态
+- [ ] 错词本底部「复习这 N 个错词」进入专项复习，完成页标题是「这轮错词过完了」
 
 ---
 
@@ -205,7 +213,7 @@ Actions 页面的 **Artifacts → screenshots** 就是不用 Mac 也能看到的
 
 - 词库页（导入 CSV/JSON、搜索、导出）、统计页（7 天柱状图）、设置页（计划/提醒/发音/数据管理）
 - 本地通知（UNUserNotificationCenter，`Info.plist` 不需要额外权限 key，但首次要请求授权）
-- 生词本 / 错词本落库（现在只有 `isFavorite` 字段，还没有错词自动收集逻辑）
+- 生词本「手动收藏」入口（`Word.isFavorite` 字段在，还没有列表页；错词本已做）
 - 测试题（三种题型）
 - 首次引导页
 - 其余 19 只小动物（02 团子 … 20 小柚）的立绘、表情与 imageset

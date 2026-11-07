@@ -15,6 +15,15 @@ struct StudyView: View {
     @State private var frames: [String: CGRect] = [:]
     private let hintCenter = HintCenter.shared
 
+    /// 会话类型；错词本复习时带一个预设队列进来。
+    private let kind: StudyKind
+    private let items: [QueueItem]?
+
+    init(kind: StudyKind = .today, items: [QueueItem]? = nil) {
+        self.kind = kind
+        self.items = items
+    }
+
     var body: some View {
         ZStack {
             Theme.Palette.bg.ignoresSafeArea()
@@ -23,6 +32,7 @@ struct StudyView: View {
                 StudySummaryView(answered: viewModel.summary.answered,
                                  accuracy: viewModel.summary.accuracy,
                                  elapsed: viewModel.elapsedText,
+                                 title: viewModel.kind.summaryTitle,
                                  onClose: { dismiss() })
                     .transition(.opacity)
             } else {
@@ -32,7 +42,7 @@ struct StudyView: View {
         }
         .task {
             loadSettings()
-            viewModel.start(context: context)
+            viewModel.start(context: context, kind: kind, items: items)
             speakCurrentIfNeeded()
             // 第一张卡：先教「翻面」，再看「四档」；两条都只出现一次
             if viewModel.current != nil {
