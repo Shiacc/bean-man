@@ -11,6 +11,10 @@ struct StudyView: View {
     @State private var accent: VoiceAccent = .american
     @State private var autoPlay = true
 
+    /// 引导目标位置（全局坐标）
+    @State private var frames: [String: CGRect] = [:]
+    private let hintCenter = HintCenter.shared
+
     var body: some View {
         ZStack {
             Theme.Palette.bg.ignoresSafeArea()
@@ -30,6 +34,18 @@ struct StudyView: View {
             loadSettings()
             viewModel.start(context: context)
             speakCurrentIfNeeded()
+            // 第一张卡：先教「翻面」，再看「四档」；两条都只出现一次
+            if viewModel.current != nil {
+                hintCenter.request(HintCopy.request(HintID.studyFlipCard))
+            }
+        }
+        .onPreferenceChange(FramePreferenceKey.self) { frames = $0 }
+        .overlay {
+            if let hint = hintCenter.current, let frame = frames[hint.id], frame.width > 1 {
+                HintOverlay(target: frame, copy: HintCopy.of(hint.id)) {
+                    hintCenter.dismiss()
+                }
+            }
         }
         .animation(.easeInOut(duration: 0.25), value: viewModel.finished)
     }
@@ -97,6 +113,7 @@ struct StudyView: View {
         }
         .frame(minHeight: 440)
         .animation(.easeInOut(duration: 0.42), value: viewModel.isFlipped)
+        .captureFrame(HintID.studyFlipCard)
     }
 
     private var bottomBar: some View {
@@ -124,12 +141,17 @@ struct StudyView: View {
         .padding(.horizontal, Theme.Spacing.screenH)
         .padding(.top, 12)
         .padding(.bottom, 8)
+        .captureFrame(HintID.studyRateButtons)
     }
 
     // MARK: - 动作
 
     private func flip() {
         viewModel.flip()
+        // 翻面之后立刻教四档评分（只教一次）
+        if viewModel.isFlipped {
+            hintCenter.request(HintCopy.request(HintID.studyRateButtons, priority: 5))
+        }
     }
 
     private func rate(_ rating: Rating) {

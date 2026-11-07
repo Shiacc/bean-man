@@ -178,4 +178,4 @@ git add -A && git commit -m "feat: 词库页" && git push
 - 测试题（三种题型）
 - 首次引导页
 - 其余 19 只小动物（02 团子 … 20 小柚）的立绘、表情与 imageset
-- 学习卡里的翻面 / 评分引导（`HintID.studyFlipCard` / `studyRateButtons` 文案已写好，还没挂到 StudyView）
+- 学习完成页的小动物庆祝动画（现在只有勾选图标 + 小豆一句话）
