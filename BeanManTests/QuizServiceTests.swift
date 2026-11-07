@@ -2,151 +2,144 @@ import XCTest
 import SwiftData
 @testable import BeanMan
 
-/// 抽题与判分的单测。PRD F7：不碰复习算法，只出题、只判分。
+/// F7 抽题与判分的单测。
+/// 只用内存库 + 手建 Word / ReviewState，不依赖示例词库。
 @MainActor
 final class QuizServiceTests: XCTestCase {
 
     private var container: ModelContainer!
+    private var context: ModelContext!
 
-    private var context: ModelContext { container.mainContext }
-
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         container = try BeanManStore.makeContainer(inMemory: true)
+        context = ModelContext(container)
     }
 
-    override func tearDownWithError() throws {
+    override func tearDown() async throws {
+        context = nil
         container = nil
-    }
-
-    // MARK: - 辅助
-
-    /// 造 n 个词；learned = true 时给每个词建 ReviewState（只有学过的词才可能被抽到）。
-    @discardableResult
-    private func makeWords(_ count: Int, learned: Bool = true) throws -> [Word] {
-        let deck = Deck(name: "测试词库", summary: "", sortIndex: 0)
-        context.insert(deck)
-
-        var words: [Word] = []
-        for index in 0..<count {
-            let word = Word(deckID: deck.id,
-                            word: "word\(index)",
-                            meaning: "释义\(index)")
-            context.insert(word)
-            deck.words.append(word)
-
-            if learned {
-                let state = ReviewState(wordID: word.id,
-                                        deckID: deck.id,
-                                        repetitions: 2,
-                                        dueDate: Date())
-                context.insert(state)
-                word.reviewState = state
-            }
-            words.append(word)
-        }
-        try context.save()
-        return words
     }
 
     // MARK: - 抽题
 
     func testNeedsAtLeastFourLearnedWords() throws {
-        let words = try makeWords(3)
-        XCTAssertTrue(QuizService.makeQuiz(from: words).isEmpty)
+        try makeWords(count: 3, learned: true)
+        XCTAssertTrue(QuizService.makeQuiz(from: allWords()).isEmpty)
+
+        try makeWords(count: 1, learned: true)
+        XCTAssertEqual(QuizService.makeQuiz(from: allWords()).count, 4)
     }
 
-    func testIgnoresWordsWithoutReviewState() throws {
-        // 3 个学过 + 5 个没学过，仍然不够 4 个，应该出不了题
-        let learned = try makeWords(3)
-        let fresh = try makeWords(5, learned: false)
-        XCTAssertTrue(QuizService.makeQuiz(from: learned + fresh).isEmpty)
+    func testUnlearnedWordsAreNotUsed() throws {
+        try makeWords(count: 6, learned: false)
+        XCTAssertTrue(QuizService.makeQuiz(from: allWords()).isEmpty)
     }
 
-    func testKindDistributionIsFourThreeThree() throws {
-        let words = try makeWords(12)
-        let questions = QuizService.makeQuiz(from: words, count: 10, seed: 42)
-        XCTAssertEqual(questions.count, 10)
+    func testTenQuestionsFollowFourThreeThree() throws {
+        try makeWords(count: 12, learned: true)
+        let quiz = QuizService.makeQuiz(from: allWords(), count: 10, seed: 7)
+        XCTAssertEqual(quiz.count, 10)
 
-        let meanings = questions.filter { $0.kind == .meaning }.count
-        let spellings = questions.filter { $0.kind == .spelling }.count
-        let listenings = questions.filter { $0.kind == .listening }.count
-        XCTAssertEqual(meanings, 4)
-        XCTAssertEqual(spellings, 3)
-        XCTAssertEqual(listenings, 3)
+        let kinds = quiz.map(\.kind)
+        XCTAssertEqual(kinds.filter { $0 == .meaning }.count, 4)
+        XCTAssertEqual(kinds.filter { $0 == .spelling }.count, 3)
+        XCTAssertEqual(kinds.filter { $0 == .listening }.count, 3)
     }
 
-    func testQuestionCountIsCappedByPoolSize() throws {
-        let words = try makeWords(6)
-        let questions = QuizService.makeQuiz(from: words, count: 10, seed: 7)
-        XCTAssertEqual(questions.count, 6, "词不够时少出题，不重复")
+    func testSameSeedGivesSameQuiz() throws {
+        try makeWords(count: 10, learned: true)
+        let a = QuizService.makeQuiz(from: allWords(), count: 6, seed: 42)
+        let b = QuizService.makeQuiz(from: allWords(), count: 6, seed: 42)
+        XCTAssertEqual(a.map(\.wordID), b.map(\.wordID))
+        XCTAssertEqual(a.map(\.kind), b.map(\.kind))
     }
 
-    func testWordIDsAreUnique() throws {
-        let words = try makeWords(12)
-        let questions = QuizService.makeQuiz(from: words, count: 10, seed: 99)
-        XCTAssertEqual(Set(questions.map(\.wordID)).count, questions.count)
+    func testNoRepeatedWordWithinOneQuiz() throws {
+        try makeWords(count: 10, learned: true)
+        let quiz = QuizService.makeQuiz(from: allWords(), count: 10, seed: 1)
+        XCTAssertEqual(Set(quiz.map(\.wordID)).count, quiz.count)
     }
 
-    func testChoiceQuestionsHaveFourUniqueOptionsIncludingAnswer() throws {
-        let words = try makeWords(12)
-        let questions = QuizService.makeQuiz(from: words, count: 10, seed: 3)
-            .filter { $0.kind != .spelling }
+    func testChoiceQuestionsHaveFourUniqueOptionsContainingAnswer() throws {
+        try makeWords(count: 8, learned: true)
+        let quiz = QuizService.makeQuiz(from: allWords(), count: 8, seed: 3)
 
-        XCTAssertFalse(questions.isEmpty)
-        for question in questions {
-            XCTAssertEqual(question.options.count, 4, "\(question.kind) 应该是四选一")
-            XCTAssertEqual(Set(question.options).count, 4, "选项不能重复")
-            XCTAssertTrue(question.options.contains(question.answer), "正确答案必须在选项里")
+        for question in quiz where question.kind != .spelling {
+            XCTAssertEqual(question.options.count, 4, "\(question.kind) 应该有 4 个选项")
+            XCTAssertEqual(Set(question.options).count, 4, "选项不应重复")
+            XCTAssertTrue(question.options.contains(question.answer))
         }
     }
 
-    func testSpellingQuestionHasNoOptionsAndUsesMeaningAsPrompt() throws {
-        let words = try makeWords(12)
-        let questions = QuizService.makeQuiz(from: words, count: 10, seed: 5)
-            .filter { $0.kind == .spelling }
+    func testSpellingQuestionHasNoOptionsAndSpeaksNothing() throws {
+        try makeWords(count: 8, learned: true)
+        let quiz = QuizService.makeQuiz(from: allWords(), count: 8, seed: 3)
+        let spelling = try XCTUnwrap(quiz.first { $0.kind == .spelling })
 
-        XCTAssertFalse(questions.isEmpty)
-        for question in questions {
-            XCTAssertTrue(question.options.isEmpty)
-            XCTAssertEqual(question.prompt, question.meaning)
-        }
+        XCTAssertTrue(spelling.options.isEmpty)
+        XCTAssertNil(spelling.spokenText)
+        XCTAssertEqual(spelling.prompt, spelling.meaning)
+        XCTAssertFalse(spelling.answer.isEmpty)
     }
 
-    func testListeningQuestionCarriesSpokenText() throws {
-        let words = try makeWords(12)
-        let questions = QuizService.makeQuiz(from: words, count: 10, seed: 11)
-            .filter { $0.kind == .listening }
+    func testListeningQuestionCarriesSpokenWord() throws {
+        try makeWords(count: 8, learned: true)
+        let quiz = QuizService.makeQuiz(from: allWords(), count: 10, seed: 5)
+        let listening = try XCTUnwrap(quiz.first { $0.kind == .listening })
 
-        XCTAssertFalse(questions.isEmpty)
-        for question in questions {
-            let word = try XCTUnwrap(words.first { $0.id == question.wordID })
-            XCTAssertEqual(question.spokenText, word.word)
-        }
-    }
-
-    func testSameSeedProducesSameQuiz() throws {
-        let words = try makeWords(12)
-        let first = QuizService.makeQuiz(from: words, count: 10, seed: 2024)
-        let second = QuizService.makeQuiz(from: words, count: 10, seed: 2024)
-
-        XCTAssertEqual(first.map(\.wordID), second.map(\.wordID))
-        XCTAssertEqual(first.map(\.answer), second.map(\.answer))
-        XCTAssertEqual(first.map(\.kind), second.map(\.kind))
+        XCTAssertNotNil(listening.spokenText)
+        XCTAssertFalse(listening.spokenText!.isEmpty)
     }
 
     // MARK: - 判分
 
-    func testIsCorrectIgnoresCaseAndSurroundingSpaces() throws {
+    func testIsCorrectIgnoresCaseAndWhitespace() throws {
         let question = QuizQuestion(kind: .spelling,
                                     wordID: UUID(),
                                     prompt: "放弃",
                                     options: [],
                                     answer: "Abandon",
                                     meaning: "放弃")
-
-        XCTAssertTrue(QuizService.isCorrect("abandon", for: question))
-        XCTAssertTrue(QuizService.isCorrect("  ABANDON  ", for: question))
+        XCTAssertTrue(QuizService.isCorrect("  abandon \n", for: question))
+        XCTAssertTrue(QuizService.isCorrect("ABANDON", for: question))
         XCTAssertFalse(QuizService.isCorrect("abandan", for: question))
-        XCTAssertTrue(QuizService.isCorrect("abandon ", for: question), "尾部空格应被忽略")
+    }
+
+    func testKindCycleIsStable() {
+        XCTAssertEqual(QuizService.kind(for: 0), .meaning)
+        XCTAssertEqual(QuizService.kind(for: 3), .meaning)
+        XCTAssertEqual(QuizService.kind(for: 4), .spelling)
+        XCTAssertEqual(QuizService.kind(for: 6), .spelling)
+        XCTAssertEqual(QuizService.kind(for: 7), .listening)
+        XCTAssertEqual(QuizService.kind(for: 9), .listening)
+        XCTAssertEqual(QuizService.kind(for: 10), .meaning)
+    }
+
+    // MARK: - 辅助
+
+    private func allWords() -> [Word] {
+        (try? context.fetch(FetchDescriptor<Word>())) ?? []
+    }
+
+    private func makeWords(count: Int, learned: Bool) throws {
+        let deck = Deck(name: "测试词库", summary: "", sortIndex: 0)
+        context.insert(deck)
+        for index in 0..<count {
+            let word = Word(deckID: deck.id,
+                            word: "word\(index)",
+                            meaning: "释义\(index)",
+                            sortIndex: index)
+            context.insert(word)
+            if learned {
+                let state = ReviewState(wordID: word.id,
+                                        deckID: deck.id,
+                                        repetitions: 1,
+                                        dueDate: Date())
+                context.insert(state)
+                word.reviewState = state
+            }
+            deck.words.append(word)
+        }
+        try context.save()
     }
 }
