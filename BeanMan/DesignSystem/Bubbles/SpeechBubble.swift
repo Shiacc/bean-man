@@ -138,7 +138,7 @@ struct XiaodouSpeech: View {
         VStack(alignment: .leading, spacing: 26) {
             HStack(alignment: .top, spacing: 10) {
                 Circle().fill(Theme.Palette.brand).frame(width: 40, height: 40)
-                XiaodouSpeech(line: "小豆小豆，今天 12 个到期词在等你", detail: "先清到期，再学 20 个新词")
+                XiaodouSpeech(line: "12 个到期词，先清一波？", detail: "先清到期，再学 20 个新词")
             }
             HStack(alignment: .top, spacing: 10) {
                 Circle().fill(Theme.Palette.success).frame(width: 40, height: 40)

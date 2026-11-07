@@ -16,34 +16,35 @@ enum XiaodouMoment {
 /// 文案规范（D3）：
 /// - 口语、短句，每条 ≤ 22 个汉字；最多一个感叹号。
 /// - 不叫用户「主人」，不卖萌过度，只做「提醒 + 安抚 + 报数」三件事。
-/// - 唤醒语「小豆小豆」只在首句出现，不每句都念。
+/// - **不要加「小豆小豆」**：那是语音唤醒词，等以后真的做语音唤醒再用；
+///   现在纯文字气泡里念出来像在自言自语，签名（气泡上的「小豆」）已经足够。
 enum Xiaodou {
 
     /// 主句。
     static func line(_ moment: XiaodouMoment) -> String {
         switch moment {
         case let .todayHasWork(due, new):
-            if due == 0 && new > 0 { return "小豆小豆，今天有 \(new) 个新词" }
-            if new == 0 { return "小豆小豆，\(due) 个到期词在等你" }
-            return "小豆小豆，\(due) 个到期词在等你"
+            if due == 0 && new > 0 { return "今天有 \(new) 个新词" }
+            if new == 0 { return "\(due) 个到期词在等你" }
+            return "\(due) 个到期词，先清一波？"
 
         case let .todayDone(streak):
-            return "小豆小豆，今天的词都过完了"
+            return "今天的词都过完了"
 
         case .todayEmpty:
-            return "小豆小豆，今天没有要背的词"
+            return "今天没有要背的词，休息一下"
 
         case .cardFront:
-            return "小豆小豆，先读一遍再翻面"
+            return "先读一遍再翻面"
 
         case .cardBack:
-            return "小豆小豆，记得住就选认识"
+            return "记得住就选「认识」"
 
         case .sessionDone:
-            return "小豆小豆，这一轮过完了"
+            return "这一轮过完了"
 
         case let .wrongBook(count):
-            return "小豆小豆，错词本有 \(count) 个词"
+            return "错词本有 \(count) 个词"
         }
     }
 

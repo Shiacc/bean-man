@@ -37,7 +37,7 @@ struct CompanionBubble: View {
     VStack(spacing: 28) {
         CompanionBubble(
             animal: .juzi,
-            line: "小豆小豆，今天 12 个到期词在等你",
+            line: "12 个到期词，先清一波？",
             detail: "先清到期，再学 20 个新词"
         )
         CompanionBubble(

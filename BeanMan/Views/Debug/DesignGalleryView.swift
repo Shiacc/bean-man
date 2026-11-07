@@ -71,7 +71,7 @@ struct DesignGalleryView: View {
     private var bubbleSection: some View {
         section("气泡 · 五种语气") {
             VStack(alignment: .leading, spacing: 14) {
-                row(.brand, "小豆小豆，今天 12 个到期词在等你")
+                row(.brand, "12 个到期词，先清一波？")
                 row(.success, "这个记住了，下次 25 天后再见")
                 row(.warning, "还有 20 个没看，别急着一次看完")
                 row(.danger, "这个已经错了三次，要不要记一下")
@@ -120,7 +120,7 @@ struct DesignGalleryView: View {
             VStack(alignment: .leading, spacing: 18) {
                 CompanionBubble(
                     animal: .juzi,
-                    line: "小豆小豆，今天 12 个到期词在等你",
+                    line: "12 个到期词，先清一波？",
                     detail: "先清到期，再学 20 个新词"
                 )
                 CompanionBubble(

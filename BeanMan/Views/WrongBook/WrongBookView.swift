@@ -148,7 +148,7 @@ struct WrongBookView: View {
                     .padding(.horizontal, 36)
                     .padding(.top, 10)
 
-                XiaodouCard(line: "小豆小豆，错词本会自己长出来",
+                XiaodouCard(line: "错词本会自己长出来",
                             detail: "标记「不认识」时我就记一笔")
                     .padding(.horizontal, Theme.Spacing.screenH)
                     .padding(.top, 28)
