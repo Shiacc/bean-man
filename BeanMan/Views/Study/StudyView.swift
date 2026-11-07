@@ -146,7 +146,7 @@ struct StudyView: View {
             }
         }
         .offset(y: -14)
-        .opacity(min(1, abs(dragX) / 90))
+        .opacity(min(CGFloat(1), abs(dragX) / 90))
         .allowsHitTesting(false)
     }
 

@@ -119,8 +119,17 @@ BeanMan/
     Deck/ImportView.swift          导入：选 CSV 文件或粘贴文本，显示逐行跳过原因
     Tabs/StatsView.swift           统计页：打卡 / 掌握度 / 7 天堆叠柱状图
     Quiz/QuizView.swift            测试页：看词选义 / 看义拼词 / 听音选义
+    Danmaku/DanmakuReviewView.swift 弹幕复习：片尾字幕式滚动，点按暂停、右滑退出
+    WrongBook/WrongBookCardsView.swift 单词本卡片流：轻点下一个 / 左滑移出 / 右滑收藏
     Settings/SettingsView.swift    计划 / 提醒 / 发音 / 导出恢复 / 重置 / 关于
+    Settings/PaywallView.swift     买断付费墙（只在到额度或主动升级时出现）
+    Achievements/AchievementsView.swift 成就墙 + 达成时的全屏庆祝
     Debug/DesignGalleryView.swift  设计验收页：气泡 / 动物 / 引导动画 / 素材自检
+  Services/
+    Purchase/TierGate.swift        免费额度闸门（1 库 / 500 词 / 每日 20 新词）
+    Purchase/PurchaseService.swift StoreKit 2 买断、恢复购买、权益缓存
+    Achievements/AchievementCenter.swift 8 个本地里程碑
+    Insights/InsightEngine.swift   最佳时段 / 积压 / 连续风险 / 常错词 + 3 个推荐词
   Resources/
     Assets.xcassets/Animals/…     动物图（Juzi.imageset 三档尺寸）
 BeanManTests/
@@ -129,6 +138,8 @@ BeanManTests/
   HintCenterTests.swift      提示只显示一次 / 冷却 / 抢占 / 重置
   WrongBookServiceTests.swift 错词派生规则 / 移出恢复 / 专项队列排序
   ImportExportTests.swift    CSV 解析 / 列名别名 / 去重 / 无效行 / 备份往返 / 重置
+  ProFeatureTests.swift      额度闸门 / 洞察推荐 / 成就解锁
+  DanmakuReviewViewModelTests.swift 弹幕时钟 / 暂停 / 循环 / 换速 / 主题
 Design/
   beanman-ios-今日与学习卡-v1.png  Figma 稿截图
   Preview/bubbles.{html,png}       气泡与引导的像素对照图（HTML 1:1 复刻 SwiftUI 数值）
@@ -163,6 +174,18 @@ Scripts/
 - [ ] 今日页「测试一下」：学过 4 个词后能出题，三种题型轮流出现，拼写题输入后回车判分，成绩页给正确率环
 - [ ] 统计页：打卡天数、今日已学 / 待复习、累计词数、正确率、掌握度，7 天柱状图能区分新词与复习
 - [ ] 今日页「词库」那行能跳到词库标签（不是死按钮）
+- [ ] 学习卡左滑 = 不认识、右滑 = 认识（没翻面时右滑只翻面）、长按朗读并收藏星星
+- [ ] 评分后底部出现「撤销上一张」，撤销后回到那张卡、今日数字回退
+- [ ] 测试里拼写题故意拼错：成绩页正确率下降，且该词出现在错词本里
+- [ ] 今日页「弹幕复习」：整屏匀速向上滚，每个词两行（单词+音标 / 词性+释义）
+- [ ] 弹幕复习轻点任意处暂停，再点继续；右上角换深浅主题；右滑一下退出，再进还在原位置
+- [ ] 横屏打开弹幕复习：每个词压成一行，行距更紧
+- [ ] 错词本左上角「卡片浏览」：轻点下一个、左滑移出、右滑收藏
+- [ ] 今日页「小豆的分析」：有足够数据时给出时段洞察，并列出 3 个推荐词
+- [ ] 开始学习后，推荐词出现在队列末尾（不计入每日新词额度）
+- [ ] 设置 → 升级：免费额度文案与实际一致；点「解锁全部功能」弹出付费墙
+- [ ] 成就墙显示 8 个里程碑，首次达到时全屏庆祝一次，之后不再弹
+- [ ] 免费额度用满（建第 2 个词库 / 导入超 500 词）时弹付费墙而不是直接报错
 
 ---
 
@@ -244,8 +267,10 @@ Actions 页面的 **Artifacts → screenshots** 就是不用 Mac 也能看到的
 
 ## 六、已知待办
 
-- 生词本「手动收藏」入口（`Word.isFavorite` 字段在，还没有列表页；错词本已做）
+- 生词本「手动收藏」的独立列表页（`Word.isFavorite` 已有字段，学习卡长按能收藏；还没有「收藏夹」页）
 - 其余 19 只小动物（02 团子 … 20 小柚）的立绘、表情与 imageset
 - 学习完成页的小动物庆祝动画（现在只有勾选图标 + 小豆一句话）
 - 测试页还没写单测（`QuizService` 是纯函数，补 `QuizServiceTests` 成本很低）
+- 内购还没在真机 / 沙盒里跑过：需要在 App Store Connect 建好 `com.yourname.beanman.pro` 才能验
+- 弹幕复习的「只看错词 / 只看生词」筛选（数据层已具备，界面先只做全量与速度/主题）
 - iCloud 同步 / FSRS / Anki 导入（PRD 里明确不做，留到 1.x 之后再说）

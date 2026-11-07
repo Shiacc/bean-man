@@ -28,7 +28,7 @@ enum Xiaodou {
             if new == 0 { return "\(due) 个到期词在等你" }
             return "\(due) 个到期词，先清一波？"
 
-        case let .todayDone(streak):
+        case .todayDone:
             return "今天的词都过完了"
 
         case .todayEmpty:
