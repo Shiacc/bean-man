@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>BeanMan · 气泡与引导（SwiftUI 布局对照）</title>
+<style>
+  :root{
+    --brand:#E4703A; --brand-pressed:#C2571F; --brand-tint:#FFF1E8; --brand-soft:#F8D9C6;
+    --bg:#FFFFFF; --surface:#F7F5F1; --surface-alt:#EDE9E2; --border:#E6E1D8;
+    --text-1:#1C1B18; --text-2:#6E6962; --text-3:#A39D93; --success:#2F8F4E;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+  body{
+    background:#DCD7CE; font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+    display:flex; gap:30px; padding:44px 24px 24px;
+  }
+  .screen{
+    position:relative; width:390px; height:844px; background:var(--bg);
+    overflow:hidden; box-shadow:0 18px 40px rgba(0,0,0,.18);
+  }
+  .caption{
+    position:absolute; top:-30px; left:0; font-size:12.5px; color:#5E574E; letter-spacing:.02em;
+  }
+  .status{display:flex;justify-content:space-between;align-items:center;padding:14px 24px 0;font-size:13px;font-weight:600;color:var(--text-1)}
+  .status .right{display:flex;gap:6px;align-items:center;font-size:11px}
+  .header{padding:14px 20px 0}
+  .header h1{font-size:26px;font-weight:700;letter-spacing:-.01em}
+  .header .date{font-size:13px;color:var(--text-3);margin-top:6px}
+
+  /* 小动物 + 气泡 */
+  .companion{display:flex;align-items:flex-end;padding:0 20px;margin-top:18px}
+  .companion img{width:84px;height:84px;display:block;margin-bottom:-2px}
+  .bubble{
+    position:relative; margin-left:4px; background:var(--brand-tint);
+    border-radius:18px; padding:12px 14px; max-width:300px;
+    box-shadow:0 3px 8px rgba(0,0,0,.05);
+  }
+  /* 尾巴：16×16 方块旋转 45°，中心压在气泡左边线上，半边露在外面 */
+  .tail{
+    position:absolute; width:16px;height:16px;background:var(--brand-tint);
+    border-radius:3px; transform:rotate(45deg); left:-8px; top:32%; margin-top:-8px;
+  }
+  .who{font-size:11px;font-weight:600;color:var(--brand);opacity:.85;margin-bottom:6px}
+  .line{font-size:14px;font-weight:500;color:var(--text-1);line-height:1.45}
+  .detail{font-size:12px;color:var(--text-2);margin-top:6px;line-height:1.4}
+
+  /* 任务卡 */
+  .card{
+    margin:16px 20px 0; background:#fff; border-radius:22px; padding:24px;
+    border:1px solid var(--border); box-shadow:0 6px 18px rgba(28,27,24,.06);
+  }
+  .card .k{font-size:12px;color:var(--text-2)}
+  .nums{display:flex;gap:18px;margin-top:6px;align-items:baseline}
+  .nums b{font-size:34px;font-weight:700;letter-spacing:-.02em}
+  .nums span{font-size:12px;color:var(--text-2);margin-left:4px}
+  .track{height:6px;border-radius:3px;background:var(--surface-alt);margin-top:20px;overflow:hidden}
+  .track i{display:block;height:100%;width:38%;background:var(--brand);border-radius:3px}
+  .hintline{font-size:11px;color:var(--text-3);margin-top:8px}
+  .cta{
+    margin-top:18px;height:52px;border-radius:16px;background:var(--brand);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;
+  }
+  .cta.ghost{background:#fff;color:var(--text-1);border:1px solid var(--border);font-weight:500}
+
+  /* 统计三连 */
+  .tiles{display:flex;gap:13px;margin:16px 20px 0}
+  .tile{flex:1;height:96px;border-radius:16px;background:var(--surface);padding:14px 12px;display:flex;flex-direction:column;justify-content:space-between}
+  .tile .t{font-size:11px;color:var(--text-2)}
+  .tile .v{font-size:24px;font-weight:700}
+  .tile .c{font-size:10px;color:var(--text-3)}
+
+  /* tabbar */
+  .tabbar{position:absolute;left:0;right:0;bottom:0;height:84px;border-top:.5px solid var(--border);background:#fff;display:flex;align-items:flex-start;padding-top:12px}
+  .tabbar div{flex:1;text-align:center;font-size:11px;color:var(--text-3)}
+  .tabbar div.on{color:var(--brand);font-weight:500}
+  .tabbar svg{display:block;margin:0 auto 6px;width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+  /* 蒙层 */
+  .hole{
+    position:absolute;left:12px;width:366px;border-radius:18px;
+    box-shadow:0 0 0 999px rgba(0,0,0,.42);
+  }
+  .ring{
+    position:absolute;left:12px;width:366px;border-radius:18px;
+    border:2px solid var(--brand);box-shadow:0 0 0 7px rgba(228,112,58,.16);
+  }
+  .hand{position:absolute;width:34px;height:34px;color:var(--brand);filter:drop-shadow(0 3px 5px rgba(0,0,0,.25));fill:currentColor}
+  .hand svg{width:100%;height:100%;fill:currentColor;stroke:none}
+
+  .tip{
+    position:absolute;left:20px;width:350px;background:var(--brand-tint);
+    border-radius:18px;padding:14px 16px;box-shadow:0 3px 8px rgba(0,0,0,.05);
+  }
+  .tip .ttail{
+    position:absolute;width:16px;height:16px;background:var(--brand-tint);
+    border-radius:3px;transform:rotate(45deg);left:50%;margin-left:-8px;
+  }
+  .tip.down .ttail{top:-8px}
+  .tip.up .ttail{bottom:-8px}
+  .tip h3{font-size:16px;font-weight:600;color:var(--text-1)}
+  .tip p{font-size:14px;color:var(--text-2);margin-top:6px;line-height:1.45}
+  .tip .ok{font-size:15px;font-weight:600;color:var(--brand);margin-top:10px}
+
+  /* 学习页 */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 0}
+  .topbar .x{font-size:17px;color:var(--text-3)}
+  .topbar .n{font-size:13px;color:var(--text-2);font-weight:500}
+  .topbar .sp{width:17px}
+  .thin{height:3px;background:var(--surface-alt);margin:14px 20px 0;border-radius:2px;overflow:hidden}
+  .thin i{display:block;height:100%;width:15%;background:var(--brand);border-radius:2px}
+  .studycard{
+    margin:28px 20px 0;height:392px;border-radius:24px;background:#fff;
+    border:1px solid var(--border);box-shadow:0 10px 26px rgba(28,27,24,.07);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  }
+  .studycard .w{font-size:34px;font-weight:700;letter-spacing:-.01em}
+  .studycard .ph{font-size:14px;color:var(--text-3)}
+  .studycard .flip{font-size:11px;color:var(--text-3);margin-top:14px}
+</style>
+</head>
+<body>
+
+<!-- 屏 1 -->
+<div class="screen">
+  <div class="caption">今日 · 小动物气泡（CompanionBubble + SpeechBubble）</div>
+  <div class="status"><span>9:41</span><span class="right">▮▮▮ 5G ▉</span></div>
+  <div class="header"><h1>今日</h1><div class="date">11 月 7 日 · 周五</div></div>
+
+  <div class="companion">
+    <img src="../Animals/01-juzi-orange-cat/render/juzi-master.png" alt="橘子">
+    <div class="bubble">
+      <div class="tail"></div>
+      <div class="who">小豆</div>
+      <div class="line">小豆小豆，今天 12 个到期词在等你</div>
+      <div class="detail">先清到期，再学 20 个新词</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="k">今日任务</div>
+    <div class="nums"><div><b>12</b><span>个待复习</span></div><div><b>20</b><span>个新词</span></div></div>
+    <div class="track"><i></i></div>
+    <div class="hintline">今日进度 8 / 40</div>
+    <div class="cta">开始学习</div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile"><div class="t">今日已学</div><div class="v">8</div><div class="c">还剩 32</div></div>
+    <div class="tile"><div class="t">正确率</div><div class="v">87%</div><div class="c">今天为止</div></div>
+    <div class="tile"><div class="t">连续打卡</div><div class="v">7</div><div class="c">保持住</div></div>
+  </div>
+
+  <div class="tabbar">
+    <div class="on"><svg viewBox="0 0 24 24"><path d="M12 3c2.4 3.2 4.5 5.2 4.5 8.2a4.5 4.5 0 0 1-9 0c0-1.3.5-2.3 1.3-3.2"/><path d="M12 20a3 3 0 0 0 3-3"/></svg>今日</div>
+    <div><svg viewBox="0 0 24 24"><path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v18H7.5A2.5 2.5 0 0 1 5 18.5z"/><path d="M5 17.5h14"/></svg>词库</div>
+    <div><svg viewBox="0 0 24 24"><path d="M5 20V11"/><path d="M12 20V5"/><path d="M19 20v-6"/></svg>统计</div>
+    <div><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg>设置</div>
+  </div>
+</div>
+
+<!-- 屏 2：提示在目标下方 -->
+<div class="screen">
+  <div class="caption">引导 A · 目标下方提示（HintOverlay，showBelow = true）</div>
+  <div class="status"><span>9:41</span><span class="right">▮▮▮ 5G ▉</span></div>
+  <div class="header"><h1>今日</h1><div class="date">11 月 7 日 · 周五</div></div>
+
+  <div class="companion">
+    <img src="../Animals/01-juzi-orange-cat/render/juzi-master.png" alt="橘子">
+    <div class="bubble">
+      <div class="tail"></div>
+      <div class="who">小豆</div>
+      <div class="line">小豆小豆，今天 12 个到期词在等你</div>
+      <div class="detail">先清到期，再学 20 个新词</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="k">今日任务</div>
+    <div class="nums"><div><b>12</b><span>个待复习</span></div><div><b>20</b><span>个新词</span></div></div>
+    <div class="track"><i></i></div>
+    <div class="hintline">今日进度 8 / 40</div>
+    <div class="cta">开始学习</div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile"><div class="t">今日已学</div><div class="v">8</div><div class="c">还剩 32</div></div>
+    <div class="tile"><div class="t">正确率</div><div class="v">87%</div><div class="c">今天为止</div></div>
+    <div class="tile"><div class="t">连续打卡</div><div class="v">7</div><div class="c">保持住</div></div>
+  </div>
+
+  <div class="tabbar">
+    <div class="on"><svg viewBox="0 0 24 24"><path d="M12 3c2.4 3.2 4.5 5.2 4.5 8.2a4.5 4.5 0 0 1-9 0c0-1.3.5-2.3 1.3-3.2"/><path d="M12 20a3 3 0 0 0 3-3"/></svg>今日</div>
+    <div><svg viewBox="0 0 24 24"><path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v18H7.5A2.5 2.5 0 0 1 5 18.5z"/><path d="M5 17.5h14"/></svg>词库</div>
+    <div><svg viewBox="0 0 24 24"><path d="M5 20V11"/><path d="M12 20V5"/><path d="M19 20v-6"/></svg>统计</div>
+    <div><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/></svg>设置</div>
+  </div>
+
+  <div class="hole" style="top:382px;height:68px"></div>
+  <div class="ring" style="top:382px;height:68px"></div>
+  <div class="hand" style="left:238px;top:405px"><svg viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.2V4.5a1.5 1.5 0 0 1 3 0V11m0-.8V6.5a1.5 1.5 0 0 1 3 0V14c0 3.9-2.4 6.5-6 6.5-2.2 0-3.6-.9-4.7-2.4L5 14.6a1.6 1.6 0 0 1 2.6-1.9L9 14"/></svg></div>
+  <div class="tip down" style="top:468px">
+    <div class="ttail"></div>
+    <h3>从这里开始</h3>
+    <p>点一下就开始今天的学习，先清到期的，再学新词。</p>
+    <div class="ok">知道了</div>
+  </div>
+</div>
+
+<!-- 屏 3：提示在目标上方 -->
+<div class="screen">
+  <div class="caption">引导 B · 目标上方提示（showBelow = false，学习卡）</div>
+  <div class="status"><span>9:41</span><span class="right">▮▮▮ 5G ▉</span></div>
+
+  <div class="topbar"><span class="x">✕</span><span class="n">3 / 20</span><span class="sp"></span></div>
+  <div class="thin"><i></i></div>
+
+  <div class="studycard">
+    <div class="w">abandon</div>
+    <div class="ph">/əˈbændən/ · v.</div>
+    <div class="flip">点卡片翻面</div>
+  </div>
+
+  <div class="cta ghost" style="margin:20px 20px 0">显示答案</div>
+
+  <div class="hole" style="top:520px;height:68px"></div>
+  <div class="ring" style="top:520px;height:68px"></div>
+  <div class="hand" style="left:238px;top:543px"><svg viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.2V4.5a1.5 1.5 0 0 1 3 0V11m0-.8V6.5a1.5 1.5 0 0 1 3 0V14c0 3.9-2.4 6.5-6 6.5-2.2 0-3.6-.9-4.7-2.4L5 14.6a1.6 1.6 0 0 1 2.6-1.9L9 14"/></svg></div>
+  <div class="tip up" style="top:372px">
+    <div class="ttail"></div>
+    <h3>先想再看</h3>
+    <p>点卡片翻面。先自己回想意思，再翻面看答案，记得更牢。</p>
+    <div class="ok">知道了</div>
+  </div>
+</div>
+
+</body>
+</html>

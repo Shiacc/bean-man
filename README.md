@@ -74,6 +74,12 @@ BeanMan/
     Theme.swift              颜色 / 圆角 / 间距 / 字号（取自 Figma 变量集合）
     Components/Components.swift  小豆卡、统计卡、按钮、进度条、四档评分、快捷行
     Assistant/Xiaodou.swift  小豆文案层（纯本地，不联网）
+    Animals/Animal.swift     20 只小动物：名字 / 用途 / 配色 / 素材名
+    Animals/AnimalView.swift 立绘 + 缺图占位 + 眨眼呼吸动画
+    Bubbles/SpeechBubble.swift   对话气泡（5 种语气 × 4 个尾巴方向）
+    Bubbles/CompanionBubble.swift 小动物 + 气泡的组合
+    Hints/HintCenter.swift   引导提示的调度与持久化（纯逻辑可单测）
+    Hints/HintOverlay.swift  挖洞蒙层 + 脉冲环 + 说明气泡
   ViewModels/
     TodayViewModel.swift     今日页数字
     StudyViewModel.swift     学习会话状态机
@@ -81,9 +87,20 @@ BeanMan/
     Tabs/TodayView.swift           今日页（Figma T-01-01 / T-01-02）
     Study/StudyView.swift          学习卡正面/背面（T-02-01 / T-02-02）
     Study/StudySummaryView.swift   学习完成（T-02-03）
+    Debug/DesignGalleryView.swift  设计验收页：气泡 / 动物 / 引导动画 / 素材自检
+  Resources/
+    Assets.xcassets/Animals/…     动物图（Juzi.imageset 三档尺寸）
 BeanManTests/
   SRSAlgorithmTests.swift    算法 7 组断言
   StudyRepositoryTests.swift 队列 / 限额 / 写回 / 打卡
+  HintCenterTests.swift      提示只显示一次 / 冷却 / 抢占 / 重置
+Design/
+  beanman-ios-今日与学习卡-v1.png  Figma 稿截图
+  Preview/bubbles.{html,png}       气泡与引导的像素对照图（HTML 1:1 复刻 SwiftUI 数值）
+  Animals/                         20 只动物总谱、风格规范、01 橘子的源文件与导出
+Scripts/
+  animal_pipeline.py         SVG → PNG → imageset 的自动化流水线
+  sync.sh / sync.ps1         多设备同步
 ```
 
 ---
@@ -97,6 +114,27 @@ BeanManTests/
 - [ ] 关掉 App 重开，进度还在（今日已学数量 +1、待复习数量 -1）
 - [ ] 全部学完出现完成页：正确率 / 用时 / 连续打卡 + 小豆的一句话
 - [ ] 深色模式下卡片、文字、按钮都正常
+- [ ] 首次进今日页会弹一次引导（挖洞 + 脉冲环 + 说明），点「知道了」后不再出现
+- [ ] 设置 → 设计验收：气泡 5 种语气、4 个尾巴方向、20 只动物表情矩阵、引导动画演示、素材自检
+
+---
+
+## 三·五、气泡与引导怎么验证
+
+代码在 `DesignSystem/Bubbles/` 与 `DesignSystem/Hints/`，三层验证：
+
+1. **看**：Xcode 里打开 `SpeechBubble.swift` / `CompanionBubble.swift` / `HintOverlay.swift`，右侧 Canvas 有三个 `#Preview`，不用跑模拟器。
+2. **点**：运行 App → 底部「设置」→ **设计验收**。气泡、动物、引导全部可点，「重置所有提示记录」可让引导重新出现（引导本身用的是持久化记录，重置才会再弹）。
+3. **测**：⌘U 跑 `BeanManTests/HintCenterTests.swift`，覆盖「只显示一次 / 冷却 / 高优先级抢占 / dismiss 后可取下一个 / 重置后可再显示 / 每条 id 都有文案」。
+
+不想开 Xcode 也能先看长相：`Design/Preview/bubbles.png` 是用 HTML 按 SwiftUI 同一套数值（圆角 18、尾巴 16×16 转 45°、蒙层 42%、挖洞外扩 8、环 2px）1:1 复刻出来的对照图。
+
+**引导的规则**（改行为先看这里）
+
+- 每个提示有一条 `HintRequest`：`id` + `priority` + `onceOnly` + `cooldown`；
+- 显示过就写进 `UserDefaults`（`hint.seen.v1` / `hint.lastShown.v1`），重装才清空；
+- 高优先级正在显示时，低优先级请求直接让路（`skipBusy`），不会排队、不会打断；
+- 目标位置靠 `.captureFrame(HintID.xxx)` 上报全局坐标，蒙层内部换算成本地坐标再挖洞——所以挂在 ScrollView 里也不会偏一个安全区。
 
 ---
 
@@ -139,3 +177,5 @@ git add -A && git commit -m "feat: 词库页" && git push
 - 生词本 / 错词本落库（现在只有 `isFavorite` 字段，还没有错词自动收集逻辑）
 - 测试题（三种题型）
 - 首次引导页
+- 其余 19 只小动物（02 团子 … 20 小柚）的立绘、表情与 imageset
+- 学习卡里的翻面 / 评分引导（`HintID.studyFlipCard` / `studyRateButtons` 文案已写好，还没挂到 StudyView）

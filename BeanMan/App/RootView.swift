@@ -42,7 +42,9 @@ struct RootView: View {
                 case .stats:
                     ComingSoonView(title: "统计", note: "连续打卡、正确率、7 天柱状图")
                 case .settings:
-                    ComingSoonView(title: "设置", note: "每日计划、提醒、发音、数据导出")
+                    NavigationStack {
+                        SettingsStubView()
+                    }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -13,6 +13,10 @@ struct TodayView: View {
     @State private var viewModel = TodayViewModel()
     @State private var isStudying = false
 
+    /// 引导目标的位置（全局坐标），由 `.captureFrame` 上报
+    @State private var frames: [String: CGRect] = [:]
+    private let hintCenter = HintCenter.shared
+
     private var dateText: String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "zh_CN")
@@ -24,13 +28,15 @@ struct TodayView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Spacing.sectionGap) {
                 header
-                XiaodouCard(line: Xiaodou.line(viewModel.xiaodouMoment),
-                            detail: Xiaodou.detail(viewModel.xiaodouMoment))
+                CompanionBubble(animal: .juzi,
+                                line: Xiaodou.line(viewModel.xiaodouMoment),
+                                detail: Xiaodou.detail(viewModel.xiaodouMoment))
                     .padding(.horizontal, Theme.Spacing.screenH)
                 taskCard
                     .padding(.horizontal, Theme.Spacing.screenH)
                 statTiles
                     .padding(.horizontal, Theme.Spacing.screenH)
+                    .captureFrame(HintID.todayStatTiles)
                 actions
                     .padding(.horizontal, Theme.Spacing.screenH)
             }
@@ -38,7 +44,19 @@ struct TodayView: View {
             .padding(.bottom, 24)
         }
         .background(Theme.Palette.bg)
-        .task { viewModel.refresh(context: context) }
+        .task {
+            viewModel.refresh(context: context)
+            // 第一次进今日页，指一下「开始学习」；看过就不再打扰
+            hintCenter.request(HintCopy.request(HintID.todayStartStudy))
+        }
+        .onPreferenceChange(FramePreferenceKey.self) { frames = $0 }
+        .overlay {
+            if let hint = hintCenter.current, let frame = frames[hint.id], frame.width > 1 {
+                HintOverlay(target: frame, copy: HintCopy.of(hint.id)) {
+                    hintCenter.dismiss()
+                }
+            }
+        }
         .onChange(of: isStudying) { _, studying in
             if !studying { viewModel.refresh(context: context) }
         }
@@ -105,6 +123,7 @@ struct TodayView: View {
             .buttonStyle(PrimaryButtonStyle(enabled: true))
             .disabled(viewModel.deckName.isEmpty)
             .padding(.top, 18)
+            .captureFrame(HintID.todayStartStudy)
         }
         .padding(Theme.Spacing.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
