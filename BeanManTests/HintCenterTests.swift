@@ -28,7 +28,7 @@ final class HintSchedulerTests: XCTestCase {
     }
 
     func testHigherPriorityPreemptsLower() {
-        let scheduler = HintScheduler()
+        var scheduler = HintScheduler()
         let showing = HintRequest(id: "big", priority: 100)
         let small = HintRequest(id: "small", priority: 1)
 
@@ -36,7 +36,7 @@ final class HintSchedulerTests: XCTestCase {
     }
 
     func testSamePriorityIsAllowed() {
-        let scheduler = HintScheduler()
+        var scheduler = HintScheduler()
         let showing = HintRequest(id: "a", priority: 10)
         let next = HintRequest(id: "b", priority: 10)
 
@@ -44,7 +44,7 @@ final class HintSchedulerTests: XCTestCase {
     }
 
     func testRepeatedSameIdWhileVisibleIsAllowed() {
-        let scheduler = HintScheduler()
+        var scheduler = HintScheduler()
         let request = HintRequest(id: "a", priority: 10)
 
         XCTAssertEqual(scheduler.decide(request, current: request, now: t0), .show)
