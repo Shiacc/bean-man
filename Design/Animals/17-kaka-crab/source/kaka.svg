@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 咔咔 · 螃蟹 v1.0 ｜ 豆卡单词
+       shell #E2725B / shellDark #C4573F / cream #FFF3EA / outline #3A2A22 -->
+  <!-- 腿（每边三条） -->
+  <g fill="none" stroke="#3A2A22" stroke-width="18" stroke-linecap="round">
+    <path d="M 320 720 C 246 740 214 792 214 842"/>
+    <path d="M 330 790 C 264 820 240 868 244 906"/>
+    <path d="M 700 720 C 774 740 806 792 806 842"/>
+    <path d="M 690 790 C 756 820 780 868 776 906"/>
+  </g>
+
+  <!-- 钳子 -->
+  <g fill="#E2725B" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round">
+    <path d="M 330 560 C 262 520 210 546 196 596 C 232 590 262 600 280 620
+             C 296 640 318 646 340 634 Z"/>
+    <path d="M 694 560 C 762 520 814 546 828 596 C 792 590 762 600 744 620
+             C 728 640 706 646 684 634 Z"/>
+  </g>
+
+  <!-- 身体 -->
+  <ellipse cx="512" cy="700" rx="212" ry="176" fill="#E2725B" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 肚皮 -->
+  <ellipse cx="512" cy="772" rx="140" ry="88" fill="#FFF3EA"/>
+
+  <!-- 眼睛（立起来的柄） -->
+  <path d="M 452 550 L 440 470 M 572 550 L 584 470" fill="none" stroke="#3A2A22" stroke-width="14" stroke-linecap="round"/>
+  <circle cx="438" cy="450" r="54" fill="#FFF3EA" stroke="#3A2A22" stroke-width="11"/>
+  <circle cx="586" cy="450" r="54" fill="#FFF3EA" stroke="#3A2A22" stroke-width="11"/>
+  <circle cx="446" cy="458" r="26" fill="#3A2A22"/>
+  <circle cx="594" cy="458" r="26" fill="#3A2A22"/>
+  <circle cx="454" cy="448" r="8" fill="#FFFFFF"/>
+  <circle cx="602" cy="448" r="8" fill="#FFFFFF"/>
+
+  <!-- 嘴（小 w） -->
+  <path d="M 486 660 Q 500 676 512 660 Q 524 676 538 660"
+        fill="none" stroke="#3A2A22" stroke-width="9" stroke-linecap="round"/>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.5">
+    <ellipse cx="374" cy="668" rx="38" ry="20"/>
+    <ellipse cx="650" cy="668" rx="38" ry="20"/>
+  </g>
+</svg>
