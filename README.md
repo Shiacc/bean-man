@@ -7,6 +7,11 @@
 
 设计稿：Figma 文件 `app-design` → 页面 `beanman-ios`；截图见 `Design/beanman-ios-今日与学习卡-v1.png`。
 
+文档：
+- [产品需求文档 PRD v0.2](Docs/02-PRD-豆卡单词-v0.2.md) — 功能规格、算法规格、交互规范、验收标准（AC-01…AC-52）
+- [阶段一：产品结构与数据模型](Docs/01-阶段1-产品结构与数据模型.md) — 分层、文件树、6 个 @Model、导入契约
+- [小动物总谱](Design/Animals/00-小动物总谱.md) · [风格规范](Design/Animals/_风格规范.md)
+
 ---
 
 ## 一、在 Mac 上跑起来（约 5 分钟）
