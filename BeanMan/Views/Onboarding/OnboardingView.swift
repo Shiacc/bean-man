@@ -1,4 +1,4 @@
-import SwiftUI
+﻿import SwiftUI
 import SwiftData
 import UIKit
 
@@ -94,8 +94,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 22) {
             CompanionBubble(animal: .juzi,
                             line: "每天想背多少个新词？",
-                            detail: "先定个能坚持的数，之后随时能改",
-                            edge: .top)
+                            detail: "先定个能坚持的数，之后随时能改")
                 .padding(.bottom, 4)
 
             VStack(alignment: .leading, spacing: 12) {
@@ -157,8 +156,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 22) {
             CompanionBubble(animal: .manman,
                             line: "要不要每天提醒你一下？",
-                            detail: "固定时间发一条本地通知，不联网",
-                            edge: .top)
+                            detail: "固定时间发一条本地通知，不联网")
 
             VStack(spacing: 0) {
                 Toggle("每日提醒", isOn: $reminderEnabled)
@@ -187,8 +185,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 22) {
             CompanionBubble(animal: .jiujiu,
                             line: "想听美音还是英音？",
-                            detail: "用的是系统语音，不下载音频包",
-                            edge: .top)
+                            detail: "用的是系统语音，不下载音频包")
 
             HStack(spacing: 12) {
                 ForEach([VoiceAccent.american, .british], id: \.self) { option in
@@ -230,8 +227,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 22) {
             CompanionBubble(animal: .gulu,
                             line: "词库已经准备好了",
-                            detail: "24 个示例词，先背起来；想换随时导入自己的",
-                            edge: .top)
+                            detail: "24 个示例词，先背起来；想换随时导入自己的")
 
             VStack(alignment: .leading, spacing: 10) {
                 Label("内置示例词库 24 词", systemImage: "book.closed")
