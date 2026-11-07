@@ -269,6 +269,7 @@ Actions 页面的 **Artifacts → screenshots** 就是不用 Mac 也能看到的
 
 - 生词本「手动收藏」的独立列表页（`Word.isFavorite` 已有字段，学习卡长按能收藏；还没有「收藏夹」页）
 - 20 只动物的**表情三连与动作帧**（主立绘已齐，见 `Design/Animals/contact-sheet-v1.png`）
+- 界面里已接入 9 只：橘子（首页气泡 / 付费墙）、雪球（错词本空态）、布丁（完成页庆祝 + 成就墙）、泡泡（测试空态 / 弹幕空态）、咕噜（词库空态）、棉花（生词本空态）、团子 / 云朵 / 小柚（仅 Design Gallery 预览）
 - 学习完成页的小动物庆祝动画（现在只有勾选图标 + 小豆一句话）
 - 测试页还没写单测（`QuizService` 是纯函数，补 `QuizServiceTests` 成本很低）
 - 内购还没在真机 / 沙盒里跑过：需要在 App Store Connect 建好 `com.yourname.beanman.pro` 才能验
