@@ -128,9 +128,15 @@ jobs:
           UDID="${{ steps.sim.outputs.udid }}"
           mkdir -p shots
 
-          # 产物解压后的层级不稳定（可能多包一层目录），直接找 .app
+          # 产物解压后的层级不稳定：可能多包一层目录，也可能把 .app 里的内容平铺出来
           ls -R app | head -40
           APP=$(find app -maxdepth 4 -name "BeanMan.app" -type d | head -1)
+          if [ -z "$APP" ] && [ -f app/Info.plist ]; then
+            echo "产物是平铺的，重组成 BeanMan.app"
+            mkdir -p app/BeanMan.app
+            find app -mindepth 1 -maxdepth 1 ! -name "BeanMan.app" -exec mv {} app/BeanMan.app/ \;
+            APP=app/BeanMan.app
+          fi
           echo "APP=$APP"
           BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP/Info.plist")
           echo "BUNDLE_ID=$BUNDLE_ID"
