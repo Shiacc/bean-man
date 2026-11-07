@@ -45,7 +45,8 @@ struct TodayView: View {
                     .padding(.horizontal, Theme.Spacing.screenH)
             }
             .padding(.top, 12)
-            .padding(.bottom, 24)
+            // 底部自绘 TabBar 是浮在内容上的，留出它 + home indicator 的高度
+            .padding(.bottom, 108)
         }
         .background(Theme.Palette.bg)
         .task {

@@ -30,12 +30,10 @@ struct StudySummaryView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 34, weight: .semibold))
-                    .foregroundStyle(Theme.Palette.brand)
-                    .frame(width: 96, height: 96)
-                    .background(Circle().fill(Theme.Palette.brandTint))
-                    .padding(.top, 60)
+                // 完成页的「庆祝」：小豆（橘猫）开心跳一下。
+                // 素材只有橘子有表情包，其余动物会退化成占位图。
+                AnimalView(animal: .juzi, size: 132, expression: .happy, animated: true)
+                    .padding(.top, 44)
 
                 Text(title)
                     .font(Theme.Font.cardTitle)

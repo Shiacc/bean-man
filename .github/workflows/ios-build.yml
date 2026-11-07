@@ -138,6 +138,14 @@ jobs:
             APP=app/BeanMan.app
           fi
           echo "APP=$APP"
+          ls -la "$APP" | head -30
+          # 诊断：资源目录里到底有没有 Juzi 这张图
+          if [ -f "$APP/Assets.car" ]; then
+            echo "Assets.car 存在"
+            xcrun --sdk iphonesimulator assetutil --info "$APP/Assets.car" 2>/dev/null | grep -i -E 'juzi|Name' | head -20 || true
+          else
+            echo "!! 没有 Assets.car"
+          fi
           BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP/Info.plist")
           echo "BUNDLE_ID=$BUNDLE_ID"
 
