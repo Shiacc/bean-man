@@ -23,10 +23,10 @@ final class QuizServiceTests: XCTestCase {
     // MARK: - 抽题
 
     func testNeedsAtLeastFourLearnedWords() throws {
-        try makeWords(count: 3, learned: true)
+        try makeWords(count: 3, learned: true, tag: "a")
         XCTAssertTrue(QuizService.makeQuiz(from: allWords()).isEmpty)
 
-        try makeWords(count: 1, learned: true)
+        try makeWords(count: 1, learned: true, tag: "b")
         XCTAssertEqual(QuizService.makeQuiz(from: allWords()).count, 4)
     }
 
@@ -121,13 +121,14 @@ final class QuizServiceTests: XCTestCase {
         (try? context.fetch(FetchDescriptor<Word>())) ?? []
     }
 
-    private func makeWords(count: Int, learned: Bool) throws {
-        let deck = Deck(name: "测试词库", summary: "", sortIndex: 0)
+    /// 造 n 个词。`tag` 用来区分多次调用，避免释义重复影响干扰项数量。
+    private func makeWords(count: Int, learned: Bool, tag: String = "a") throws {
+        let deck = Deck(name: "测试词库 \(tag)", summary: "", sortIndex: 0)
         context.insert(deck)
         for index in 0..<count {
             let word = Word(deckID: deck.id,
-                            word: "word\(index)",
-                            meaning: "释义\(index)",
+                            word: "word\(tag)\(index)",
+                            meaning: "释义\(tag)\(index)",
                             sortIndex: index)
             context.insert(word)
             if learned {

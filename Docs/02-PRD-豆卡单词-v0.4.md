@@ -139,7 +139,7 @@
 | F9 | 设置 | P0 | 部分（设计验收入口已通） |
 | F10 | 本地提醒 | P0 | 待开发 |
 | F11 | 小豆文案 + 气泡 + 引导 | P1 | **已交付** |
-| F12 | 小动物系统（20 只） | P1 | 1/20 已交付（橘子） |
+| F12 | 小动物系统（20 只） | P1 | **20/20 主立绘已交付**（表情与动作待补） |
 | F13 | iCloud 同步 / 小组件 / Watch | P2 | 不做 |
 | F14 | FSRS 算法 | P2 | 不做（见 §6.6） |
 | F15 | APKG 导入 | P2 | 不做 |
@@ -1363,7 +1363,7 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | R-04 | 时钟回拨导致打卡重复 | 低 | `dayKey` 单调取 max；连续打卡用集合运算 |
 | R-05 | 通知在低电量模式延迟 | 低 | 文案不绑定具体时间点 |
 | R-06 | 静音键下 TTS 仍出声 | 中 | 设置页说明；提供「仅按钮朗读」模式 |
-| R-07 | 20 只动物素材工作量 | 中 | 流水线已跑通；其余 19 只按橘子参数批量产出 |
+| R-07 | 20 只动物素材工作量 | ~~中~~ 已关闭 | 20 只主立绘全部产出（`Design/Animals/contact-sheet-v1.png`），流水线 `Scripts/animal_pipeline.py` 可复跑 |
 | R-08 | 大词库（10 万词）卡顿 | 中 | 分页取词 + 搜索用 `FetchDescriptor` 限制；性能门槛 §11 |
 | R-09 | Windows 无编译能力 | 中 | GitHub Actions 镜像 + 每次改动在 Mac 上 ⌘B |
 
@@ -1402,7 +1402,7 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | 11 | 设置（含升级入口） | 已交付 | `Views/Settings/SettingsView.swift` | 恢复内置库、深色模式逐页校对 |
 | 12 | 本地提醒 | 部分 | `Services/Notification/NotificationService.swift` | 设置页开关已连，真机未验 |
 | 13 | 小豆文案 / 气泡 / 引导 | 已交付 | `DesignSystem/Assistant/*`、`Bubbles/*`、`Hints/*` | 更多场景文案 |
-| 14 | 小动物（20 只） | 1/20 | `DesignSystem/Animals/*` | 19 只素材 |
+| 14 | 小动物（20 只） | **主立绘 20/20** | `DesignSystem/Animals/*`、`Assets.xcassets/Animals/*` | 表情三连与动作帧 |
 | 15 | 弹幕复习（F16） | 已交付 | `Views/Danmaku/*`、`ViewModels/DanmakuReviewViewModel.swift` | 「只看错词/生词」筛选未上界面 |
 | 16 | 手势交互（F17） | 已交付 | `StudyView` 的 swipe / long press + `StudyViewModel.undo` | 无 |
 | 17 | 单词本卡片流（F18） | 已交付 | `Views/WrongBook/WrongBookCardsView.swift` | 无 |
