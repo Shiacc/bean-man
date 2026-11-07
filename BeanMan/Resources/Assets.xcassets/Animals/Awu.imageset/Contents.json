@@ -1,0 +1,26 @@
+{
+  "images": [
+    {
+      "filename": "awu.png",
+      "idiom": "universal",
+      "scale": "1x"
+    },
+    {
+      "filename": "awu@2x.png",
+      "idiom": "universal",
+      "scale": "2x"
+    },
+    {
+      "filename": "awu@3x.png",
+      "idiom": "universal",
+      "scale": "3x"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  },
+  "properties": {
+    "template-rendering-intent": "original"
+  }
+}

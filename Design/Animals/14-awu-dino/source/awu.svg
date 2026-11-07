@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 啊呜 · 小恐龙 v1.1 ｜ 豆卡单词
+       dino #6BA292 / dinoDark #528477 / belly #E8F1EC / spike #F2C14E / outline #3A2A22 -->
+  <!-- 尾巴（短粗，从身体右下伸出） -->
+  <path d="M 668 820 C 764 838 842 812 868 762 C 872 742 850 736 830 748
+           C 792 772 736 780 690 774 Z"
+        fill="#6BA292" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 背刺（尖朝左外，底边埋进身体） -->
+  <g fill="#F2C14E" stroke="#3A2A22" stroke-width="9" stroke-linejoin="round">
+    <path d="M 344 690 L 246 664 L 340 738 Z"/>
+    <path d="M 336 760 L 226 756 L 330 812 Z"/>
+    <path d="M 352 828 L 258 860 L 360 872 Z"/>
+  </g>
+
+  <!-- 身体 -->
+  <path d="M 324 706 C 308 840 364 912 512 912 C 660 912 716 840 700 706
+           C 688 622 606 590 512 590 C 418 590 336 622 324 706 Z"
+        fill="#6BA292" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 肚子 -->
+  <ellipse cx="512" cy="806" rx="120" ry="96" fill="#E8F1EC"/>
+
+  <!-- 小短手 -->
+  <ellipse cx="386" cy="748" rx="44" ry="28" transform="rotate(-16 386 748)"
+           fill="#528477" stroke="#3A2A22" stroke-width="9"/>
+  <ellipse cx="638" cy="748" rx="44" ry="28" transform="rotate(16 638 748)"
+           fill="#528477" stroke="#3A2A22" stroke-width="9"/>
+
+  <!-- 脚 -->
+  <ellipse cx="436" cy="890" rx="58" ry="30" fill="#528477" stroke="#3A2A22" stroke-width="9"/>
+  <ellipse cx="588" cy="890" rx="58" ry="30" fill="#528477" stroke="#3A2A22" stroke-width="9"/>
+
+  <!-- 头 -->
+  <ellipse cx="512" cy="500" rx="242" ry="212" fill="#6BA292" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 头顶三片小刺 -->
+  <g fill="#F2C14E" stroke="#3A2A22" stroke-width="8" stroke-linejoin="round">
+    <path d="M 466 316 L 480 268 L 500 314 Z"/>
+    <path d="M 512 308 L 532 254 L 552 306 Z"/>
+    <path d="M 562 318 L 584 274 L 594 320 Z"/>
+  </g>
+
+  <!-- 眼 -->
+  <g>
+    <ellipse cx="432" cy="486" rx="42" ry="46" fill="#3A2A22"/>
+    <ellipse cx="592" cy="486" rx="42" ry="46" fill="#3A2A22"/>
+    <circle cx="418" cy="470" r="13" fill="#FFFFFF"/>
+    <circle cx="578" cy="470" r="13" fill="#FFFFFF"/>
+  </g>
+
+  <!-- 嘴 -->
+  <path d="M 452 594 C 480 624 544 624 572 594" fill="none" stroke="#3A2A22" stroke-width="9" stroke-linecap="round"/>
+  <g fill="#FFFFFF" stroke="#3A2A22" stroke-width="5">
+    <path d="M 496 608 L 496 626 L 508 614 Z"/>
+    <path d="M 528 608 L 528 626 L 516 614 Z"/>
+  </g>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.5">
+    <ellipse cx="376" cy="564" rx="38" ry="20"/>
+    <ellipse cx="648" cy="564" rx="38" ry="20"/>
+  </g>
+</svg>
