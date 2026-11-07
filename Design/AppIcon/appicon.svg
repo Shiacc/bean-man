@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 豆卡单词 App Icon：豆沙橙底 + 一颗奶油豆 + 角落卡片。1024 全出血，圆角交给 iOS 裁。 -->
+  <rect width="1024" height="1024" fill="#E4703A"/>
+  <circle cx="512" cy="1220" r="640" fill="#D9622C"/>
+
+  <!-- 右下角两张卡片：暗示「卡」，只露一半，越到边缘越自然 -->
+  <g transform="translate(72 58) rotate(14 780 820)">
+    <rect x="628" y="700" width="250" height="164" rx="30" fill="#FFF1E8" opacity="0.45"/>
+    <rect x="610" y="726" width="250" height="164" rx="30" fill="#FFF1E8" stroke="#3A2A22" stroke-width="18"/>
+    <line x1="656" y1="782" x2="812" y2="782" stroke="#C2571F" stroke-width="18" stroke-linecap="round"/>
+    <line x1="656" y1="822" x2="756" y2="822" stroke="#C2571F" stroke-width="18" stroke-linecap="round" opacity="0.5"/>
+  </g>
+
+  <g transform="rotate(-18 512 512)">
+    <!-- 豆身 -->
+    <ellipse cx="512" cy="512" rx="258" ry="214" fill="#FFF1E8" stroke="#3A2A22" stroke-width="22"/>
+    <!-- 豆子上的那道褶：两端都收在豆身内 -->
+    <path d="M 520 366 C 442 436, 442 588, 520 658"
+          fill="none" stroke="#C2571F" stroke-width="26" stroke-linecap="round"/>
+    <!-- 高光 -->
+    <ellipse cx="400" cy="418" rx="58" ry="36" fill="#FFFFFF" opacity="0.6" transform="rotate(-28 400 418)"/>
+  </g>
+</svg>
