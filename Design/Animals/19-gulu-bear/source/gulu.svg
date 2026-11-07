@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 咕噜 · 小熊 v1.0 ｜ 豆卡单词
+       bear #B08050 / bearDark #8F6540 / muzzle #F6E9D8 / outline #3A2A22 -->
+  <!-- 身体 -->
+  <path d="M 322 712 C 306 842 362 912 512 912 C 662 912 718 842 702 712
+           C 690 628 606 596 512 596 C 418 596 334 628 322 712 Z"
+        fill="#B08050" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 肚子 -->
+  <ellipse cx="512" cy="806" rx="128" ry="100" fill="#F6E9D8"/>
+
+  <!-- 脚 -->
+  <ellipse cx="436" cy="890" rx="58" ry="32" fill="#8F6540" stroke="#3A2A22" stroke-width="9"/>
+  <ellipse cx="588" cy="890" rx="58" ry="32" fill="#8F6540" stroke="#3A2A22" stroke-width="9"/>
+
+  <!-- 耳朵 -->
+  <circle cx="344" cy="344" r="76" fill="#B08050" stroke="#3A2A22" stroke-width="11"/>
+  <circle cx="680" cy="344" r="76" fill="#B08050" stroke="#3A2A22" stroke-width="11"/>
+  <circle cx="344" cy="348" r="40" fill="#8F6540"/>
+  <circle cx="680" cy="348" r="40" fill="#8F6540"/>
+
+  <!-- 头 -->
+  <ellipse cx="512" cy="512" rx="248" ry="220" fill="#B08050" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 口鼻 -->
+  <ellipse cx="512" cy="600" rx="118" ry="90" fill="#F6E9D8"/>
+
+  <!-- 眼 -->
+  <g>
+    <ellipse cx="430" cy="500" rx="40" ry="44" fill="#3A2A22"/>
+    <ellipse cx="594" cy="500" rx="40" ry="44" fill="#3A2A22"/>
+    <circle cx="418" cy="486" r="12" fill="#FFFFFF"/>
+    <circle cx="582" cy="486" r="12" fill="#FFFFFF"/>
+  </g>
+
+  <!-- 鼻子 -->
+  <path d="M 488 566 C 488 548 536 548 536 566 C 536 584 512 596 512 596
+           C 512 596 488 584 488 566 Z" fill="#3A2A22"/>
+
+  <!-- 嘴 -->
+  <path d="M 512 596 L 512 612 M 512 612 C 512 630 492 638 480 628 M 512 612 C 512 630 532 638 544 628"
+        fill="none" stroke="#3A2A22" stroke-width="9" stroke-linecap="round"/>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.5">
+    <ellipse cx="366" cy="588" rx="42" ry="22"/>
+    <ellipse cx="658" cy="588" rx="42" ry="22"/>
+  </g>
+</svg>

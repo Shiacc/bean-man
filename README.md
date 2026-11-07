@@ -2,8 +2,8 @@
 
 离线优先的背单词 App。SwiftUI + SwiftData，iOS 17+，无账号、无后端。
 
-当前进度：**M1–M4 已交付** —— 今日页、学习卡（四档 + 发音 + 完成页）、错词本、测试（三种题型）、词库（列表/详情/导入/导出）、统计（7 天柱图）、设置、本地提醒、气泡与引导、橘子素材。
-待做：学习卡手势、拼写错题写回、单词本卡片流、片尾字幕式弹幕复习（竖屏/横屏）、小豆分析推荐、生词本列表、其余 19 只动物。
+当前进度：**M1–M4 + F16–F21 已交付** —— 今日页、学习卡（四档 + 发音 + 手势 + 撤销 + 完成页）、错词本（列表/卡片流）、测试（三种题型 + 拼写错写回）、词库（列表/详情/导入/导出/恢复内置库）、统计（7 天柱图）、设置、本地提醒、气泡与引导、片尾字幕式弹幕复习（竖/横屏 + 黑白主题）、小豆分析推荐、买断内购与免费额度、成就里程碑、生词本列表、**20 只小动物主立绘**。
+待做：20 只动物的表情三连与动作帧、完成页庆祝动画、内购沙盒验证、上架材料。
 代码已由 GitHub Actions 在 macOS runner 上编译 + 跑单测（最近一次全绿：`42388641803`）。
 
 设计稿：Figma 文件 `app-design`，两个页面分工——
@@ -131,7 +131,7 @@ BeanMan/
     Achievements/AchievementCenter.swift 8 个本地里程碑
     Insights/InsightEngine.swift   最佳时段 / 积压 / 连续风险 / 常错词 + 3 个推荐词
   Resources/
-    Assets.xcassets/Animals/…     动物图（Juzi.imageset 三档尺寸）
+    Assets.xcassets/Animals/…     20 只动物图（Juzi…Youzi.imageset，各三档尺寸）
 BeanManTests/
   SRSAlgorithmTests.swift    算法 7 组断言
   StudyRepositoryTests.swift 队列 / 限额 / 写回 / 打卡
@@ -143,7 +143,7 @@ BeanManTests/
 Design/
   beanman-ios-今日与学习卡-v1.png  Figma 稿截图
   Preview/bubbles.{html,png}       气泡与引导的像素对照图（HTML 1:1 复刻 SwiftUI 数值）
-  Animals/                         20 只动物总谱、风格规范、01 橘子的源文件与导出
+  Animals/                         20 只动物总谱、风格规范、01–20 源文件与导出、大合照 contact-sheet-v1.png
 Scripts/
   animal_pipeline.py         SVG → PNG → imageset 的自动化流水线
   sync.sh / sync.ps1         多设备同步
@@ -268,7 +268,7 @@ Actions 页面的 **Artifacts → screenshots** 就是不用 Mac 也能看到的
 ## 六、已知待办
 
 - 生词本「手动收藏」的独立列表页（`Word.isFavorite` 已有字段，学习卡长按能收藏；还没有「收藏夹」页）
-- 其余 19 只小动物（02 团子 … 20 小柚）的立绘、表情与 imageset
+- 20 只动物的**表情三连与动作帧**（主立绘已齐，见 `Design/Animals/contact-sheet-v1.png`）
 - 学习完成页的小动物庆祝动画（现在只有勾选图标 + 小豆一句话）
 - 测试页还没写单测（`QuizService` 是纯函数，补 `QuizServiceTests` 成本很低）
 - 内购还没在真机 / 沙盒里跑过：需要在 App Store Connect 建好 `com.yourname.beanman.pro` 才能验
