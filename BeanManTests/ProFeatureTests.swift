@@ -158,7 +158,7 @@ final class AchievementCenterTests: XCTestCase {
                                          clearedDue: false,
                                          importedDeck: false)
         XCTAssertEqual(center.progress(for: .thousandWords, metrics: metrics), 0.5, accuracy: 0.001)
-        XCTAssertEqual(center.progressText(for: .thousandWords, metrics: metrics), "500 / 1000")
+        XCTAssertEqual(center.progressText(for: .thousandWords, metrics: metrics), "500 / 1000 词")
         XCTAssertEqual(center.progress(for: .streak7, metrics: metrics), 3.0 / 7.0, accuracy: 0.001)
     }
 

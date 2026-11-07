@@ -146,8 +146,15 @@ struct StudyView: View {
             }
         }
         .offset(y: -14)
-        .opacity(min(CGFloat(1), abs(dragX) / 90))
+        .opacity(swipeBadgeOpacity)
         .allowsHitTesting(false)
+    }
+
+    /// 拖动距离映射成 0...1 的透明度。写死类型，避免 CGFloat / Int 混算的歧义。
+    private var swipeBadgeOpacity: Double {
+        let distance: CGFloat = abs(dragX)
+        let ratio: CGFloat = distance / 90.0
+        return Double(min(max(ratio, 0), 1))
     }
 
     private func badge(_ text: String, color: Color, tint: Color) -> some View {

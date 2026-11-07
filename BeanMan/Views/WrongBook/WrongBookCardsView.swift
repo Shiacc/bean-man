@@ -130,8 +130,15 @@ struct WrongBookCardsView: View {
             }
         }
         .offset(y: -14)
-        .opacity(min(CGFloat(1), abs(dragX) / 90))
+        .opacity(swipeBadgeOpacity)
         .allowsHitTesting(false)
+    }
+
+    /// 同 StudyView：写死 CGFloat / Double，别让编译器在 `/` 上做类型推断。
+    private var swipeBadgeOpacity: Double {
+        let distance: CGFloat = abs(dragX)
+        let ratio: CGFloat = distance / 90.0
+        return Double(min(max(ratio, 0), 1))
     }
 
     private func pill(_ text: String, color: Color, tint: Color) -> some View {

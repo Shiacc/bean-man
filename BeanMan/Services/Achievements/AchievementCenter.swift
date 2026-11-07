@@ -115,9 +115,10 @@ final class AchievementCenter {
         Achievement.allCases.filter { isUnlocked($0) }.count
     }
 
-    /// 0...1，已解锁直接给 1。
-    func progress(for achievement: Achievement) -> Double {
+    /// 0...1，已解锁直接给 1。`metrics` 不传就用最近一次判定的。
+    func progress(for achievement: Achievement, metrics override: AchievementMetrics? = nil) -> Double {
         if isUnlocked(achievement) { return 1 }
+        let metrics = override ?? self.metrics
         let value: Double
         switch achievement {
         case .firstStep: value = metrics.learnedWords > 0 ? 1 : 0
@@ -130,7 +131,8 @@ final class AchievementCenter {
         return min(1, max(0, value / achievement.target))
     }
 
-    func progressText(for achievement: Achievement) -> String {
+    func progressText(for achievement: Achievement, metrics override: AchievementMetrics? = nil) -> String {
+        let metrics = override ?? self.metrics
         switch achievement {
         case .streak7, .streak30, .streak100:
             return "\(min(metrics.streak, Int(achievement.target))) / \(Int(achievement.target)) 天"

@@ -1391,33 +1391,38 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 |---|---|---|---|---|
 | 1 | 首次引导（4 步） | 已交付 | `Views/Onboarding/OnboardingView.swift` | 通知授权文案需真机复核 |
 | 2 | 今日页 | 已交付 | `Views/Tabs/TodayView.swift` | 空态「无词库」跳转可更明确 |
-| 3 | 学习卡（翻面/四档/发音/完成页） | 已交付 | `Views/Study/*` | **手势（F17）未接** |
+| 3 | 学习卡（翻面/四档/发音/完成页/手势） | 已交付 | `Views/Study/StudyView.swift` | 手势只做了左/右滑与长按，无「上滑跳过」 |
 | 4 | 复习算法 SM-2 | 已交付 | `Services/SRS/SRSAlgorithm.swift` | — |
 | 5 | 词库管理 | 已交付 | `Views/Deck/*` | 恢复内置库入口 |
 | 6 | CSV / JSON 导入导出 | 已交付 | `Services/ImportExport/*` | GB18030 真机样本 |
-| 7 | 错词本 | 已交付 | `Services/WrongBook/*`、`Views/WrongBook/*` | **卡片流（F18）未做** |
-| 8 | 生词本（手动收藏） | 部分 | `Word.isFavorite` | 列表页、入口 |
-| 9 | 测试（三题型） | 已交付 | `Views/Quiz/*`、`Services/Quiz/*` | **拼写错题写回 SRS 未接** |
+| 7 | 错词本（含卡片流） | 已交付 | `Services/WrongBook/*`、`Views/WrongBook/*` | 卡片流筛选沿用列表筛选 |
+| 8 | 生词本（手动收藏） | 部分 | `Word.isFavorite` + 学习卡长按 | 独立「收藏夹」页 |
+| 9 | 测试（三题型，拼写错题写回） | 已交付 | `Views/Quiz/*`、`Services/Quiz/*`、`QuizViewModel.submitTyped` | 听音题语音包在真机复核 |
 | 10 | 统计 | 已交付 | `Views/Tabs/StatsView.swift` | 到期曲线未画 |
-| 11 | 设置 | 已交付 | `Views/Settings/SettingsView.swift` | 恢复内置库、深色模式逐页校对 |
+| 11 | 设置（含升级入口） | 已交付 | `Views/Settings/SettingsView.swift` | 恢复内置库、深色模式逐页校对 |
 | 12 | 本地提醒 | 部分 | `Services/Notification/NotificationService.swift` | 设置页开关已连，真机未验 |
 | 13 | 小豆文案 / 气泡 / 引导 | 已交付 | `DesignSystem/Assistant/*`、`Bubbles/*`、`Hints/*` | 更多场景文案 |
 | 14 | 小动物（20 只） | 1/20 | `DesignSystem/Animals/*` | 19 只素材 |
-| 15 | 弹幕复习（F16） | 待做 | 仅设计（片尾字幕式，已按 m02219 返工） | 全部 |
-| 16 | 手势交互（F17） | 待做 | 仅规范 | 全部 |
-| 17 | 单词本卡片流（F18） | 待做 | 仅设计 | 全部 |
-| 18 | 小豆分析推荐（F19） | 待做 | 仅设计 | `InsightEngine` + 推荐进今日 |
+| 15 | 弹幕复习（F16） | 已交付 | `Views/Danmaku/*`、`ViewModels/DanmakuReviewViewModel.swift` | 「只看错词/生词」筛选未上界面 |
+| 16 | 手势交互（F17） | 已交付 | `StudyView` 的 swipe / long press + `StudyViewModel.undo` | 无 |
+| 17 | 单词本卡片流（F18） | 已交付 | `Views/WrongBook/WrongBookCardsView.swift` | 无 |
+| 18 | 小豆分析推荐（F19） | 已交付 | `Services/Insights/InsightEngine.swift` + `StudyRepository` 推荐段 | 仅四条规则，未做「时段提醒联动设置页」 |
+| 19 | 账户与收费（F20） | 部分 | `Services/Purchase/*`、`Views/Settings/PaywallView.swift` | App Store Connect 未建商品，沙盒未验 |
+| 20 | 成就与里程碑（F21） | 已交付 | `Services/Achievements/*`、`Views/Achievements/*` | 分享图未做 |
 
 **下一步顺序（按用户「先完善功能/设计/程序/素材」）**
 
-1. F17 手势：`StudyView` 加 `DragGesture` + `Undo` 状态（1 天）。
-2. 拼写错题写回：`QuizViewModel.submitTyped()` 失败时调 `StudyRepository.apply(.again)`（0.5 天）。
-3. **F19 小豆推荐**：`InsightEngine`（纯函数 + 单测）→ 今日页小豆卡换成洞察 → 任务卡加推荐段（1–1.5 天）。
-4. F18 单词本卡片流：`WrongBookView` 加 segmented 视图切换（1 天）。
-5. F16 弹幕复习：`CreditsReviewView` + `CreditsEngine`（一个 offset 驱动整屏，1–1.5 天）。
-6. 生词本列表 + 恢复内置库（0.5 天）。
-7. 其余 19 只动物（每只 0.5–1 天）。
-8. 上架：图标已好，截图/隐私标签/TestFlight（M6）。
+1. 生词本独立列表 + 恢复内置库入口（0.5 天）。
+2. 其余 19 只动物（每只 0.5–1 天），完成页用 `buding` 庆祝动画。
+3. 弹幕复习补「只看错词 / 只看生词」筛选（数据层已具备，0.5 天）。
+4. 内购回到 App Store Connect：建商品、沙盒购买/恢复/退款各验一次（依赖账号）。
+5. 上架：截图、隐私标签、TestFlight（M6）。
+
+**已知偏差（相对 v0.4 规格）**
+
+- 弹幕复习的「点按暂停」实现了，但「暂停后自动淡出提示」用了 3 秒一次性提示，不是每次暂停都提示。
+- 拼写题写回用的是 `Rating.again`，会让 ease 下降、进错词本；这正是 §5.7.1 想要的效果。
+- 学习卡右滑「认识」仅在翻面后可评，未翻面时右滑只翻面（防止瞎评）。
 
 ---
 
