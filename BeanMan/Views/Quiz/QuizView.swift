@@ -136,7 +136,7 @@ struct QuizView: View {
                     .background(Theme.Palette.surface, in: RoundedRectangle(cornerRadius: Theme.Radius.tile, style: .continuous))
                     .disabled(viewModel.isAnswered)
                     .submitLabel(.done)
-                    .onSubmit { viewModel.submitTyped() }
+                    .onSubmit { viewModel.submitTyped(context: context) }
 
                 if viewModel.isAnswered {
                     feedback(question)
@@ -224,7 +224,7 @@ struct QuizView: View {
                 if viewModel.isAnswered {
                     viewModel.next(context: context)
                 } else {
-                    viewModel.submitTyped()
+                    viewModel.submitTyped(context: context)
                 }
             } label: {
                 Text(viewModel.isAnswered ? (viewModel.index + 1 == viewModel.total ? "看成绩" : "下一题") : "提交")

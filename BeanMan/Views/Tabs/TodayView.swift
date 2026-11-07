@@ -17,6 +17,7 @@ struct TodayView: View {
     @State private var isShowingWrongBook = false
     @State private var isShowingQuiz = false
     @State private var isShowingAchievements = false
+    @State private var isReviewingDanmaku = false
 
     /// 引导目标的位置（全局坐标），由 `.captureFrame` 上报
     @State private var frames: [String: CGRect] = [:]
@@ -87,6 +88,9 @@ struct TodayView: View {
         }
         .sheet(isPresented: $isShowingAchievements) {
             NavigationStack { AchievementsView() }
+        }
+        .fullScreenCover(isPresented: $isReviewingDanmaku) {
+            DanmakuReviewView()
         }
     }
 
@@ -249,6 +253,11 @@ struct TodayView: View {
                       title: viewModel.deckName,
                       subtitle: "\(viewModel.totalWordCount) 词") {
                 router?.tab = .decks
+            }
+            ActionRow(icon: "text.line.last.and.arrowtriangle.forward",
+                      title: "弹幕复习",
+                      subtitle: "滚动过一遍，点一下就暂停") {
+                isReviewingDanmaku = true
             }
             ActionRow(icon: "rosette",
                       title: "成就与里程碑",

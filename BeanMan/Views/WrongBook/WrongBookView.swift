@@ -14,6 +14,7 @@ struct WrongBookView: View {
     @State private var detailEntry: WrongWordEntry?
     @State private var reviewItems: [QueueItem] = []
     @State private var isReviewing = false
+    @State private var isShowingCards = false
 
     var body: some View {
         NavigationStack {
@@ -31,6 +32,15 @@ struct WrongBookView: View {
             .navigationTitle("错词本")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        isShowingCards = true
+                    } label: {
+                        Image(systemName: "rectangle.stack")
+                    }
+                    .foregroundStyle(Theme.Palette.brand)
+                    .accessibilityLabel("卡片浏览")
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("完成") { dismiss() }
                         .foregroundStyle(Theme.Palette.brand)
@@ -52,6 +62,9 @@ struct WrongBookView: View {
         }
         .fullScreenCover(isPresented: $isReviewing) {
             StudyView(kind: .wrongBook, items: reviewItems)
+        }
+        .fullScreenCover(isPresented: $isShowingCards) {
+            WrongBookCardsView()
         }
     }
 

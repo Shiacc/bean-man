@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 /// 全屏学习页 —— 对应 Figma `T-02-01 学习卡·正面` / `T-02-02 学习卡·背面` / `T-02-03 学习完成`。
 @MainActor
@@ -10,6 +11,7 @@ struct StudyView: View {
     @State private var viewModel = StudyViewModel()
     @State private var accent: VoiceAccent = .american
     @State private var autoPlay = true
+    @State private var dragX: CGFloat = 0
 
     /// 引导目标位置（全局坐标）
     @State private var frames: [String: CGRect] = [:]
@@ -122,8 +124,73 @@ struct StudyView: View {
             }
         }
         .frame(minHeight: 440)
+        .offset(x: dragX)
+        .rotationEffect(.degrees(Double(dragX / 28)), anchor: .bottom)
+        .overlay(alignment: .top) { swipeBadge }
+        .simultaneousGesture(swipeGesture)
+        .onLongPressGesture(minimumDuration: 0.45) {
+            longPressAction()
+        }
         .animation(.easeInOut(duration: 0.42), value: viewModel.isFlipped)
+        .animation(.spring(response: 0.3, dampingFraction: 0.85), value: dragX)
         .captureFrame(HintID.studyFlipCard)
+    }
+
+    /// 拖动时浮在最上面的「不认识 / 认识」，松手就消失。
+    private var swipeBadge: some View {
+        Group {
+            if dragX < -24 {
+                badge("不认识", color: Theme.Palette.danger, tint: Theme.Palette.dangerTint)
+            } else if dragX > 24 {
+                badge("认识", color: Theme.Palette.success, tint: Theme.Palette.successTint)
+            }
+        }
+        .offset(y: -14)
+        .opacity(min(1, abs(dragX) / 90))
+        .allowsHitTesting(false)
+    }
+
+    private func badge(_ text: String, color: Color, tint: Color) -> some View {
+        Text(text)
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(color)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 7)
+            .background(tint, in: Capsule())
+    }
+
+    /// 左滑 = 不认识，右滑 = 认识（没翻面时右滑只翻面，避免瞎评「认识」）。
+    private var swipeGesture: some Gesture {
+        DragGesture(minimumDistance: 18)
+            .onChanged { value in
+                dragX = value.translation.width
+            }
+            .onEnded { value in
+                let threshold: CGFloat = 72
+                let dx = value.translation.width
+                dragX = 0
+
+                if dx < -threshold {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    rate(.again)
+                } else if dx > threshold {
+                    if viewModel.isFlipped {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        rate(.good)
+                    } else {
+                        flip()
+                    }
+                }
+            }
+    }
+
+    /// 长按：朗读 + 收藏（不动记忆曲线）。
+    private func longPressAction() {
+        guard let word = viewModel.current?.word else { return }
+        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+        speak(word.word)
+        word.isFavorite.toggle()
+        try? context.save()
     }
 
     private var bottomBar: some View {
@@ -137,7 +204,7 @@ struct StudyView: View {
                     rate(rating)
                 }
             } else {
-                Text("轻点卡片任意处翻面")
+                Text("轻点翻面 · 左滑不认识 · 长按朗读")
                     .font(Theme.Font.bodySmall)
                     .foregroundStyle(Theme.Palette.textTertiary)
                 Button {
@@ -146,6 +213,22 @@ struct StudyView: View {
                     Text("显示答案")
                 }
                 .buttonStyle(PrimaryButtonStyle())
+            }
+
+            if viewModel.canUndo {
+                Button {
+                    viewModel.undo(context: context)
+                    speakCurrentIfNeeded()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.uturn.backward")
+                            .font(.system(size: 11, weight: .medium))
+                        Text("撤销上一张")
+                            .font(.system(size: 12))
+                    }
+                    .foregroundStyle(Theme.Palette.textSecondary)
+                }
+                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, Theme.Spacing.screenH)

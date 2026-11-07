@@ -15,6 +15,8 @@ final class QuizViewModel {
     private(set) var finished = false
     private(set) var startedAt = Date()
     private(set) var errorMessage: String?
+    /// 拼写题答错写回错词本的次数（成绩页提示用）
+    private(set) var wrongCount = 0
 
     /// 选择题已选中的选项；拼写题的输入框
     var selectedOption: String?
@@ -77,9 +79,29 @@ final class QuizViewModel {
         evaluate(option, question: current)
     }
 
-    func submitTyped() {
+    func submitTyped(context: ModelContext) {
         guard !isAnswered, let current, current.kind == .spelling else { return }
+        let correct = QuizService.isCorrect(typedAnswer, for: current)
         evaluate(typedAnswer, question: current)
+
+        // 拼写错了才写回：等同一次「不认识」，直接进错词本（PRD §5.7.1）。
+        // 选择题/听音题有 25% 猜中率，写回会冤枉算法，所以不写。
+        if !correct {
+            writeBackAsWrong(question: current, context: context)
+        }
+    }
+
+    private func writeBackAsWrong(question: QuizQuestion, context: ModelContext) {
+        guard let word = (try? context.fetch(FetchDescriptor<Word>()))
+            .first(where: { $0.id == question.wordID }) else { return }
+
+        let item = QueueItem(id: word.id, word: word, isNew: word.reviewState == nil)
+        do {
+            _ = try StudyRepository.apply(rating: .again, to: item, context: context)
+            wrongCount += 1
+        } catch {
+            errorMessage = "记录错词失败"
+        }
     }
 
     private func evaluate(_ input: String, question: QuizQuestion) {

@@ -24,6 +24,28 @@ final class StudyViewModel {
     private var session: StudySession?
     private var startedAt = Date()
 
+    // MARK: - 撤销上一张
+
+    /// 上一张评分前，Word 的 ReviewState 长什么样（用来撤回）。
+    private struct UndoState {
+        let wordID: UUID
+        let wasNew: Bool
+        let easeFactor: Double
+        let intervalDays: Int
+        let repetitions: Int
+        let dueDate: Date
+        let lastReviewedAt: Date?
+        let lapses: Int
+        let phase: StudyPhase
+        let lastRatingRaw: Int?
+        let wrongBookHiddenAt: Date?
+    }
+
+    private var undoState: UndoState?
+    private var undoRecord: StudyRecord?
+    private(set) var canUndo = false
+    private(set) var undoHint: String?
+
     var current: QueueItem? {
         guard index >= 0, index < queue.count else { return nil }
         return queue[index]
@@ -93,6 +115,9 @@ final class StudyViewModel {
     func rate(_ rating: Rating, context: ModelContext) -> Bool {
         guard let item = current else { return false }
 
+        // 评分前留一份快照，供「撤销」使用
+        snapshotForUndo(item)
+
         do {
             let outcome = try StudyRepository.apply(rating: rating,
                                                    to: item,
@@ -101,12 +126,100 @@ final class StudyViewModel {
             lastOutcome = outcome
             answeredCount += 1
             if rating.isCorrect { correctCount += 1 }
+            undoRecord = session?.records.max(by: { $0.reviewedAt < $1.reviewedAt })
+            canUndo = true
+            undoHint = rating.needsReviewList ? "记到错词本了" : nil
         } catch {
             errorMessage = "记录失败：\(error.localizedDescription)"
+            canUndo = false
         }
 
         advance()
         return !finished
+    }
+
+    /// 撤回上一张：把复习状态还原、删掉那条记录、退回上一张。
+    func undo(context: ModelContext) {
+        guard canUndo, let state = undoState else { return }
+
+        // 先记下这次评分是否算对，再删记录（删完就取不到了）
+        let wasCorrect = undoRecord?.rating.isCorrect ?? false
+
+        do {
+            if let newRecord = undoRecord {
+                context.delete(newRecord)
+            }
+
+            if let reviewState = try? context.fetch(FetchDescriptor<ReviewState>())
+                .first(where: { $0.wordID == state.wordID }) {
+
+                if state.wasNew {
+                    // 新词第一次评分 → 回到「没有复习状态」
+                    context.delete(reviewState)
+                } else {
+                    reviewState.easeFactor = state.easeFactor
+                    reviewState.intervalDays = state.intervalDays
+                    reviewState.repetitions = state.repetitions
+                    reviewState.dueDate = state.dueDate
+                    reviewState.lastReviewedAt = state.lastReviewedAt
+                    reviewState.lapses = state.lapses
+                    reviewState.phaseRaw = state.phase.rawValue
+                    reviewState.lastRatingRaw = state.lastRatingRaw
+                    reviewState.wrongBookHiddenAt = state.wrongBookHiddenAt
+                }
+            }
+
+            try context.save()
+        } catch {
+            errorMessage = "撤销失败：\(error.localizedDescription)"
+            return
+        }
+
+        // 计数与位置回退
+        answeredCount = max(0, answeredCount - 1)
+        if wasCorrect { correctCount = max(0, correctCount - 1) }
+        if let session {
+            session.answeredCount = max(0, session.answeredCount - 1)
+            session.correctCount = correctCount
+        }
+
+        index = max(0, index - 1)
+        isFlipped = true
+        finished = false
+        canUndo = false
+        undoState = nil
+        undoRecord = nil
+        undoHint = nil
+    }
+
+    private func snapshotForUndo(_ item: QueueItem) {
+        undoState = nil
+        let word = item.word
+        if let state = word.reviewState {
+            undoState = UndoState(wordID: word.id,
+                                  wasNew: false,
+                                  easeFactor: state.easeFactor,
+                                  intervalDays: state.intervalDays,
+                                  repetitions: state.repetitions,
+                                  dueDate: state.dueDate,
+                                  lastReviewedAt: state.lastReviewedAt,
+                                  lapses: state.lapses,
+                                  phase: state.phase,
+                                  lastRatingRaw: state.lastRatingRaw,
+                                  wrongBookHiddenAt: state.wrongBookHiddenAt)
+        } else {
+            undoState = UndoState(wordID: word.id,
+                                  wasNew: true,
+                                  easeFactor: 2.5,
+                                  intervalDays: 0,
+                                  repetitions: 0,
+                                  dueDate: Date(),
+                                  lastReviewedAt: nil,
+                                  lapses: 0,
+                                  phase: .new,
+                                  lastRatingRaw: nil,
+                                  wrongBookHiddenAt: nil)
+        }
     }
 
     private func advance() {
