@@ -13,6 +13,21 @@
 
 本机是 Windows，没有 Xcode，所以**代码从未编译过**。第一次编译可能需要修几处小错，属正常。
 
+**方式 A（推荐，30 秒）：用 XcodeGen 生成工程**
+
+```bash
+brew install xcodegen
+git clone git@gitee.com:zhuge-x/beanman.git
+cd beanman
+xcodegen generate          # 生成 BeanMan.xcodeproj
+open BeanMan.xcodeproj     # ⌘R 运行，⌘U 测试
+```
+
+`BeanMan.xcodeproj` 是生成物，不进仓库；新增 `.swift` 文件不用改工程，Windows 侧也能加。
+若想改用 Xcode 图形界面建工程，走方式 B。
+
+**方式 B：手工建工程**
+
 1. Xcode → File → New → Project → iOS → **App**
    - Product Name：`BeanMan`
    - Interface：**SwiftUI**
@@ -85,7 +100,39 @@ BeanManTests/
 
 ---
 
-## 四、已知待办
+## 四、多设备同步
+
+远程仓库：`git@gitee.com:zhuge-x/beanman.git`（私有）。**唯一真相源是远程，两台设备各留一份工作副本。**
+
+| 设备 | 角色 | git |
+|---|---|---|
+| Mac | 编译 / 跑模拟器 / 跑测试 | 原生 git |
+| Windows（这台） | 写代码、设计稿、AI 工作台 | 只有 WSL 里的 git |
+
+```bash
+# Mac：一天的开头和结尾
+git pull --rebase
+git add -A && git commit -m "feat: 词库页" && git push
+
+# Windows：一条命令搞定（内部转给 WSL 的 git）
+.\Scripts\sync.ps1 "feat: 今日页"
+```
+
+`Scripts/sync.sh` 做三件事：`pull --rebase --autostash` → 有改动就提交 → `push`。
+不带参数时提交信息自动是 `chore: 同步 <时间>`。
+
+**几条硬规矩**
+
+- 工作副本**不要**放进 iCloud / OneDrive / 坚果云 —— 云客户端半写入 `.git` 会让仓库损坏；
+- 两台设备**不要同时**改同一个 Xcode 工程（用了 `project.yml` 之后这条基本不成立了）；
+- 换行已由 `.gitattributes` 统一成 LF，别手动改；
+- 提交前 `git status` 看一眼，`Secrets/`、`*.p8`、`*.mobileprovision` 已被 `.gitignore` 挡住。
+
+**密钥跨设备**：签名证书走 1Password / 加密盘，不进仓库；若用 sops 加密存放，age 私钥同样放 1Password。
+
+---
+
+## 五、已知待办
 
 - 词库页（导入 CSV/JSON、搜索、导出）、统计页（7 天柱状图）、设置页（计划/提醒/发音/数据管理）
 - 本地通知（UNUserNotificationCenter，`Info.plist` 不需要额外权限 key，但首次要请求授权）
