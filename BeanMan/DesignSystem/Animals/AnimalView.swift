@@ -71,10 +71,11 @@ struct AnimalView: View {
     }
 
     private func image(_ name: String) -> some View {
+        // .interpolation 是 Image 的方法，必须放在 scaledToFit() 之前（之后已经是 some View）
         Image(name)
+            .interpolation(.high)
             .resizable()
             .scaledToFit()
-            .interpolation(.high)
     }
 
     /// 素材没到位时的占位：主色圆底 + 爪印，保证布局不跳
