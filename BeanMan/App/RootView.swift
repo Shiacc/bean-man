@@ -55,8 +55,17 @@ struct RootView: View {
         .task {
             BeanManStore.bootstrap(context)
             // 首次启动：设置存在但没走完引导，就把引导顶上来
-            if let settings = try? AppSettingsStore.current(in: context), !settings.onboardingCompleted {
-                isOnboardingPresented = true
+            if let settings = try? AppSettingsStore.current(in: context) {
+                #if DEBUG
+                // 调试 / 截图用：带 -skipOnboarding 启动就跳过引导
+                if ProcessInfo.processInfo.arguments.contains("-skipOnboarding") {
+                    settings.onboardingCompleted = true
+                    try? context.save()
+                }
+                #endif
+                if !settings.onboardingCompleted {
+                    isOnboardingPresented = true
+                }
             }
         }
         .fullScreenCover(isPresented: $isOnboardingPresented) {

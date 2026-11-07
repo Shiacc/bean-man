@@ -128,6 +128,13 @@ jobs:
           UDID="${{ steps.sim.outputs.udid }}"
           mkdir -p shots
 
+          # 产物解压后的层级不稳定（可能多包一层目录），直接找 .app
+          ls -R app | head -40
+          APP=$(find app -maxdepth 4 -name "BeanMan.app" -type d | head -1)
+          echo "APP=$APP"
+          BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP/Info.plist")
+          echo "BUNDLE_ID=$BUNDLE_ID"
+
           xcrun simctl boot "$UDID" || true
           xcrun simctl bootstatus "$UDID" -b
 
@@ -136,15 +143,23 @@ jobs:
             --time "9:41" --batteryState charged --batteryLevel 100 \
             --cellularMode active --cellularBars 4 --wifiBars 3 || true
 
-          xcrun simctl install "$UDID" app/BeanMan.app
-          xcrun simctl launch "$UDID" com.yourname.beanman || echo "启动失败，截桌面"
+          xcrun simctl install "$UDID" "$APP"
 
-          sleep 5
-          xcrun simctl io "$UDID" screenshot shots/01-today.png || true
+          # ① 首次启动：拍引导页
+          xcrun simctl launch "$UDID" "$BUNDLE_ID" || echo "启动失败，截桌面"
+          sleep 6
+          xcrun simctl io "$UDID" screenshot shots/01-onboarding.png || true
+
+          # ② 带 -skipOnboarding 重启：拍今日页
+          xcrun simctl terminate "$UDID" "$BUNDLE_ID" || true
+          sleep 1
+          xcrun simctl launch "$UDID" "$BUNDLE_ID" -skipOnboarding || echo "带参数启动失败"
+          sleep 6
+          xcrun simctl io "$UDID" screenshot shots/02-today.png || true
 
           # 如果启动崩了，把崩溃日志抓出来（比看截图有用）
-          xcrun simctl spawn "$UDID" log show --last 2m --style compact \
-            --predicate 'process == "BeanMan"' 2>/dev/null | tail -60 \
+          xcrun simctl spawn "$UDID" log show --last 3m --style compact \
+            --predicate 'process == "BeanMan"' 2>/dev/null | tail -80 \
             > shots/app-log.txt || true
 
       - name: 上传截图
