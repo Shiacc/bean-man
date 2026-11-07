@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import SwiftData
 
 /// 学习完成页 —— 对应 Figma `T-02-03 学习完成`。
@@ -14,6 +15,7 @@ struct StudySummaryView: View {
 
     @State private var streak = 0
     @State private var perWordText = "—"
+    @State private var celebrating = false
 
     init(answered: Int,
          accuracy: Int,
@@ -30,10 +32,26 @@ struct StudySummaryView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                // 完成页的「庆祝」：小豆（橘猫）开心跳一下。
-                // 素材只有橘子有表情包，其余动物会退化成占位图。
-                AnimalView(animal: .juzi, size: 132, expression: .happy, animated: true)
-                    .padding(.top, 44)
+                // 完成页的「庆祝」：布丁（柯基）是「完成庆祝」这一格的角色。
+                // 出场：从 0.86 弹到 1，同时撒一圈纸屑；Reduce Motion 时直接定格。
+                ZStack {
+                    ConfettiBurst(isActive: celebrating)
+                    AnimalView(animal: .buding, size: 140, expression: .happy, animated: true)
+                        .scaleEffect(celebrating ? 1 : 0.86)
+                        .opacity(celebrating ? 1 : 0)
+                        .offset(y: celebrating ? 0 : 10)
+                }
+                .frame(height: 176)
+                .padding(.top, 36)
+                .onAppear {
+                    guard !UIAccessibility.isReduceMotionEnabled else {
+                        celebrating = true
+                        return
+                    }
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.55)) {
+                        celebrating = true
+                    }
+                }
 
                 Text(title)
                     .font(Theme.Font.cardTitle)
@@ -98,5 +116,33 @@ struct StudySummaryView: View {
             let seconds = parts[0] * 60 + parts[1]
             perWordText = "\(max(1, seconds / max(1, answered))) 秒"
         }
+    }
+}
+
+/// 完成页的一小把纸屑：12 个点从中心弹出去。
+/// 只做位移和透明度，不引入粒子系统；Reduce Motion 由调用方直接定格。
+private struct ConfettiBurst: View {
+    let isActive: Bool
+
+    private var colors: [Color] {
+        [Theme.Palette.brand, Theme.Palette.success, Theme.Palette.warning,
+         Theme.Palette.brandSoft, Theme.Palette.dangerTint, Theme.Palette.surfaceAlt]
+    }
+
+    var body: some View {
+        ZStack {
+            ForEach(0..<12, id: \.self) { index in
+                let angle = Double(index) / 12.0 * 2.0 * .pi
+                Circle()
+                    .fill(colors[index % colors.count])
+                    .frame(width: index.isMultiple(of: 3) ? 10 : 7,
+                           height: index.isMultiple(of: 3) ? 10 : 7)
+                    .offset(x: cos(angle) * (isActive ? 96 : 12),
+                            y: sin(angle) * (isActive ? 82 : 12))
+                    .opacity(isActive ? 0.85 : 0)
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }
