@@ -12,6 +12,7 @@
 - [阶段一：产品结构与数据模型](Docs/01-阶段1-产品结构与数据模型.md) — 分层、文件树、6 个 @Model、导入契约
 - [小动物总谱](Design/Animals/00-小动物总谱.md) · [风格规范](Design/Animals/_风格规范.md)
 - [**没有 Mac 怎么编译、怎么上线**](Docs/03-无Mac编译与上线.md) — GitHub Actions 编译/截图、API Key 签名、TestFlight、上架清单
+- [**上架操作清单**](Docs/04-上架操作清单.md) — 从注册开发者账号到 TestFlight 内测的分步操作 + 中国区备案提醒
 
 ---
 
