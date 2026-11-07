@@ -1,0 +1,75 @@
+name: iOS 构建与单测
+
+# 用途：在没有 Mac 的开发机上验证「能不能编译、单测过不过」。
+# 触发：push 到 main、或手动 Run workflow。
+# 前提：仓库要镜像到 GitHub（Gitee 没有 macOS runner），见 README「CI 编译验证」。
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: xcodebuild build + test
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 工具与版本
+        run: |
+          brew install xcodegen xcbeautify
+          xcodebuild -version
+          xcodegen generate
+
+      - name: 挑一个可用的模拟器
+        id: sim
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c "
+import json, sys
+data = json.load(sys.stdin)['devices']
+for runtime, devices in data.items():
+    if 'iOS' not in runtime:
+        continue
+    for d in devices:
+        if d.get('isAvailable'):
+            print(d['udid'])
+            sys.exit(0)
+sys.exit(1)
+")
+          echo "使用模拟器 $UDID"
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+
+      - name: 编译
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project BeanMan.xcodeproj \
+            -scheme BeanMan \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcbeautify --renderer github-actions
+
+      - name: 单元测试
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project BeanMan.xcodeproj \
+            -scheme BeanMan \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcbeautify --renderer github-actions
+
+      - name: 上传测试报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/DerivedData/Logs/Test/*.xcresult
+          if-no-files-found: ignore
