@@ -3,7 +3,7 @@
 离线优先的背单词 App。SwiftUI + SwiftData，iOS 17+，无账号、无后端。
 
 当前进度：**M1–M4 + F16–F21 已交付** —— 今日页、学习卡（四档 + 发音 + 手势 + 撤销 + 完成页）、错词本（列表/卡片流）、测试（三种题型 + 拼写错写回）、词库（列表/详情/导入/导出/恢复内置库）、统计（7 天柱图）、设置、本地提醒、气泡与引导、片尾字幕式弹幕复习（竖/横屏 + 黑白主题）、小豆分析推荐、买断内购与免费额度、成就里程碑、生词本列表、**20 只小动物主立绘**。
-待做：20 只动物的表情三连与动作帧、完成页庆祝动画、内购沙盒验证、上架材料。
+待做：4 只动物的表情（竹竹 / 慢慢 / 呱呱 / 咔咔）、动作帧与小动画、内购沙盒验证、上架材料。
 代码已由 GitHub Actions 在 macOS runner 上编译 + 跑单测（最近一次全绿：`42388641803`）。
 
 设计稿：Figma 文件 `app-design`，两个页面分工——
@@ -131,7 +131,7 @@ BeanMan/
     Achievements/AchievementCenter.swift 8 个本地里程碑
     Insights/InsightEngine.swift   最佳时段 / 积压 / 连续风险 / 常错词 + 3 个推荐词
   Resources/
-    Assets.xcassets/Animals/…     20 只动物图（Juzi…Youzi.imageset，各三档尺寸）
+    Assets.xcassets/Animals/…     20 只动物图 + 68 个图集（主立绘三档 + 表情单档 512，PNG8 共 1.7MB）
 BeanManTests/
   SRSAlgorithmTests.swift    算法 7 组断言
   StudyRepositoryTests.swift 队列 / 限额 / 写回 / 打卡
@@ -268,7 +268,7 @@ Actions 页面的 **Artifacts → screenshots** 就是不用 Mac 也能看到的
 ## 六、已知待办
 
 - 生词本「手动收藏」的独立列表页（`Word.isFavorite` 已有字段，学习卡长按能收藏；还没有「收藏夹」页）
-- 20 只动物的**表情三连与动作帧**（主立绘已齐，见 `Design/Animals/contact-sheet-v1.png`）
+- 剩余 4 只动物的表情（竹竹 / 慢慢 / 呱呱 / 咔咔，眼睛不是双椭圆结构）+ 全部动物的动作帧（见 `Design/Animals/expressions-batch-v1.png`）
 - 界面里已接入 9 只：橘子（首页气泡 / 付费墙）、雪球（错词本空态）、布丁（完成页庆祝 + 成就墙）、泡泡（测试空态 / 弹幕空态）、咕噜（词库空态）、棉花（生词本空态）、团子 / 云朵 / 小柚（仅 Design Gallery 预览）
 - 学习完成页的小动物庆祝动画（现在只有勾选图标 + 小豆一句话）
 - 测试页还没写单测（`QuizService` 是纯函数，补 `QuizServiceTests` 成本很低）
