@@ -225,7 +225,7 @@ struct WrongBookCardsView: View {
 
     private var emptyState: some View {
         VStack(spacing: 16) {
-            AnimalView(animal: .xueqiu, size: 128, expression: .normal)
+            AnimalView(animal: .xueqiu, size: 128, expression: .sleepy)
             Text("错词本是空的")
                 .font(Theme.Font.cardTitle)
                 .foregroundStyle(Theme.Palette.textPrimary)
