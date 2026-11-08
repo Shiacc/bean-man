@@ -30,6 +30,28 @@ PENDING = [
     ("image-3a82dc80.jpg", "Juzi", "Sleepy", "橘子·犯困"),
     ("image-5265e0c8.jpg", "Buding", "Blink", "布丁·眨眼"),
     ("image-e5d36157.png", "Buding", "Happy", "布丁·开心"),
+    ("image-1af7d057.jpg", "Buding", "Sleepy", "布丁·犯困"),
+    # 雪球（白兔）：空状态主力
+    ("image-bf303ddd.jpg", "Xueqiu", "Blink", "雪球·眨眼"),
+    ("image-37a40640.png", "Xueqiu", "Happy", "雪球·开心"),
+    ("image-4dc4b665.jpg", "Xueqiu", "Sleepy", "雪球·犯困"),
+    # 芝麻（仓鼠）：生词本
+    ("image-8c4ca4ba.jpg", "Zhima", "Blink", "芝麻·眨眼"),
+    ("image-c58fe7a8.png", "Zhima", "Happy", "芝麻·开心"),
+    ("image-9735188c.png", "Zhima", "Sleepy", "芝麻·犯困"),
+    # 棉花（垂耳兔）：新词空态
+    ("image-400d8968.jpg", "Mianhua", "Blink", "棉花·眨眼"),
+    ("image-433e0910.png", "Mianhua", "Happy", "棉花·开心"),
+    ("image-41f65149.jpg", "Mianhua", "Sleepy", "棉花·犯困"),
+    # 泡泡（水獭）：测试空态
+    ("image-75c0154e.jpg", "Paopao", "Happy", "泡泡·开心"),
+    ("image-b8681cb1.jpg", "Paopao", "Sleepy", "泡泡·犯困"),
+    # 咕噜（小熊）：词库空态
+    ("image-a96123ae.jpg", "Gulu", "Happy", "咕噜·开心"),
+    ("image-444119b0.jpg", "Gulu", "Sleepy", "咕噜·犯困"),
+    # 团子（柴犬）：连续打卡
+    ("image-9bcdceaa.jpg", "Dango", "Happy", "团子·开心"),
+    ("image-6a21d7a9.png", "Dango", "Sleepy", "团子·犯困"),
 ]
 
 
