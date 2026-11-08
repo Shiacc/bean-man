@@ -30,6 +30,13 @@ final class TodayViewModel {
         return .todayHasWork(due: counts.due, new: counts.new)
     }
 
+    /// 小豆的表情：有活干是常态，今天已经干完就开心，压根没词可学就打瞌睡。
+    var xiaodouExpression: AnimalExpression {
+        if counts.total > 0 { return .normal }
+        if counts.learnedToday > 0 { return .happy }
+        return .sleepy
+    }
+
     var todayProgress: Double {
         let plan = planTotal
         guard plan > 0 else { return 0 }

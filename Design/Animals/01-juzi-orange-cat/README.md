@@ -121,3 +121,15 @@ python Scripts/animal_pipeline.py frames \
 
 > SVG → PNG 用本机 Chrome 无头渲染（`Scripts/animal_pipeline.py` 里已封装），
 > 换机器时确认 `CHROME_CANDIDATES` 里有对应路径。
+## 表情（v1.1 补齐）
+
+| 表情 | 文件 | 资源名 | 用在 |
+|---|---|---|---|
+| 常态 | source/juzi.svg | `Juzi` | 今日页顶部气泡 |
+| 眨眼 | source/juzi-blink.svg | `JuziBlink` | 待机动画中间帧 |
+| 开心 | source/juzi-happy.svg | `JuziHappy` | 今日任务全部完成 |
+| 犯困 | source/juzi-sleepy.svg | `JuziSleepy` | 一个词都没有时 |
+| 惊讶 | source/juzi-surprised.svg | `JuziSurprised` | 保留，暂未接 |
+
+表情变体由 `Scripts/animal_expressions.py` 生成：只替换眼睛块与嘴块，几何完全复用，避免「同一只动物五种比例」。
+对照图：`Design/Animals/expressions-v1.png`。

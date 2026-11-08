@@ -109,7 +109,7 @@ struct FavoritesView: View {
     private var emptyState: some View {
         VStack(spacing: 18) {
             Spacer()
-            AnimalView(animal: .mianhua, size: 132, expression: .normal, animated: true)
+            AnimalView(animal: .zhima, size: 132, expression: .normal, animated: true)
             XiaodouCard(line: "还没有收藏的词", detail: "学习卡上长按单词就能收进来")
             Spacer()
         }

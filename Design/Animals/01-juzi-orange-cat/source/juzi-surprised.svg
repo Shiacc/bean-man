@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 橘子 · 橘猫 · surprised ｜ 豆卡单词
+       body #E4703A / stripe #C2571F / cream #FFF1E8 / outline #3A2A22 / blush #F3A183 -->
+  <defs>
+    <style>
+      .ln { stroke: #3A2A22; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .tab { stroke: #C2571F; stroke-linecap: round; fill: none; }
+    </style>
+  </defs>
+
+  <!-- 尾巴（贴地，向右小卷） -->
+  <path d="M 616 848 C 716 862 772 820 764 762 C 758 720 720 716 708 748"
+        fill="none" stroke="#3A2A22" stroke-width="66" stroke-linecap="round"/>
+  <path d="M 616 848 C 716 862 772 820 764 762 C 758 720 720 716 708 748"
+        fill="none" stroke="#E4703A" stroke-width="46" stroke-linecap="round"/>
+  <path d="M 764 762 C 758 720 720 716 708 748"
+        fill="none" stroke="#C2571F" stroke-width="46" stroke-linecap="round"/>
+
+  <!-- 身体 -->
+  <path d="M 374 698 C 350 826 396 902 512 902 C 628 902 674 826 650 698
+           C 636 612 584 582 512 582 C 440 582 388 612 374 698 Z"
+        fill="#E4703A" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 胸口奶油色 -->
+  <path d="M 512 592 C 468 592 444 640 444 728 C 444 814 470 868 512 868
+           C 554 868 580 814 580 728 C 580 640 556 592 512 592 Z" fill="#FFF1E8"/>
+
+  <!-- 前爪 -->
+  <ellipse cx="442" cy="888" rx="64" ry="41" fill="#FFF1E8" stroke="#3A2A22" stroke-width="10"/>
+  <ellipse cx="582" cy="888" rx="64" ry="41" fill="#FFF1E8" stroke="#3A2A22" stroke-width="10"/>
+  <path d="M 420 892 L 420 906 M 450 892 L 450 906 M 546 892 L 546 906 M 576 892 L 576 906"
+        stroke="#D8CFC0" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- 耳朵：宽底、圆尖，底座埋进头里 -->
+  <g stroke="#3A2A22" stroke-width="11" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M 378 192 C 400 186 424 206 486 322 L 320 360 C 340 292 352 200 378 192 Z" fill="#E4703A"/>
+    <path d="M 646 192 C 624 186 600 206 538 322 L 704 360 C 684 292 672 200 646 192 Z" fill="#E4703A"/>
+  </g>
+  <path d="M 386 250 C 404 252 418 268 456 330 L 348 352 C 362 296 370 252 386 250 Z" fill="#F6C6B0"/>
+  <path d="M 638 250 C 620 252 606 268 568 330 L 676 352 C 662 296 654 252 638 250 Z" fill="#F6C6B0"/>
+
+  <!-- 头 -->
+  <ellipse cx="512" cy="496" rx="250" ry="232" fill="#E4703A" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 额头虎斑 -->
+  <g class="tab" stroke-width="15">
+    <path d="M 512 276 L 512 338"/>
+    <path d="M 470 282 L 461 330"/>
+    <path d="M 554 282 L 563 330"/>
+  </g>
+  <!-- 脸颊虎斑 -->
+  <g class="tab" stroke-width="14">
+    <path d="M 292 458 L 352 470"/>
+    <path d="M 290 508 L 350 516"/>
+    <path d="M 732 458 L 672 470"/>
+    <path d="M 734 508 L 674 516"/>
+  </g>
+
+  <!-- 嘴部奶油色 -->
+  <ellipse cx="512" cy="576" rx="96" ry="64" fill="#FFF1E8"/>
+
+  <!-- 眼睛（惊讶：白眼球 + 小瞳孔） -->
+  <ellipse cx="426" cy="494" rx="58" ry="62" fill="#FFFFFF" stroke="#3A2A22" stroke-width="10"/>
+  <ellipse cx="598" cy="494" rx="58" ry="62" fill="#FFFFFF" stroke="#3A2A22" stroke-width="10"/>
+  <circle cx="426" cy="500" r="27" fill="#3A2A22"/>
+  <circle cx="598" cy="500" r="27" fill="#3A2A22"/>
+  <circle cx="417" cy="489" r="9" fill="#FFFFFF"/>
+  <circle cx="589" cy="489" r="9" fill="#FFFFFF"/>
+
+  <!-- 腮红 -->
+  <ellipse cx="386" cy="580" rx="45" ry="25" fill="#F3A183" opacity="0.6"/>
+  <ellipse cx="638" cy="580" rx="45" ry="25" fill="#F3A183" opacity="0.6"/>
+
+  <!-- 鼻子 -->
+  <path d="M 512 550 L 529 567 L 495 567 Z" fill="#C2571F" stroke="#C2571F"
+        stroke-width="9" stroke-linejoin="round"/>
+
+  <!-- 嘴（惊讶：张大） -->
+  <ellipse cx="512" cy="608" rx="30" ry="38" fill="#C2571F" stroke="#3A2A22" stroke-width="8"/>
+  <ellipse cx="512" cy="626" rx="16" ry="12" fill="#F3888C"/>
+
+  <!-- 胡须 -->
+  <g stroke="#3A2A22" stroke-width="6.5" stroke-linecap="round" fill="none" opacity="0.7">
+    <path d="M 426 560 L 342 544"/>
+    <path d="M 424 590 L 338 592"/>
+    <path d="M 598 560 L 682 544"/>
+    <path d="M 600 590 L 686 592"/>
+  </g>
+</svg>

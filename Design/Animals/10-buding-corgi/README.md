@@ -62,3 +62,14 @@ Animal.buding.accent   // #E39B5C
 - [ ] 表情三连：happy / blink / sleepy
 - [ ] idle 循环（摇尾巴 0.9 秒一个来回）
 - [ ] 跳跃动作（380ms，用于完成页）
+## 表情（v1.1 补齐）
+
+| 表情 | 文件 | 资源名 | 用在 |
+|---|---|---|---|
+| 常态 | source/buding.svg | `Buding` | 通用 |
+| 眨眼 | source/buding-blink.svg | `BudingBlink` | 待机动画中间帧 |
+| 开心 | source/buding-happy.svg | `BudingHappy` | 学习完成页庆祝 |
+| 犯困 | source/buding-sleepy.svg | `BudingSleepy` | 保留 |
+| 惊讶 | source/buding-surprised.svg | `BudingSurprised` | 保留 |
+
+生成脚本：`Scripts/animal_expressions.py`。

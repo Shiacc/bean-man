@@ -38,7 +38,8 @@ struct TodayView: View {
                 header
                 CompanionBubble(animal: .juzi,
                                 line: Xiaodou.line(viewModel.xiaodouMoment),
-                                detail: Xiaodou.detail(viewModel.xiaodouMoment))
+                                detail: Xiaodou.detail(viewModel.xiaodouMoment),
+                                expression: viewModel.xiaodouExpression)
                     .padding(.horizontal, Theme.Spacing.screenH)
                 taskCard
                     .padding(.horizontal, Theme.Spacing.screenH)

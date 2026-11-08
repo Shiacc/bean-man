@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 布丁 · 柯基 · sleepy ｜ 豆卡单词
+       fur #E39B5C / cream #FFF6EA / ear #C97A43 / outline #3A2A22 / blush #F3A183 -->
+  <!-- 身体 -->
+  <path d="M 322 712 C 306 840 360 912 512 912 C 664 912 718 840 702 712
+           C 690 630 606 596 512 596 C 418 596 334 630 322 712 Z"
+        fill="#E39B5C" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 胸腹奶油色 -->
+  <path d="M 512 596 C 440 596 396 640 392 700 L 386 900 L 638 900 L 632 700
+           C 628 640 584 596 512 596 Z" fill="#FFF6EA"/>
+
+  <!-- 前爪 -->
+  <ellipse cx="446" cy="892" rx="54" ry="30" fill="#FFF6EA" stroke="#3A2A22" stroke-width="9"/>
+  <ellipse cx="578" cy="892" rx="54" ry="30" fill="#FFF6EA" stroke="#3A2A22" stroke-width="9"/>
+
+  <!-- 大尖耳（柯基标志） -->
+  <path d="M 336 396 C 306 292 306 214 328 186 C 372 210 412 300 420 372 Z"
+        fill="#E39B5C" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+  <path d="M 688 396 C 718 292 718 214 696 186 C 652 210 612 300 604 372 Z"
+        fill="#E39B5C" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+  <path d="M 348 356 C 328 288 330 240 342 222 C 368 244 392 306 398 352 Z" fill="#C97A43"/>
+  <path d="M 676 356 C 696 288 694 240 682 222 C 656 244 632 306 626 352 Z" fill="#C97A43"/>
+
+  <!-- 头 -->
+  <ellipse cx="512" cy="500" rx="244" ry="216" fill="#E39B5C" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 鼻梁白条 -->
+  <path d="M 512 300 C 546 340 556 400 552 470 L 472 470 C 468 400 478 340 512 300 Z"
+        fill="#FFF6EA"/>
+
+  <!-- 嘴部 -->
+  <ellipse cx="512" cy="586" rx="118" ry="86" fill="#FFF6EA"/>
+
+  <!-- 眼（困：闭合 + 眼皮重） -->
+  <path d="M 380 492 Q 426 534 472 492" class="ln" stroke-width="12"/>
+  <path d="M 552 492 Q 598 534 644 492" class="ln" stroke-width="12"/>
+  <path d="M 386 482 L 372 468 M 638 482 L 652 468" class="ln" stroke-width="7" opacity="0.8"/>
+
+  <!-- 鼻子 -->
+  <path d="M 490 552 C 490 536 534 536 534 552 C 534 568 512 580 512 580
+           C 512 580 490 568 490 552 Z" fill="#3A2A22"/>
+
+  <!-- 嘴（困：小圆口） -->
+  <ellipse cx="512" cy="612" rx="14" ry="16" fill="#3A2A22" opacity="0.85"/>
+  <!-- 睡意 -->
+  <g class="ln" stroke-width="7" opacity="0.55">
+    <path d="M 716 306 L 744 306 L 716 340 L 746 340"/>
+    <path d="M 766 260 L 786 260 L 766 284 L 788 284"/>
+  </g>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.5">
+    <ellipse cx="358" cy="600" rx="44" ry="24"/>
+    <ellipse cx="666" cy="600" rx="44" ry="24"/>
+  </g>
+</svg>
