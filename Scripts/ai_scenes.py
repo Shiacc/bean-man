@@ -63,13 +63,16 @@ def font(size: int):
     return ImageFont.load_default()
 
 
-def export(src_name: str, asset: str) -> str:
+def export(src_name: str, asset: str, colors: int = 0) -> str:
     src = os.path.join(SRC, src_name)
     if not os.path.exists(src):
         sys.exit(f"找不到源图：{src}")
     img = Image.open(src).convert("RGB")
     if img.size != (1024, 1024):
         img = img.resize((1024, 1024), Image.LANCZOS)
+    if colors:
+        # 场景插画是平涂风格，128 色量化几乎无损，体积能降到原来的 1/7
+        img = img.quantize(colors=colors, method=Image.FASTOCTREE, dither=Image.NONE)
 
     dest = os.path.join(OUT, f"{asset}.imageset")
     os.makedirs(dest, exist_ok=True)
@@ -127,12 +130,14 @@ def build_sheet() -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--sheet", action="store_true", help="只重拼对照图")
+    parser.add_argument("--colors", type=int, default=128,
+                        help="量化色数；0 = 不量化（默认 128 色，约 118KB/张）")
     args = parser.parse_args()
 
     if not args.sheet:
         write_root_contents()
         for src_name, asset, label, _ in SCENES:
-            export(src_name, asset)
+            export(src_name, asset, colors=args.colors)
             print("scene", asset)
     build_sheet()
 
