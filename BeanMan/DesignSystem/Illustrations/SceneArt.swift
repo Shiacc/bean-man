@@ -71,14 +71,16 @@ struct SceneArtView: View {
             if let image = UIImage(named: scene.assetName) {
                 Image(uiImage: image)
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
                     .accessibilityLabel(scene.accessibilityLabel)
             } else {
                 placeholder
             }
         }
+        // 插画是 1:1 的：按宽度定高，避免被容器裁掉上下
+        .aspectRatio(1, contentMode: .fit)
         .frame(maxWidth: .infinity)
-        .frame(height: height)
+        .frame(maxHeight: height)
         .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)

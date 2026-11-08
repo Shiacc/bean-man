@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>豆卡单词 · 场景插画在真机布局里的样子</title>
+<style>
+  :root{
+    --brand:#E4703A; --brandTint:#FFF1E8; --bg:#FFFFFF; --surface:#F7F5F1;
+    --surfaceAlt:#EDE9E2; --border:#E6E1D8; --textPrimary:#1C1B18;
+    --textSecondary:#6E6962; --textTertiary:#A39D93;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#EDE9E2;font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;padding:36px 40px 48px;color:var(--textPrimary)}
+  h1{font-size:20px;font-weight:700;letter-spacing:.2px}
+  .sub{font-size:13px;color:var(--textSecondary);margin-top:6px}
+  .row{display:flex;gap:28px;margin-top:28px;align-items:flex-start}
+  .phone{width:390px;height:844px;background:var(--bg);border-radius:32px;overflow:hidden;
+         box-shadow:0 18px 40px rgba(28,27,24,.14);display:flex;flex-direction:column;position:relative}
+  .status{height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:14px;font-weight:600}
+  .body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px;text-align:center}
+  .scene{width:100%;border-radius:22px;border:1px solid var(--border);overflow:hidden;background:var(--surface)}
+  .scene img{display:block;width:100%;height:100%;object-fit:cover}
+  .h{width:220px;height:220px;margin-bottom:18px}
+  .w{width:264px;height:220px;margin-bottom:18px}
+  .title{font-size:22px;font-weight:700;margin-top:2px}
+  .detail{font-size:14px;color:var(--textSecondary);margin-top:8px;line-height:1.6;max-width:300px}
+  .btn{margin-top:20px;height:52px;width:100%;max-width:330px;border-radius:16px;background:var(--brand);
+       color:#fff;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center}
+  .btn.ghost{background:#fff;color:var(--textPrimary);border:1px solid var(--border);margin-top:12px}
+  .tabbar{height:84px;border-top:1px solid var(--border);display:flex;align-items:flex-start;padding-top:10px;background:var(--bg)}
+  .tab{flex:1;text-align:center;font-size:11px;color:var(--textTertiary)}
+  .tab.on{color:var(--brand)}
+  .dot{width:22px;height:22px;margin:0 auto 4px;border-radius:7px;background:var(--surfaceAlt)}
+  .tab.on .dot{background:var(--brandTint)}
+  .dots{display:flex;gap:6px;justify-content:center;padding:10px 0 6px}
+  .dots i{width:7px;height:7px;border-radius:50%;background:var(--surfaceAlt)}
+  .dots i.on{background:var(--brand);width:16px}
+  .label{font-size:12px;color:var(--textTertiary);margin-top:14px;text-align:center}
+  .cap{margin-top:10px;font-size:11px;color:var(--textTertiary);text-align:center}
+  .statRow{display:flex;gap:10px;margin-top:18px;width:100%}
+  .stat{flex:1;background:var(--surface);border-radius:16px;padding:14px 8px}
+  .stat b{display:block;font-size:24px;font-weight:700}
+  .stat span{font-size:11px;color:var(--textSecondary)}
+</style>
+</head>
+<body>
+  <h1>场景插画 · 在真实布局里的样子</h1>
+  <div class="sub">390 × 844 · 与 App 里的实际排版一致（插画保留米色底，圆角 22，描边 #E6E1D8）</div>
+
+  <div class="row">
+    <!-- 1 引导第一步 -->
+    <div>
+      <div class="phone">
+        <div class="status"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
+        <div class="body" style="justify-content:flex-start;padding-top:8px;text-align:left">
+          <div class="scene w"><img src="../../BeanMan/Resources/Assets.xcassets/Illustrations/SceneOnboardingWelcome.imageset/scene.png" alt=""></div>
+          <div style="width:100%">
+            <div class="title">每天背一点，打开就能学</div>
+            <div class="detail">先定个每日计划：每天多少个新词、复习上限多少。<br>之后想改，设置里随时能调。</div>
+          </div>
+          <div class="dots" style="padding-top:26px"><i class="on"></i><i></i><i></i><i></i></div>
+        </div>
+        <div style="padding:0 20px 28px"><div class="btn">下一步</div></div>
+      </div>
+      <div class="label">引导 · 第 1 步（SceneOnboardingWelcome）</div>
+    </div>
+
+    <!-- 2 词库空态 -->
+    <div>
+      <div class="phone">
+        <div class="status"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div style="padding:8px 20px 4px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:26px;font-weight:700">词库</span>
+          <span style="color:var(--brand);font-size:15px;font-weight:600">＋ 导入</span>
+        </div>
+        <div class="body">
+          <div class="scene w"><img src="../../BeanMan/Resources/Assets.xcassets/Illustrations/SceneEmptyDeck.imageset/scene.png" alt=""></div>
+          <div class="title" style="font-size:20px">还没有词库，先导入一个？</div>
+          <div class="detail">支持 CSV 文件，或者直接粘贴表格</div>
+          <div class="btn">导入词库</div>
+        </div>
+        <div class="tabbar">
+          <div class="tab"><div class="dot"></div>今日</div>
+          <div class="tab on"><div class="dot"></div>词库</div>
+          <div class="tab"><div class="dot"></div>统计</div>
+          <div class="tab"><div class="dot"></div>设置</div>
+        </div>
+      </div>
+      <div class="label">词库空态（SceneEmptyDeck）</div>
+    </div>
+
+    <!-- 3 生词本空态 -->
+    <div>
+      <div class="phone">
+        <div class="status"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div style="padding:8px 20px 4px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:26px;font-weight:700">生词本</span>
+          <span style="font-size:14px;color:var(--textSecondary)">0 个</span>
+        </div>
+        <div class="body">
+          <div class="scene w"><img src="../../BeanMan/Resources/Assets.xcassets/Illustrations/SceneEmptyFavorites.imageset/scene.png" alt=""></div>
+          <div class="title" style="font-size:20px">还没有收藏的词</div>
+          <div class="detail">学习卡上长按单词就能收进来</div>
+        </div>
+        <div class="tabbar">
+          <div class="tab on"><div class="dot"></div>今日</div>
+          <div class="tab"><div class="dot"></div>词库</div>
+          <div class="tab"><div class="dot"></div>统计</div>
+          <div class="tab"><div class="dot"></div>设置</div>
+        </div>
+      </div>
+      <div class="label">生词本空态（SceneEmptyFavorites）</div>
+    </div>
+
+    <!-- 4 完成页 -->
+    <div>
+      <div class="phone">
+        <div class="status"><span>9:41</span><span>5G ▮▮▮</span></div>
+        <div class="body" style="justify-content:flex-start;padding-top:20px">
+          <div class="scene h" style="width:200px;height:200px"><img src="../../BeanMan/Resources/Assets.xcassets/Illustrations/SceneOnboardingDone.imageset/scene.png" alt=""></div>
+          <div class="title">今天的词过完了</div>
+          <div class="detail">12 个词，用了 6 分 12 秒。明天见。</div>
+          <div class="statRow">
+            <div class="stat"><b>83%</b><span>正确率</span></div>
+            <div class="stat"><b>7</b><span>连续打卡</span></div>
+            <div class="stat"><b>5</b><span>剩余到期</span></div>
+          </div>
+          <div style="width:100%;margin-top:24px">
+            <div class="btn">回到今日</div>
+            <div class="btn ghost">再复习错词</div>
+          </div>
+        </div>
+      </div>
+      <div class="label">学习完成页（SceneOnboardingDone）</div>
+    </div>
+  </div>
+
+  <div class="cap">插画由 gemini-3.1-flash-image-preview 生成 · 米色底 #FFF9F3 · 与 20 只贴纸角色同一套描边与配色</div>
+</body>
+</html>
