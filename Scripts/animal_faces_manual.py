@@ -27,22 +27,28 @@ def apply(src: Path, out: Path, pairs, header: str) -> None:
 
 # ---------------- 05 竹竹（熊猫）：深色斜眼罩 + 白色高光 ----------------
 PANDA = A / "05-zhuzhu-panda" / "source"
-panda_hi = """  <!-- 高光 -->
-  <circle cx="424" cy="466" r="20" fill="#FFFFFF"/>
-  <circle cx="616" cy="466" r="20" fill="#FFFFFF"/>
-  <circle cx="404" cy="510" r="9" fill="#FFFFFF" opacity="0.7"/>
-  <circle cx="596" cy="510" r="9" fill="#FFFFFF" opacity="0.7"/>
+panda_hi = """  <!-- 眼睛：白眼球 + 深瞳 + 高光 -->
+  <ellipse cx="420" cy="492" rx="34" ry="38" fill="#FFFFFF"/>
+  <ellipse cx="604" cy="492" rx="34" ry="38" fill="#FFFFFF"/>
+  <circle cx="424" cy="498" r="20" fill="#1C1B18"/>
+  <circle cx="600" cy="498" r="20" fill="#1C1B18"/>
+  <circle cx="417" cy="487" r="8" fill="#FFFFFF"/>
+  <circle cx="593" cy="487" r="8" fill="#FFFFFF"/>
 """
 
 
 def panda_arc(kind: str) -> str:
     # 眼罩中心 (416,486) / (608,486)，随眼罩一起旋转 ±16°
+# 眼罩中心约 (418,492) / (606,492)；闭眼线要画成奶白色，否则在深色眼罩上看不见
     if kind == "happy":
-        left = 'M 372 482 Q 416 448 460 482'
-        right = 'M 564 482 Q 608 448 652 482'
+        left = 'M 380 496 Q 418 462 456 496'
+        right = 'M 568 496 Q 606 462 644 496'
+    elif kind == "sleepy":
+        left = 'M 380 488 Q 418 520 456 488'
+        right = 'M 568 488 Q 606 520 644 488'
     else:
-        left = 'M 372 486 Q 416 516 460 486'
-        right = 'M 564 486 Q 608 516 652 486'
+        left = 'M 380 494 Q 418 520 456 494'
+        right = 'M 568 494 Q 606 520 644 494'
     extra = ""
     if kind == "sleepy":
         extra = """
@@ -89,8 +95,8 @@ def frog_arc(kind: str) -> str:
         a, b = 'M 366 344 Q 394 306 422 344', 'M 566 344 Q 594 306 622 344'
     else:
         a, b = 'M 366 338 Q 394 372 422 338', 'M 566 338 Q 594 372 622 338'
-    return f"""  <path d="{a}" fill="none" stroke="#3A2A22" stroke-width="13" stroke-linecap="round"/>
-  <path d="{b}" fill="none" stroke="#3A2A22" stroke-width="13" stroke-linecap="round"/>
+    return f"""  <path d="{a}" fill="none" stroke="#FFF9F3" stroke-width="13" stroke-linecap="round"/>
+  <path d="{b}" fill="none" stroke="#FFF9F3" stroke-width="13" stroke-linecap="round"/>
 """
 
 

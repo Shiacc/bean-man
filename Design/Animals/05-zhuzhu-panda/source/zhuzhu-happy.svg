@@ -1,58 +1,61 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <!-- 竹竹 · 熊猫 v1.3 ｜ 豆卡单词
-       ink #3A2A22 / fur #FFFFFF / blush #F3A183 -->
+  <!-- 竹竹 · 熊猫 v2.0 ｜ 豆卡单词
+       ink #3A2A22 / fur #FFFFFF / blush #F3A183
+       v2 改版要点：
+       1. 眼罩改成外倾水滴（-16°），并且用 headClip 裁进头轮廓，绝不溢出
+       2. 眼罩里补白眼球 + 深瞳，v1 只有黑块加一颗高光，像戴墨镜
+       3. 耳朵变大、上移到头顶两角，只露上半圈
+       4. 身体改成「黑肩带 + 白肚 + 黑短腿 + 两只小圆爪」 -->
   <defs>
     <path id="bodyShape" d="M 330 716 C 312 840 348 900 392 906 L 632 906 C 676 900 712 840 694 716
                           C 682 634 604 600 512 600 C 420 600 342 634 330 716 Z"/>
     <clipPath id="bodyClip"><use href="#bodyShape"/></clipPath>
+    <clipPath id="headClip"><ellipse cx="512" cy="500" rx="252" ry="230"/></clipPath>
   </defs>
 
   <!-- 身体填充 -->
   <use href="#bodyShape" fill="#FFFFFF"/>
 
-  <!-- 黑色肩带（裁进身体轮廓；外边界故意超出，避免露白缝） -->
+  <!-- 黑色前肢（顺着身体两侧垂下，裁进身体轮廓） -->
   <g clip-path="url(#bodyClip)" fill="#3A2A22">
-    <path d="M 330 600 C 380 680 396 800 396 906 L 396 940 L 260 940 L 260 600 Z"/>
-    <path d="M 694 600 C 644 680 628 800 628 906 L 628 940 L 764 940 L 764 600 Z"/>
+      <path d="M 300 686 C 352 742 372 830 372 940 L 300 940 Z"/>
+    <path d="M 724 686 C 672 742 652 830 652 940 L 724 940 Z"/>
   </g>
 
-  <!-- 身体描边压在肩带上，清掉裁切毛边 -->
+  <!-- 身体描边压在黑毛上，清掉裁切毛边 -->
   <use href="#bodyShape" fill="none" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
 
-  <!-- 脚掌 -->
-  <ellipse cx="452" cy="884" rx="54" ry="36" fill="#3A2A22"/>
-  <ellipse cx="572" cy="884" rx="54" ry="36" fill="#3A2A22"/>
+  <!-- 黑短腿（收在身体轮廓里，中间留白肚） -->
+  <g clip-path="url(#bodyClip)">
+    <ellipse cx="432" cy="884" rx="62" ry="46" fill="#3A2A22"/>
+    <ellipse cx="592" cy="884" rx="62" ry="46" fill="#3A2A22"/>
+  </g>
 
-  <!-- 耳朵 -->
-  <circle cx="338" cy="300" r="74" fill="#3A2A22"/>
-  <circle cx="686" cy="300" r="74" fill="#3A2A22"/>
+  <!-- 耳朵（画在头之前，只露上半圈） -->
+  <circle cx="344" cy="308" r="88" fill="#3A2A22"/>
+  <circle cx="680" cy="308" r="88" fill="#3A2A22"/>
 
   <!-- 头 -->
   <ellipse cx="512" cy="500" rx="252" ry="230" fill="#FFFFFF" stroke="#3A2A22" stroke-width="11"/>
 
-  <!-- 黑眼圈 -->
-  <g fill="#3A2A22">
-    <ellipse cx="416" cy="486" rx="62" ry="76" transform="rotate(-16 416 486)"/>
-    <ellipse cx="608" cy="486" rx="62" ry="76" transform="rotate(16 608 486)"/>
+  <!-- 眼罩：外倾水滴，裁进头轮廓 -->
+  <g clip-path="url(#headClip)">
+    <ellipse cx="414" cy="492" rx="82" ry="108" transform="rotate(-18 418 492)" fill="#3A2A22"/>
+    <ellipse cx="610" cy="492" rx="82" ry="108" transform="rotate(18 606 492)" fill="#3A2A22"/>
   </g>
 
   <!-- 眼罩里的闭眼（happy） -->
   <g fill="none" stroke="#FFF1E8" stroke-width="13" stroke-linecap="round">
-    <g transform="rotate(-16 416 486)"><path d="M 372 482 Q 416 448 460 482"/></g>
-    <g transform="rotate(16 608 486)"><path d="M 564 482 Q 608 448 652 482"/></g>
+    <g transform="rotate(-16 416 486)"><path d="M 380 496 Q 418 462 456 496"/></g>
+    <g transform="rotate(16 608 486)"><path d="M 568 496 Q 606 462 644 496"/></g>
   </g>
 
-  <!-- 鼻子 -->
-  <path d="M 494 566 C 494 550 530 550 530 566 C 530 582 512 592 512 592
-           C 512 592 494 582 494 566 Z" fill="#3A2A22"/>
-
-  <!-- 嘴 -->
-  <path d="M 512 592 L 512 608 M 512 608 C 512 628 492 638 480 628 M 512 608 C 512 628 532 638 544 628"
+  <!-- 鼻子与嘴 -->
+  <path d="M 494 576 Q 512 566 530 576 Q 530 598 512 604 Q 494 598 494 576 Z" fill="#3A2A22"/>
+  <path d="M 512 604 L 512 620 M 512 620 Q 492 636 478 622 M 512 620 Q 532 636 546 622"
         fill="none" stroke="#3A2A22" stroke-width="9" stroke-linecap="round"/>
 
   <!-- 腮红 -->
-  <g fill="#F3A183" opacity="0.5">
-    <ellipse cx="356" cy="606" rx="46" ry="26"/>
-    <ellipse cx="668" cy="606" rx="46" ry="26"/>
-  </g>
+  <ellipse cx="356" cy="616" rx="44" ry="23" fill="#F3A183" opacity="0.55"/>
+  <ellipse cx="668" cy="616" rx="44" ry="23" fill="#F3A183" opacity="0.55"/>
 </svg>
