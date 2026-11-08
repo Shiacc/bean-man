@@ -1403,7 +1403,7 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | 11 | 设置（含升级入口） | 已交付 | `Views/Settings/SettingsView.swift` | 恢复内置库、深色模式逐页校对 |
 | 12 | 本地提醒 | 部分 | `Services/Notification/NotificationService.swift` | 设置页开关已连，真机未验 |
 | 13 | 小豆文案 / 气泡 / 引导 | 已交付 | `DesignSystem/Assistant/*`、`Bubbles/*`、`Hints/*` | 更多场景文案 |
-| 14 | 小动物（20 只） | **主立绘 20/20** | `DesignSystem/Animals/*`、`Assets.xcassets/Animals/*` | 表情三连与动作帧 |
+| 14 | 小动物（20 只） | **主立绘 + 表情 20/20** | `DesignSystem/Animals/*`、`Assets.xcassets/Animals/*`（80 个图集） | 动作帧（idle/跳/挥手）未做 |
 | 15 | 弹幕复习（F16） | 已交付 | `Views/Danmaku/*`、`ViewModels/DanmakuReviewViewModel.swift` | 「只看错词/生词/全部」筛选已上顶栏 |
 | 16 | 手势交互（F17） | 已交付 | `StudyView` 的 swipe / long press + `StudyViewModel.undo` | 无 |
 | 17 | 单词本卡片流（F18） | 已交付 | `Views/WrongBook/WrongBookCardsView.swift` | 无 |
