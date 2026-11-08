@@ -82,12 +82,16 @@ def trim_and_square(img: Image.Image, pad_ratio: float = 0.04) -> Image.Image:
     return canvas
 
 
+def save_small(img: Image.Image, path: Path, colors: int = 64) -> None:
+    """存成 PNG8 调色板图：纯色扁平图 256 色足够，体积只有原来的 1/5 左右。"""
+    img.convert("RGBA").quantize(colors=colors, method=Image.FASTOCTREE,
+                                 dither=Image.Dither.NONE).save(path, "PNG", optimize=True)
 def write_imageset(square: Image.Image, out_root: Path, name: str, display: str, one_scale: bool = False) -> Path:
     """生成 Name.imageset（默认 @1x=256 / @2x=512 / @3x=768；one_scale 时只出一张 512 通用图）。"""
     if one_scale:
         imageset = out_root / f"{name}.imageset"
         imageset.mkdir(parents=True, exist_ok=True)
-        square.resize((512, 512), Image.LANCZOS).save(imageset / f"{name.lower()}.png")
+        save_small(square.resize((512, 512), Image.LANCZOS), imageset / f"{name.lower()}.png")
         contents = {
             "images": [{"filename": f"{name.lower()}.png", "idiom": "universal"}],
             "info": {"author": "xcode", "version": 1},
@@ -99,7 +103,7 @@ def write_imageset(square: Image.Image, out_root: Path, name: str, display: str,
     imageset.mkdir(parents=True, exist_ok=True)
     for scale, px in ((1, 256), (2, 512), (3, 768)):
         suffix = "" if scale == 1 else f"@{scale}x"
-        square.resize((px, px), Image.LANCZOS).save(imageset / f"{name.lower()}{suffix}.png")
+        save_small(square.resize((px, px), Image.LANCZOS), imageset / f"{name.lower()}{suffix}.png")
     contents = {
         "images": [
             {"filename": f"{name.lower()}.png", "idiom": "universal", "scale": "1x"},
