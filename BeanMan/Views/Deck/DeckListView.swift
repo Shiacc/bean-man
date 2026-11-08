@@ -114,7 +114,8 @@ struct DeckListView: View {
 
     private var emptyState: some View {
         VStack(spacing: 18) {
-            AnimalView(animal: .gulu, size: 132)
+            SceneArtView(scene: .emptyDeck, height: 220)
+                .padding(.horizontal, 28)
             XiaodouSpeech(line: "还没有词库，先导入一个？",
                           detail: "支持 CSV 文件，或者直接粘贴表格",
                           edge: .top)

@@ -240,7 +240,8 @@ struct QuizView: View {
 
     private var emptyState: some View {
         VStack(spacing: 18) {
-            AnimalView(animal: .paopao, size: 132)
+            SceneArtView(scene: .emptyQuiz, height: 220)
+                .padding(.horizontal, 28)
             XiaodouSpeech(line: "先学几个词，测试才有题",
                           detail: "学过的词不少于 4 个就能出题",
                           edge: .top)

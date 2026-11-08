@@ -97,6 +97,7 @@ BeanMan/
     Assistant/Xiaodou.swift  小豆文案层（纯本地，不联网）
     Animals/Animal.swift     20 只小动物：名字 / 用途 / 配色 / 素材名
     Animals/AnimalView.swift 立绘 + 缺图占位 + 眨眼呼吸动画
+    Illustrations/SceneArt.swift 场景插画（引导 / 空状态 / 庆祝，保留米色底）
     Bubbles/SpeechBubble.swift   对话气泡（5 种语气 × 4 个尾巴方向）
     Bubbles/CompanionBubble.swift 小动物 + 气泡的组合
     Hints/HintCenter.swift   引导提示的调度与持久化（纯逻辑可单测）
@@ -132,6 +133,8 @@ BeanMan/
     Insights/InsightEngine.swift   最佳时段 / 积压 / 连续风险 / 常错词 + 3 个推荐词
   Resources/
     Assets.xcassets/Animals/…     20 只主立绘（AI 极简贴纸 v2，256/512/768，PNG8 共约 0.6MB）
+    Assets.xcassets/Animals/…*Happy|Blink|Sleepy  表情变体（512 单档）
+    Assets.xcassets/Illustrations/… 16 张场景插画（引导 / 空状态 / 庆祝，1024 单档）
 BeanManTests/
   SRSAlgorithmTests.swift    算法 7 组断言
   StudyRepositoryTests.swift 队列 / 限额 / 写回 / 打卡
@@ -166,7 +169,7 @@ Scripts/
 - [ ] 全部学完出现完成页：正确率 / 用时 / 连续打卡 + 小豆的一句话
 - [ ] 深色模式下卡片、文字、按钮都正常
 - [ ] 首次进今日页会弹一次引导（挖洞 + 脉冲环 + 说明），点「知道了」后不再出现
-- [ ] 设置 → 设计验收：气泡 5 种语气、4 个尾巴方向、20 只动物表情矩阵、引导动画演示、素材自检
+- [ ] 设置 → 设计验收：气泡 5 种语气、4 个尾巴方向、20 只动物表情矩阵、16 张场景插画、引导动画演示、素材自检
 - [ ] 学习时点「不认识 / 模糊」→ 今日页「错词本 N 个」+1；点进去能按「待复习 / 全部 / 已移出」筛选、搜索、滑动移出、点开详情看学习状态
 - [ ] 错词本底部「复习这 N 个错词」进入专项复习，完成页标题是「这轮错词过完了」
 - [ ] 词库页能看到示例词库和词数，点进去能搜「abandon」、滑动删词、右上角「设为当前」

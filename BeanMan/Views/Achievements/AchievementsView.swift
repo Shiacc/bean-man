@@ -118,7 +118,8 @@ struct AchievementCelebrationView: View {
                 .onTapGesture(perform: onDismiss)
 
             VStack(spacing: 12) {
-                AnimalView(animal: .buding, size: 104, expression: .happy, animated: true)
+                SceneArtView(scene: .achievement, height: 172)
+                    .padding(.horizontal, 4)
                 Text("解锁：\(achievement.title)")
                     .font(Theme.Font.cardTitle)
                     .foregroundStyle(Theme.Palette.textPrimary)

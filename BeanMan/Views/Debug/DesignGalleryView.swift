@@ -40,6 +40,7 @@ struct DesignGalleryView: View {
                 edgeSection
                 companionSection
                 animalSection
+                sceneSection
                 hintSection
                 auditSection
             }
@@ -208,6 +209,23 @@ struct DesignGalleryView: View {
                     center.resetAll()
                 }
                 .font(.system(size: 14, weight: .medium))
+            }
+        }
+    }
+
+    // MARK: 场景插画
+
+    private var sceneSection: some View {
+        section("场景插画") {
+            VStack(alignment: .leading, spacing: 12) {
+                ForEach(SceneArt.allCases) { scene in
+                    VStack(alignment: .leading, spacing: 6) {
+                        SceneArtView(scene: scene, height: 168)
+                        Text("\(scene.assetName) · \(scene.isAvailable ? "已接入" : "缺图（回落占位）")")
+                            .font(.system(size: 11))
+                            .foregroundStyle(scene.isAvailable ? Theme.Palette.textSecondary : Theme.Palette.warning)
+                    }
+                }
             }
         }
     }

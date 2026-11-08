@@ -145,8 +145,9 @@ struct WrongBookView: View {
     private var emptyState: some View {
         ScrollView {
             VStack(spacing: 0) {
-                AnimalView(animal: .xueqiu, size: 132, expression: .sleepy)
-                    .padding(.top, 36)
+                SceneArtView(scene: .emptyWrongBook, height: 220)
+                    .padding(.top, 28)
+                    .padding(.horizontal, 44)
 
                 Text(viewModel.emptyTitle)
                     .font(Theme.Font.cardTitle)

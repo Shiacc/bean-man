@@ -30,6 +30,16 @@ struct OnboardingView: View {
 
     private let newOptions = [10, 20, 30]
 
+    /// 每一步配一张场景插画：先讲「谁在陪你」，再讲「要你填什么」。
+    private var heroScene: SceneArt {
+        switch step {
+        case 0: .onboardingWelcome
+        case 1: .onboardingReminder
+        case 2: .onboardingPlan
+        default: .review
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             progressDots
@@ -37,6 +47,7 @@ struct OnboardingView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
+                    SceneArtView(scene: heroScene, height: 176)
                     switch step {
                     case 0: planStep
                     case 1: reminderStep

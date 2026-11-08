@@ -36,12 +36,13 @@ struct StudySummaryView: View {
                 // 出场：从 0.86 弹到 1，同时撒一圈纸屑；Reduce Motion 时直接定格。
                 ZStack {
                     ConfettiBurst(isActive: celebrating)
-                    AnimalView(animal: .buding, size: 140, expression: .happy, animated: true)
+                    SceneArtView(scene: .onboardingDone, height: 200)
+                        .padding(.horizontal, 48)
                         .scaleEffect(celebrating ? 1 : 0.86)
                         .opacity(celebrating ? 1 : 0)
                         .offset(y: celebrating ? 0 : 10)
                 }
-                .frame(height: 176)
+                .frame(height: 208)
                 .padding(.top, 36)
                 .onAppear {
                     guard !UIAccessibility.isReduceMotionEnabled else {
