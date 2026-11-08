@@ -1,13 +1,15 @@
 name: iOS 构建与单测
 
 # 用途：在没有 Mac 的开发机上验证「能不能编译、单测过不过」，并截出模拟器首页。
-# 触发：push 到 main、PR、手动 Run workflow。
+# 触发：push 到 dev、PR、打 v* tag、手动 Run workflow。main 是空基线，不跑 CI。
 # 前提：仓库要镜像到 GitHub（Gitee 没有 macOS runner），见 Docs/03-无Mac编译与上线.md。
 
 on:
   push:
-    branches: [main]
+    branches: [dev]
+    tags: ["v*"]
   pull_request:
+    branches: [dev]
   workflow_dispatch:
 
 jobs:
