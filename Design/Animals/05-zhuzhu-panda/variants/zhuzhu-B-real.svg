@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <path id="bodyShape" d="M 330 764 C 312 884 370 896 392 902 L 632 902 C 654 896 712 884 694 764 C 682 682 586 648 512.0 648 C 438 648 342 682 330 764 Z"/>
+    <clipPath id="bodyClip"><use href="#bodyShape"/></clipPath>
+    <ellipse id="headShape" cx="512" cy="496" rx="244" ry="222"/>
+    <clipPath id="headClip"><use href="#headShape"/></clipPath>
+  </defs>
+
+  <!-- 身体：白底 → 黑肢 → 奶油肚 → 压描边（描边在头之前，头会盖住上沿） -->
+  <use href="#bodyShape" fill="#FFF9F3"/>
+  <g clip-path="url(#bodyClip)">
+    <ellipse cx="386" cy="766" rx="76" ry="104" fill="#2E2420" transform="rotate(16 386 766)"/><ellipse cx="638" cy="766" rx="76" ry="104" fill="#2E2420" transform="rotate(-16 638 766)"/>
+    <path d="M 312 722 C 356 780 402 864 402 942 L 312 942 Z" fill="#2E2420"/><path d="M 712 722 C 668 780 622 864 622 942 L 712 942 Z" fill="#2E2420"/>
+    <ellipse cx="434" cy="906" rx="52" ry="28" fill="#2E2420"/><ellipse cx="590" cy="906" rx="52" ry="28" fill="#2E2420"/>
+  </g>
+  <ellipse cx="512.0" cy="808" rx="106" ry="76" fill="#FFF9F3" stroke="none"/>
+  <use href="#bodyShape" fill="none" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 耳朵在头之前 -->
+  <circle cx="351" cy="323" r="92" fill="#2E2420" stroke="#3A2A22" stroke-width="11"/><circle cx="673" cy="323" r="92" fill="#2E2420" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 头 + 五官，全部裁进头轮廓 -->
+  <use href="#headShape" fill="#FFF9F3"/>
+  <g clip-path="url(#headClip)">
+    <ellipse cx="410" cy="502" rx="70" ry="94" fill="#2E2420" transform="rotate(-24 410 502)"/><ellipse cx="614" cy="502" rx="70" ry="94" fill="#2E2420" transform="rotate(24 614 502)"/>
+    <ellipse cx="408" cy="500" rx="25" ry="29" fill="#FFFFFF" stroke="none"/><circle cx="408" cy="502" r="14" fill="#241C17" stroke="none"/><circle cx="403" cy="492" r="4" fill="#FFFFFF" stroke="none"/><ellipse cx="616" cy="500" rx="25" ry="29" fill="#FFFFFF" stroke="none"/><circle cx="616" cy="502" r="14" fill="#241C17" stroke="none"/><circle cx="612" cy="492" r="4" fill="#FFFFFF" stroke="none"/>
+    <ellipse cx="512.0" cy="598" rx="68" ry="44" fill="#FFF9F3" stroke="none"/><path d="M 482 564 Q 512 590 542 564" fill="none" stroke="#3A2A22" stroke-width="9" stroke-linecap="round"/><path d="M 512 586 L 512 614" fill="none" stroke="#3A2A22" stroke-width="9" stroke-linecap="round"/>
+    
+  </g>
+  <use href="#headShape" fill="none" stroke="#3A2A22" stroke-width="11"/>
+</svg>
