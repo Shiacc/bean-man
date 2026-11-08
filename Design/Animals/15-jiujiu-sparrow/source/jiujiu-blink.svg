@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 啾啾 · 麻雀 v1.0 ｜ 豆卡单词
+       blue #9BB4C9 / blueDark #7E9AB3 / cream #F6EFE4 / beak #E8A24A / outline #3A2A22 -->
+  <!-- 尾巴 -->
+  <path d="M 540 828 L 664 890 L 660 852 L 552 800 Z"
+        fill="#7E9AB3" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 身体 -->
+  <ellipse cx="500" cy="700" rx="196" ry="196" fill="#9BB4C9" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 肚子 -->
+  <ellipse cx="478" cy="768" rx="114" ry="96" fill="#F6EFE4"/>
+
+  <!-- 翅膀 -->
+  <path d="M 604 632 C 676 652 700 716 676 774 C 630 768 596 726 586 686 Z"
+        fill="#7E9AB3" stroke="#3A2A22" stroke-width="10" stroke-linejoin="round"/>
+
+  <!-- 脚 -->
+  <path d="M 452 880 L 452 916 M 452 916 L 424 936 M 452 916 L 452 940 M 452 916 L 480 936
+           M 530 880 L 530 916 M 530 916 L 502 936 M 530 916 L 530 940 M 530 916 L 558 936"
+        fill="none" stroke="#3A2A22" stroke-width="9" stroke-linecap="round"/>
+
+  <!-- 头 -->
+  <circle cx="470" cy="470" r="196" fill="#9BB4C9" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 头顶呆毛 -->
+  <path d="M 452 278 C 440 236 452 214 470 206 M 470 206 C 486 232 490 254 486 274"
+        fill="none" stroke="#3A2A22" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- 眼 -->
+  <g>
+    <path d="M 367.9 460.2 Q 404.0 491.7 440.1 460.2" fill="none" stroke="#3A2A22" stroke-width="11.0" stroke-linecap="round"/>
+    <path d="M 499.9 460.2 Q 536.0 491.7 572.1 460.2" fill="none" stroke="#3A2A22" stroke-width="11.0" stroke-linecap="round"/>
+    
+    
+  </g>
+
+  <!-- 喙 -->
+  <path d="M 470 520 L 522 544 L 470 566 Z" fill="#E8A24A" stroke="#3A2A22" stroke-width="8" stroke-linejoin="round"/>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.55">
+    <ellipse cx="352" cy="536" rx="38" ry="20"/>
+    <ellipse cx="588" cy="536" rx="38" ry="20"/>
+  </g>
+</svg>

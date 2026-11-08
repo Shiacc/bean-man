@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 雪球 · 白兔 v1.0 ｜ 豆卡单词
+       fur #EDE7DD / furShade #DCD3C4 / inner #F6C1B4 / outline #3A2A22 / blush #F3A183 -->
+  <!-- 耳朵（直立，画在头之前） -->
+  <path d="M 388 400 C 362 268 372 168 404 138 C 452 168 470 286 466 386 Z"
+        fill="#EDE7DD" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+  <path d="M 636 400 C 662 268 652 168 620 138 C 572 168 554 286 558 386 Z"
+        fill="#EDE7DD" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+  <path d="M 402 380 C 386 276 394 196 410 174 C 438 202 450 292 446 372 Z" fill="#F6C1B4"/>
+  <path d="M 622 380 C 638 276 630 196 614 174 C 586 202 574 292 578 372 Z" fill="#F6C1B4"/>
+
+  <!-- 身体 -->
+  <path d="M 324 706 C 308 840 364 912 512 912 C 660 912 716 840 700 706
+           C 688 622 606 590 512 590 C 418 590 336 622 324 706 Z"
+        fill="#EDE7DD" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 肚子 -->
+  <ellipse cx="512" cy="806" rx="122" ry="98" fill="#FFFFFF"/>
+
+  <!-- 脚 -->
+  <ellipse cx="436" cy="888" rx="56" ry="32" fill="#FFFFFF" stroke="#3A2A22" stroke-width="9"/>
+  <ellipse cx="588" cy="888" rx="56" ry="32" fill="#FFFFFF" stroke="#3A2A22" stroke-width="9"/>
+
+  <!-- 头 -->
+  <ellipse cx="512" cy="530" rx="238" ry="204" fill="#EDE7DD" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 眼 -->
+  <g>
+    <path d="M 403.9 527.6 Q 440.0 559.9 476.1 527.6" fill="none" stroke="#3A2A22" stroke-width="11.0" stroke-linecap="round"/><path d="M 397.9 519.6 L 385.9 507.6" fill="none" stroke="#3A2A22" stroke-width="6.6" stroke-linecap="round" opacity="0.85"/><path d="M 482.1 519.6 L 494.1 507.6" fill="none" stroke="#3A2A22" stroke-width="6.6" stroke-linecap="round" opacity="0.85"/>
+    <path d="M 547.9 527.6 Q 584.0 559.9 620.1 527.6" fill="none" stroke="#3A2A22" stroke-width="11.0" stroke-linecap="round"/><path d="M 541.9 519.6 L 529.9 507.6" fill="none" stroke="#3A2A22" stroke-width="6.6" stroke-linecap="round" opacity="0.85"/><path d="M 626.1 519.6 L 638.1 507.6" fill="none" stroke="#3A2A22" stroke-width="6.6" stroke-linecap="round" opacity="0.85"/>
+    
+    
+  </g>
+
+  <!-- 鼻子（粉色小三角） -->
+  <path d="M 494 592 L 530 592 L 512 610 Z" fill="#F3888C" stroke="#3A2A22" stroke-width="7" stroke-linejoin="round"/>
+
+  <!-- 嘴 + 门牙 -->
+  <path d="M 512 610 L 512 620 M 512 620 C 512 634 496 640 486 632 M 512 620 C 512 634 528 640 538 632"
+        fill="none" stroke="#3A2A22" stroke-width="8" stroke-linecap="round"/>
+  <g fill="#FFFFFF" stroke="#3A2A22" stroke-width="5">
+    <rect x="500" y="622" width="11" height="18" rx="3"/>
+    <rect x="513" y="622" width="11" height="18" rx="3"/>
+  </g>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.55">
+    <ellipse cx="386" cy="596" rx="42" ry="22"/>
+    <ellipse cx="638" cy="596" rx="42" ry="22"/>
+  </g>
+
+  <!-- 尾球 -->
+  <circle cx="676" cy="844" r="42" fill="#FFFFFF" stroke="#3A2A22" stroke-width="11"/>
+</svg>

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 泡泡 · 水獭 v1.0 ｜ 豆卡单词
+       teal #6FA8A0 / tealDark #558A83 / cream #F6EFE4 / outline #3A2A22 / blush #F3A183 -->
+  <!-- 身体 -->
+  <path d="M 326 706 C 308 838 362 912 512 912 C 662 912 716 838 698 706
+           C 686 626 606 592 512 592 C 418 592 338 626 326 706 Z"
+        fill="#6FA8A0" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 肚子 -->
+  <ellipse cx="512" cy="806" rx="128" ry="100" fill="#F6EFE4"/>
+
+  <!-- 前爪（抱在胸前） -->
+  <ellipse cx="418" cy="742" rx="56" ry="44" transform="rotate(-12 418 742)"
+           fill="#558A83" stroke="#3A2A22" stroke-width="9"/>
+  <ellipse cx="606" cy="742" rx="56" ry="44" transform="rotate(12 606 742)"
+           fill="#558A83" stroke="#3A2A22" stroke-width="9"/>
+
+  <!-- 脚 -->
+  <ellipse cx="434" cy="888" rx="52" ry="32" fill="#558A83" stroke="#3A2A22" stroke-width="9"/>
+  <ellipse cx="590" cy="888" rx="52" ry="32" fill="#558A83" stroke="#3A2A22" stroke-width="9"/>
+
+  <!-- 耳朵 -->
+  <circle cx="342" cy="332" r="52" fill="#6FA8A0" stroke="#3A2A22" stroke-width="11"/>
+  <circle cx="682" cy="332" r="52" fill="#6FA8A0" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 头 -->
+  <ellipse cx="512" cy="496" rx="246" ry="222" fill="#6FA8A0" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 嘴部奶油区（两个圆拼成的「八」字） -->
+  <g fill="#F6EFE4">
+    <circle cx="462" cy="566" r="82"/>
+    <circle cx="562" cy="566" r="82"/>
+    <rect x="462" y="566" width="100" height="82" rx="40"/>
+  </g>
+
+  <!-- 眼睛 -->
+  <g>
+    <path d="M 380.3 475.0 Q 424.0 512.5 467.7 475.0" fill="none" stroke="#3A2A22" stroke-width="11.5" stroke-linecap="round"/>
+    <path d="M 556.3 475.0 Q 600.0 512.5 643.7 475.0" fill="none" stroke="#3A2A22" stroke-width="11.5" stroke-linecap="round"/>
+    
+    
+  </g>
+
+  <!-- 鼻子 -->
+  <path d="M 488 542 C 488 526 536 526 536 542 C 536 558 512 570 512 570
+           C 512 570 488 558 488 542 Z" fill="#3A2A22"/>
+
+  <!-- 嘴 -->
+  <path d="M 512 570 L 512 586 M 512 586 C 512 604 492 612 480 604 M 512 586 C 512 604 532 612 544 604"
+        fill="none" stroke="#3A2A22" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- 胡须 -->
+  <g stroke="#3A2A22" stroke-width="5" stroke-linecap="round" opacity="0.75">
+    <path d="M 424 578 L 350 566"/>
+    <path d="M 424 596 L 352 600"/>
+    <path d="M 600 578 L 674 566"/>
+    <path d="M 600 596 L 672 600"/>
+  </g>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.5">
+    <ellipse cx="356" cy="600" rx="42" ry="22"/>
+    <ellipse cx="668" cy="600" rx="42" ry="22"/>
+  </g>
+</svg>

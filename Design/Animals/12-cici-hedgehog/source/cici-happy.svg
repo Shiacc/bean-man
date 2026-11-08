@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 刺刺 · 刺猬 v1.1 ｜ 豆卡单词
+       quill #A9744F / quillDark #8C5C3D / face #F6E6D2 / outline #3A2A22 / blush #F3A183 -->
+  <!-- 刺（一整片锯齿斗篷，底边埋进身体，避免三角形悬空） -->
+  <path d="M 288 720 L 318 520 L 368 610 L 400 436 L 448 566 L 486 372 L 540 566
+           L 578 400 L 618 572 L 664 452 L 700 606 L 736 720 Z"
+        fill="#8C5C3D" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 身体 -->
+  <path d="M 316 700 C 300 838 358 912 512 912 C 666 912 724 838 708 700
+           C 694 610 610 578 512 578 C 414 578 330 610 316 700 Z"
+        fill="#A9744F" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 脸 -->
+  <path d="M 512 604 C 416 604 358 664 368 760 C 376 842 436 884 512 884
+           C 588 884 648 842 656 760 C 666 664 608 604 512 604 Z"
+        fill="#F6E6D2" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 小圆耳 -->
+  <circle cx="372" cy="648" r="42" fill="#A9744F" stroke="#3A2A22" stroke-width="10"/>
+  <circle cx="652" cy="648" r="42" fill="#A9744F" stroke="#3A2A22" stroke-width="10"/>
+
+  <!-- 眼睛 -->
+  <g>
+    <path d="M 410.6 730.1 Q 442.0 699.1 473.4 730.1" fill="none" stroke="#3A2A22" stroke-width="11.0" stroke-linecap="round"/>
+    <path d="M 550.6 730.1 Q 582.0 699.1 613.4 730.1" fill="none" stroke="#3A2A22" stroke-width="11.0" stroke-linecap="round"/>
+    
+    
+  </g>
+
+  <!-- 鼻子 -->
+  <circle cx="512" cy="782" r="25" fill="#3A2A22"/>
+  <circle cx="504" cy="774" r="8" fill="#FFFFFF" opacity="0.8"/>
+
+  <!-- 嘴 -->
+  <path d="M 512 806 L 512 818 M 512 818 C 512 834 494 842 482 832 M 512 818 C 512 834 530 842 542 832"
+        fill="none" stroke="#3A2A22" stroke-width="9" stroke-linecap="round"/>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.55">
+    <ellipse cx="400" cy="806" rx="38" ry="21"/>
+    <ellipse cx="624" cy="806" rx="38" ry="21"/>
+  </g>
+
+  <!-- 前爪 -->
+  <ellipse cx="450" cy="886" rx="46" ry="26" fill="#F6E6D2" stroke="#3A2A22" stroke-width="9"/>
+  <ellipse cx="574" cy="886" rx="46" ry="26" fill="#F6E6D2" stroke="#3A2A22" stroke-width="9"/>
+</svg>

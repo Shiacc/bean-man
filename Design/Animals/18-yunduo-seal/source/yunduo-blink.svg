@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 云朵 · 海豹 v1.0 ｜ 豆卡单词
+       seal #BFD3E0 / sealDark #9FB9CA / cream #F7FBFD / outline #3A2A22 -->
+  <!-- 尾鳍 -->
+  <path d="M 512 830 C 452 862 404 918 392 962 L 512 924 L 632 962 C 620 918 572 862 512 830 Z"
+        fill="#9FB9CA" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 身体 -->
+  <ellipse cx="512" cy="640" rx="244" ry="228" fill="#BFD3E0" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 肚子 -->
+  <ellipse cx="512" cy="712" rx="164" ry="150" fill="#F7FBFD"/>
+
+  <!-- 侧鳍 -->
+  <path d="M 300 620 C 236 660 214 720 232 764 C 276 758 314 726 326 682 Z"
+        fill="#9FB9CA" stroke="#3A2A22" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M 724 620 C 788 660 810 720 792 764 C 748 758 710 726 698 682 Z"
+        fill="#9FB9CA" stroke="#3A2A22" stroke-width="10" stroke-linejoin="round"/>
+
+
+  <!-- 眼 -->
+  <g>
+    <path d="M 380.3 561.0 Q 424.0 598.5 467.7 561.0" fill="none" stroke="#3A2A22" stroke-width="11.5" stroke-linecap="round"/>
+    <path d="M 556.3 561.0 Q 600.0 598.5 643.7 561.0" fill="none" stroke="#3A2A22" stroke-width="11.5" stroke-linecap="round"/>
+    
+    
+  </g>
+
+  <!-- 鼻与嘴 -->
+  <path d="M 490 636 C 490 620 534 620 534 636 C 534 652 512 664 512 664
+           C 512 664 490 652 490 636 Z" fill="#3A2A22"/>
+  <path d="M 512 664 L 512 680 M 512 680 C 512 696 494 704 484 696 M 512 680 C 512 696 530 704 540 696"
+        fill="none" stroke="#3A2A22" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- 胡须 -->
+  <g stroke="#3A2A22" stroke-width="5" stroke-linecap="round" opacity="0.7">
+    <path d="M 452 646 L 392 634"/>
+    <path d="M 452 662 L 394 664"/>
+    <path d="M 572 646 L 632 634"/>
+    <path d="M 572 662 L 630 664"/>
+  </g>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.5">
+    <ellipse cx="376" cy="672" rx="42" ry="22"/>
+    <ellipse cx="648" cy="672" rx="42" ry="22"/>
+  </g>
+</svg>

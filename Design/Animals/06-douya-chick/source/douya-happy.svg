@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 豆芽 · 小鸡 v1.0 ｜ 豆卡单词
+       yellow #F5C542 / light #FBE7A0 / beak #E88C2E / outline #3A2A22 / blush #F3A183 -->
+  <!-- 身体（蛋形，头身一体） -->
+  <ellipse cx="512" cy="556" rx="252" ry="262" fill="#F5C542" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 肚皮 -->
+  <ellipse cx="512" cy="642" rx="158" ry="150" fill="#FBE7A0"/>
+
+  <!-- 翅膀 -->
+  <ellipse cx="392" cy="686" rx="42" ry="58" transform="rotate(22 392 686)"
+           fill="#FBE7A0" stroke="#3A2A22" stroke-width="10"/>
+  <ellipse cx="632" cy="686" rx="42" ry="58" transform="rotate(-22 632 686)"
+           fill="#FBE7A0" stroke="#3A2A22" stroke-width="10"/>
+
+  <!-- 脚 -->
+  <g stroke="#3A2A22" stroke-width="10" stroke-linejoin="round">
+    <path d="M 470 812 L 470 856 M 470 856 L 434 886 M 470 856 L 470 892 M 470 856 L 506 886" fill="none" stroke-linecap="round"/>
+    <path d="M 554 812 L 554 856 M 554 856 L 518 886 M 554 856 L 554 892 M 554 856 L 590 886" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- 呆毛 -->
+  <path d="M 512 300 C 500 252 470 232 452 246 M 512 300 C 512 244 520 214 548 202
+           M 512 300 C 528 252 560 240 578 252"
+        fill="none" stroke="#3A2A22" stroke-width="11" stroke-linecap="round"/>
+
+  <!-- 眼睛 -->
+  <g>
+    <path d="M 390.4 523.9 Q 436.0 478.5 481.6 523.9" fill="none" stroke="#3A2A22" stroke-width="12.4" stroke-linecap="round"/>
+    <path d="M 542.4 523.9 Q 588.0 478.5 633.6 523.9" fill="none" stroke="#3A2A22" stroke-width="12.4" stroke-linecap="round"/>
+    
+    
+  </g>
+
+  <!-- 嘴（菱形） -->
+  <path d="M 512 552 L 556 584 L 512 616 L 468 584 Z" fill="#E88C2E" stroke="#3A2A22" stroke-width="8" stroke-linejoin="round"/>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.55">
+    <ellipse cx="356" cy="606" rx="44" ry="24"/>
+    <ellipse cx="668" cy="606" rx="44" ry="24"/>
+  </g>
+</svg>

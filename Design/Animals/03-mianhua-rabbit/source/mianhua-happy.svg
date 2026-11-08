@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 棉花 · 垂耳兔 v1.2 ｜ 豆卡单词
+       fur #F2D7C2 / inner #F6C1B4 / cream #FFF9F3 / outline #3A2A22 / blush #F3A183 -->
+  <defs>
+    <style>
+      .ln { stroke: #A39D93; stroke-linecap: round; fill: none; }
+    </style>
+  </defs>
+
+  <!-- 尾巴（毛球，先画，被身体压住一半） -->
+  <circle cx="672" cy="832" r="46" fill="#FFF9F3" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 身体 -->
+  <path d="M 356 700 C 332 830 384 906 512 906 C 640 906 692 830 668 700
+           C 654 610 590 578 512 578 C 434 578 370 610 356 700 Z"
+        fill="#F2D7C2" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 胸口奶油色 -->
+  <path d="M 512 592 C 464 592 438 644 438 736 C 438 818 468 868 512 868
+           C 556 868 586 818 586 736 C 586 644 560 592 512 592 Z" fill="#FFF9F3"/>
+
+  <!-- 前爪 -->
+  <ellipse cx="442" cy="888" rx="64" ry="41" fill="#FFF9F3" stroke="#3A2A22" stroke-width="10"/>
+  <ellipse cx="582" cy="888" rx="64" ry="41" fill="#FFF9F3" stroke="#3A2A22" stroke-width="10"/>
+  <path d="M 420 892 L 420 906 M 450 892 L 450 906 M 546 892 L 546 906 M 576 892 L 576 906"
+        stroke="#D8CFC0" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- 垂耳：画在头之后面，只有露在头轮廓外的部分可见（否则会横穿脸） -->
+  <g stroke="#3A2A22" stroke-width="11" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M 322 392 C 214 452 184 556 208 638 C 224 692 286 706 326 674
+             C 366 642 370 566 350 506 C 334 458 334 416 322 392 Z" fill="#F2D7C2"/>
+    <path d="M 702 392 C 810 452 840 556 816 638 C 800 692 738 706 698 674
+             C 658 642 654 566 674 506 C 690 458 690 416 702 392 Z" fill="#F2D7C2"/>
+  </g>
+  <path d="M 336 432 C 252 484 228 570 248 638 C 260 678 302 690 330 666
+           C 356 642 358 578 344 526 C 334 486 340 456 336 432 Z" fill="#F6C1B4"/>
+  <path d="M 688 432 C 772 484 796 570 776 638 C 764 678 722 690 694 666
+           C 668 642 666 578 680 526 C 690 486 684 456 688 432 Z" fill="#F6C1B4"/>
+
+  <!-- 头（压在耳朵上面，只留耳缘） -->
+  <ellipse cx="512" cy="496" rx="250" ry="232" fill="#F2D7C2" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 眼睛 -->
+  <g>
+    <path d="M 373.8 507.4 Q 426.0 456.2 478.2 507.4" fill="none" stroke="#3A2A22" stroke-width="14.0" stroke-linecap="round"/>
+    <path d="M 545.8 507.4 Q 598.0 456.2 650.2 507.4" fill="none" stroke="#3A2A22" stroke-width="14.0" stroke-linecap="round"/>
+    
+    
+  </g>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.6">
+    <ellipse cx="396" cy="592" rx="45" ry="25"/>
+    <ellipse cx="628" cy="592" rx="45" ry="25"/>
+  </g>
+
+  <!-- 鼻子 + 三瓣嘴 -->
+  <path d="M 492 562 C 492 546 532 546 532 562 C 532 578 512 590 512 590
+           C 512 590 492 578 492 562 Z" fill="#3A2A22"/>
+  <path d="M 512 590 L 512 606 M 512 606 C 512 624 494 632 482 624 M 512 606 C 512 624 530 632 542 624"
+        fill="none" stroke="#3A2A22" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- 门牙 -->
+  <g fill="#FFFFFF" stroke="#3A2A22" stroke-width="6" stroke-linejoin="round">
+    <rect x="498" y="624" width="13" height="20" rx="5"/>
+    <rect x="513" y="624" width="13" height="20" rx="5"/>
+  </g>
+
+  <!-- 胡子 -->
+  <g class="ln" stroke-width="6">
+    <path d="M 400 574 L 340 566"/>
+    <path d="M 400 596 L 344 602"/>
+    <path d="M 624 574 L 684 566"/>
+    <path d="M 624 596 L 680 602"/>
+  </g>
+</svg>

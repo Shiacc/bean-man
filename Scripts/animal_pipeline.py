@@ -82,8 +82,19 @@ def trim_and_square(img: Image.Image, pad_ratio: float = 0.04) -> Image.Image:
     return canvas
 
 
-def write_imageset(square: Image.Image, out_root: Path, name: str, display: str) -> Path:
-    """生成 Name.imageset（@1x=256 / @2x=512 / @3x=768，展示尺寸 256pt）。"""
+def write_imageset(square: Image.Image, out_root: Path, name: str, display: str, one_scale: bool = False) -> Path:
+    """生成 Name.imageset（默认 @1x=256 / @2x=512 / @3x=768；one_scale 时只出一张 512 通用图）。"""
+    if one_scale:
+        imageset = out_root / f"{name}.imageset"
+        imageset.mkdir(parents=True, exist_ok=True)
+        square.resize((512, 512), Image.LANCZOS).save(imageset / f"{name.lower()}.png")
+        contents = {
+            "images": [{"filename": f"{name.lower()}.png", "idiom": "universal"}],
+            "info": {"author": "xcode", "version": 1},
+            "properties": {"template-rendering-intent": "original"},
+        }
+        (imageset / "Contents.json").write_text(json.dumps(contents, indent=2), encoding="utf-8")
+        return imageset
     imageset = out_root / f"{name}.imageset"
     imageset.mkdir(parents=True, exist_ok=True)
     for scale, px in ((1, 256), (2, 512), (3, 768)):
@@ -130,7 +141,7 @@ def cmd_sheet(args: argparse.Namespace) -> None:
         preview_dir.mkdir(parents=True, exist_ok=True)
         square.resize((512, 512), Image.LANCZOS).save(preview_dir / f"{args.name.lower()}.png")
 
-    imageset = write_imageset(square, out_root, args.name, args.display)
+    imageset = write_imageset(square, out_root, args.name, args.display, one_scale=args.one_scale)
     print(f"[ok] {args.display} -> {imageset}")
     print(f"     master {master}")
     if sticker_file:
@@ -178,6 +189,7 @@ def main() -> None:
     s.add_argument("--pad", type=float, default=0.04)
     s.add_argument("--sticker", default=None, help="贴纸 1024 PNG 的输出目录（可省略）")
     s.add_argument("--preview", default=None, help="512 预览图的输出目录（可省略）")
+    s.add_argument("--one-scale", action="store_true", help="只输出一张 512 通用图（表情变体用，省包体）")
     s.set_defaults(func=cmd_sheet)
 
     f = sub.add_parser("frames", help="多帧合成循环动画")

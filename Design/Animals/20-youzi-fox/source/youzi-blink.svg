@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 小柚 · 狐狸 v1.0 ｜ 豆卡单词
+       fur #D97742 / furDark #B85E30 / cream #FFF4EA / earTip #3A2A22 / outline #3A2A22 -->
+  <!-- 尾巴（大而蓬，白尖） -->
+  <path d="M 640 760 C 764 742 852 800 868 892 C 820 852 730 820 660 828 Z"
+        fill="#D97742" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+  <path d="M 812 826 C 848 852 866 880 868 892 C 846 876 822 862 806 852 Z"
+        fill="#FFF4EA" stroke="#3A2A22" stroke-width="9" stroke-linejoin="round"/>
+
+  <!-- 身体 -->
+  <path d="M 326 712 C 310 842 364 912 512 912 C 660 912 714 842 698 712
+           C 686 628 604 596 512 596 C 420 596 338 628 326 712 Z"
+        fill="#D97742" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 胸腹 -->
+  <ellipse cx="512" cy="772" rx="104" ry="98" fill="#FFF4EA"/>
+
+  <!-- 大尖耳（黑耳尖） -->
+  <path d="M 330 420 C 300 300 296 212 318 178 C 372 208 420 306 428 384 Z"
+        fill="#D97742" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+  <path d="M 694 420 C 724 300 728 212 706 178 C 652 208 604 306 596 384 Z"
+        fill="#D97742" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+  <path d="M 318 178 C 320 208 324 240 330 268 L 356 232 Z" fill="#3A2A22"/>
+  <path d="M 706 178 C 704 208 700 240 694 268 L 668 232 Z" fill="#3A2A22"/>
+
+  <!-- 头 -->
+  <ellipse cx="512" cy="510" rx="240" ry="206" fill="#D97742" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 面部奶油（下巴到脸颊） -->
+  <path d="M 512 640 C 452 640 412 606 406 556 C 452 596 572 596 618 556
+           C 612 606 572 640 512 640 Z" fill="#FFF4EA"/>
+
+  <!-- 眼 -->
+  <g>
+    <path d="M 390.0 504.4 Q 428.0 537.4 466.0 504.4" fill="none" stroke="#3A2A22" stroke-width="11.0" stroke-linecap="round"/>
+    <path d="M 558.0 504.4 Q 596.0 537.4 634.0 504.4" fill="none" stroke="#3A2A22" stroke-width="11.0" stroke-linecap="round"/>
+    
+    
+  </g>
+
+  <!-- 鼻子 -->
+  <path d="M 492 566 C 492 550 532 550 532 566 C 532 582 512 592 512 592
+           C 512 592 492 582 492 566 Z" fill="#3A2A22"/>
+
+  <!-- 嘴 -->
+  <path d="M 512 592 L 512 606 M 512 606 C 512 622 494 630 484 622 M 512 606 C 512 622 530 630 540 622"
+        fill="none" stroke="#3A2A22" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.5">
+    <ellipse cx="372" cy="580" rx="40" ry="21"/>
+    <ellipse cx="652" cy="580" rx="40" ry="21"/>
+  </g>
+</svg>
