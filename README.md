@@ -7,7 +7,7 @@
 代码已由 GitHub Actions 在 macOS runner 上编译 + 跑单测（最近一次全绿：`42388641803`）。
 
 设计稿：Figma 文件 `app-design`，两个页面分工——
-- **`beanman-ios`**（屏幕画板，14 行 / 40 屏，T-01-01 … T-14-01）：**14 行 / 40 屏总览** → `Design/beanman-ios-全流程-v5.png`（一行一个大功能：今日 2、学习卡 6、单词本 2、弹幕复习 5、小豆 4、词库 3、导入 2、生词本 2、测试 4、统计 1、设置 2、引导 4、付费 2、成就 1）
+- **`beanman-ios`**（屏幕画板，14 行 / 41 屏，T-01-01 … T-14-01）：**14 行 / 41 屏总览** → `Design/beanman-ios-全流程-v7.png`（一行一个大功能：今日 2、学习卡 6、单词本 2、弹幕复习 6、小豆 4、词库 3、导入 2、生词本 2、测试 4、统计 1、设置 2、引导 4、付费 2、成就 1）
 - **`beanman-components`**（规范页，根 frame `BeanMan · Design System` `123:13124`）：[Design/组件规范.md](Design/组件规范.md) — 18 个颜色 token、10 级字体阶梯、6 级圆角、5 档间距、6 组真组件、7 条使用规则；[对照图](Design/beanman-ios-DesignSystem-v1.png)
 - 弹幕主题对照：[浅色](Design/beanman-ios-弹幕浅色-v1.png) · [退出方式](Design/beanman-ios-弹幕退出-v1.png) · 付费与成就：[付费墙](Design/beanman-ios-付费墙-v1.png) · [成就](Design/beanman-ios-成就-v1.png)
 
