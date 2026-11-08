@@ -1,0 +1,11 @@
+name: probe-linux
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/probe-linux.yml'
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "linux runner ok"
