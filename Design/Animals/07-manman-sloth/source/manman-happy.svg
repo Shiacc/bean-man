@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 慢慢 · 树懒 v1.0 ｜ 豆卡单词
+       fur #8C7A66 / furDark #6F6053 / face #F3E4D3 / outline #3A2A22 / blush #F3A183 -->
+  <!-- 身体 -->
+  <path d="M 318 700 C 300 838 356 912 512 912 C 668 912 724 838 706 700
+           C 694 618 610 586 512 586 C 414 586 330 618 318 700 Z"
+        fill="#8C7A66" stroke="#3A2A22" stroke-width="11" stroke-linejoin="round"/>
+
+  <!-- 肚子 -->
+  <ellipse cx="512" cy="800" rx="132" ry="104" fill="#F3E4D3"/>
+
+  <!-- 长手臂（垂到身体两侧） -->
+  <path d="M 330 640 C 268 700 250 796 268 880 L 328 880 C 314 800 328 716 372 664 Z"
+        fill="#6F6053" stroke="#3A2A22" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M 694 640 C 756 700 774 796 756 880 L 696 880 C 710 800 696 716 652 664 Z"
+        fill="#6F6053" stroke="#3A2A22" stroke-width="10" stroke-linejoin="round"/>
+
+  <!-- 爪 -->
+  <g fill="#F3E4D3" stroke="#3A2A22" stroke-width="7">
+    <ellipse cx="298" cy="892" rx="34" ry="24"/>
+    <ellipse cx="726" cy="892" rx="34" ry="24"/>
+  </g>
+
+  <!-- 耳朵 -->
+  <circle cx="330" cy="330" r="52" fill="#8C7A66" stroke="#3A2A22" stroke-width="11"/>
+  <circle cx="694" cy="330" r="52" fill="#8C7A66" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 头 -->
+  <ellipse cx="512" cy="494" rx="248" ry="226" fill="#8C7A66" stroke="#3A2A22" stroke-width="11"/>
+
+  <!-- 脸盘（奶油） -->
+  <ellipse cx="512" cy="530" rx="176" ry="164" fill="#F3E4D3"/>
+
+  <!-- 眼罩（两片深色斜椭圆） -->
+  <g fill="#6F6053">
+    <ellipse cx="424" cy="470" rx="72" ry="54" transform="rotate(-10 424 470)"/>
+    <ellipse cx="600" cy="470" rx="72" ry="54" transform="rotate(10 600 470)"/>
+  </g>
+
+  <!-- 笑眼 -->
+  <path d="M 392 476 Q 424 446 456 476" fill="none" stroke="#3A2A22" stroke-width="11" stroke-linecap="round"/>
+  <path d="M 568 476 Q 600 446 632 476" fill="none" stroke="#3A2A22" stroke-width="11" stroke-linecap="round"/>
+
+  <!-- 鼻子 -->
+  <path d="M 486 556 C 486 538 538 538 538 556 C 538 574 512 588 512 588
+           C 512 588 486 574 486 556 Z" fill="#3A2A22"/>
+
+  <!-- 微笑 -->
+  <path d="M 476 612 Q 512 640 548 612" fill="none" stroke="#3A2A22" stroke-width="9" stroke-linecap="round"/>
+
+  <!-- 腮红 -->
+  <g fill="#F3A183" opacity="0.5">
+    <ellipse cx="356" cy="574" rx="44" ry="24"/>
+    <ellipse cx="668" cy="574" rx="44" ry="24"/>
+  </g>
+</svg>
