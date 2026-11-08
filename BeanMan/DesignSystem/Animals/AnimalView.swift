@@ -56,9 +56,12 @@ struct AnimalView: View {
 
     @ViewBuilder
     private var content: some View {
-        if animal.isAvailable(expression) {
+        // 表情素材可能还没画（比如某只动物只做了主立绘）：先回落主立绘，再回落占位图。
+        // 直接跳占位图会让人以为素材坏了。
+        if animal.isAvailable(expression) || animal.isAvailable(.normal) {
+            let base = animal.isAvailable(expression) ? animal.assetName(for: expression) : animal.assetName(for: .normal)
             ZStack {
-                image(animal.assetName(for: expression))
+                image(base)
                 if showsBlink {
                     image(animal.assetName(for: .blink))
                         .opacity(blinking ? 1 : 0)
