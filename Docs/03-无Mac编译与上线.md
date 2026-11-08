@@ -350,6 +350,38 @@ end
 
 ---
 
+## 9. 可见性策略：测试期 public，完成后自动转 private
+
+| 阶段 | 可见性 | 原因 |
+|---|---|---|
+| 开发 + 测试期 | **public** | standard macOS runner 免费、不限分钟（私有仓库 2000 分钟 ÷ 10× = 只有 200 分钟 macOS/月） |
+| 版本测完 / 准备发布 | **private** | 代码与设计不再公开 |
+
+切换有两个入口，都不需要开浏览器：
+
+**① 打 tag 自动转私有**（推荐，＝「这一版测完了」的语义）
+
+```bash
+git tag v0.1.0 && git push github v0.1.0
+```
+
+`.github/workflows/repo-visibility.yml` 会调用 GitHub API 把仓库设为 private。
+
+**② 手动切**
+
+```bash
+# Actions → 仓库可见性 → Run workflow（选 public / private）
+# 或者本地一条命令：
+powershell -ExecutionPolicy Bypass -File .\Scripts\repo_visibility.ps1 -Target private
+```
+
+依赖：仓库 Secret `ADMIN_TOKEN`（经典 PAT，需 `repo` 权限，且有该仓库 admin 权限）。
+新建机器时用 `python Scripts/set_repo_secret.py --repo Shiacc/bean-man --token-file <pat 文件>` 写入（需要 `pip install pynacl`）。
+
+> 转私有后 macOS runner 按 10× 计费：一次 CI（编译 + 单测 + 截图）14–16 分钟 ≈ 150 分钟配额，一个月大约能跑 13 次。日常只 push dev、不跑截图，约 8–12 分钟/次。
+
+---
+
 ## 附录：相关文件
 
 | 文件 | 作用 |

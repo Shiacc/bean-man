@@ -1,0 +1,60 @@
+name: 仓库可见性
+
+# 用途：测试期用 public（macOS runner 免费不限分钟），测试结束把仓库切回 private。
+# 触发：① 打 v* tag（＝一个版本测完了，自动转私有）② 手动 Run workflow 并选 public / private。
+# 依赖：仓库 Secret `ADMIN_TOKEN`（经典 PAT，需 repo/admin 权限）——由 Scripts/set_secret.py 写入。
+# 注意：转私有后 macOS runner 按 10× 计费（2000 分钟/月 ≈ 200 分钟 macOS）。
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      visibility:
+        description: "目标可见性"
+        required: true
+        default: private
+        type: choice
+        options: [private, public]
+
+permissions:
+  contents: read
+
+jobs:
+  switch:
+    name: 切换可见性
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检查 ADMIN_TOKEN
+        run: |
+          if [ -z "${{ secrets.ADMIN_TOKEN }}" ]; then
+            echo "::error::缺少仓库 Secret ADMIN_TOKEN，无法修改可见性"
+            exit 1
+          fi
+
+      - name: 调用 GitHub API
+        env:
+          GH_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+          TARGET: ${{ github.event.inputs.visibility }}
+          REPO: ${{ github.repository }}
+        run: |
+          target="${TARGET:-private}"
+          case "$target" in
+            private) body='{"private":true}' ;;
+            public)  body='{"private":false}' ;;
+            *) echo "::error::未知可见性 $target"; exit 1 ;;
+          esac
+
+          code=$(curl -sS -o /tmp/resp.json -w '%{http_code}' -X PATCH \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -d "$body" "https://api.github.com/repos/$REPO")
+
+          head -c 600 /tmp/resp.json; echo
+          if [ "$code" != "200" ]; then
+            echo "::error::切换失败，HTTP $code"
+            exit 1
+          fi
+
+          echo "仓库已切换为 **$target**" >> "$GITHUB_STEP_SUMMARY"

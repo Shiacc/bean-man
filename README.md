@@ -11,6 +11,8 @@
 
 发布走 tag（`v0.1.0` 这类），tag 会额外触发模拟器截图；需要截图时也可以在 Actions 页手动 Run workflow。
 
+**仓库可见性**：测试期保持 **public**（macOS runner 免费不限分钟）；打 `v*` tag 时 `.github/workflows/repo-visibility.yml` 会自动把仓库转成 **private**，也可以手动 `powershell -ExecutionPolicy Bypass -File .\Scripts\repo_visibility.ps1 -Target private`。
+
 ```bash
 git switch dev            # 日常都在 dev 上
 git push origin dev       # 推 Gitee
