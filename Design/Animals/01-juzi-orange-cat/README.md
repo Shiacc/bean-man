@@ -37,7 +37,7 @@
 | 困 | `JuziSleepy`（待画） | 深夜、复习超时 | 眼睛半闭 |
 | 惊讶 | `JuziSurprised`（待画） | 连续答对 5 题、成就解锁 | 圆眼 + 小嘴 |
 
-动作动画：`idle` 呼吸已出（`Scripts/animal_idle.py`，8 帧 / 2.4 s / ±6px，见 `render/idle/` 与 `export/juzi-idle.apng`）；`wave`（招手，首次引导）与 `hop`（开心跳，完成页）待做。**App 里不用这些帧** —— `AnimalView(animated: true)` 用 SwiftUI `.breathe` 做同样的呼吸（连续插值更顺、体积为 0），APNG 只给设计稿与宣传物料。
+动作动画：`idle` 呼吸已出（`Scripts/animal_idle.py`，8 帧 / 2.4 s / ±6px，见 `render/idle/` 与 `export/juzi-idle.apng`）；`hop`（开心跳）已出（`Scripts/animal_hop.py`，6 帧 / 650ms，`export/juzi-hop.apng`）；`wave`（招手）待做 —— 橘子没有手臂，招手更适合用「点头」代替。**App 里不用这些帧** —— `AnimalView(animated: true)` 用 SwiftUI `.breathe` 做同样的呼吸（连续插值更顺、体积为 0），APNG 只给设计稿与宣传物料。
 
 ## 四、文件清单
 
