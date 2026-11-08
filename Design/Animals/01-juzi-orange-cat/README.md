@@ -37,7 +37,7 @@
 | 困 | `JuziSleepy`（待画） | 深夜、复习超时 | 眼睛半闭 |
 | 惊讶 | `JuziSurprised`（待画） | 连续答对 5 题、成就解锁 | 圆眼 + 小嘴 |
 
-动作动画（待做）：`idle`（呼吸 + 眨眼，已出 APNG 预览）、`wave`（招手，用于首次引导）、`hop`（开心跳，用于完成页）。
+动作动画：`idle` 呼吸已出（`Scripts/animal_idle.py`，8 帧 / 2.4 s / ±6px，见 `render/idle/` 与 `export/juzi-idle.apng`）；`wave`（招手，首次引导）与 `hop`（开心跳，完成页）待做。**App 里不用这些帧** —— `AnimalView(animated: true)` 用 SwiftUI `.breathe` 做同样的呼吸（连续插值更顺、体积为 0），APNG 只给设计稿与宣传物料。
 
 ## 四、文件清单
 
@@ -55,7 +55,8 @@ Design/Animals/01-juzi-orange-cat/
 └── export/
     ├── juzi-1024.png       贴纸大图
     ├── juzi.png            512 预览
-    └── juzi-idle.apng      眨眼循环（3 帧 / 2.2 s）
+    ├── juzi-idle.apng      呼吸循环（8 帧 / 2.4 s，±6px 上下浮动）
+└── juzi-idle.gif       同上，GIF 版（245KB，文档用）
 ```
 
 App 内资源（已生成）：
