@@ -80,6 +80,19 @@ jobs:
                 echo "::error title=xcodebuild::$line"
               done
 
+          # 一条 *.swift 错误都没摘到（测试进程直接崩了 / 断言以别的格式出现）时，
+          # 把 test.log 末尾和失败用例名也发成 annotation，别让人只看到「failure」。
+          if ! grep -qE "\.swift:[0-9]+:[0-9]+: error" build.log test.log 2>/dev/null; then
+            grep -E "Test Case .*(failed|passed)|Fatal error|signal|Assertion" test.log 2>/dev/null | tail -20 \
+              | while IFS= read -r line; do
+                  echo "::error title=testlog::$line"
+                done
+            tail -30 test.log 2>/dev/null \
+              | while IFS= read -r line; do
+                  echo "::error title=testlog-tail::$line"
+                done
+          fi
+
       - name: 上传完整日志
         if: always()
         uses: actions/upload-artifact@v4

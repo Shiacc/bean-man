@@ -315,9 +315,16 @@ Actions 页面的 **Artifacts → screenshots** 就是不用 Mac 也能看到的
 
 ## 六、已知待办
 
-- 动物表情变体（happy / blink / sleepy / surprised）需要按 **v2 画风**用 AI 重出 —— 旧的矢量表情图集已删掉，`AnimalView` 现在自动回落到主立绘
-- 动作帧（idle 呼吸 / 跳）目前只有橘子的 v1 矢量版 APNG，v2 风格待补
-- 内购还没在真机 / 沙盒里跑过：需要在 App Store Connect 建好 `com.yourname.beanman.pro` 才能验
-- 图片生成依赖本机的 `Scripts/haoee_gemini_relay.py`（计划任务 `haoee-gemini-relay`，端口 8791）；换机器要重新配
-- 界面里已接入 9 只：橘子（首页气泡 / 付费墙）、雪球（错词本空态）、布丁（完成页庆祝）、泡泡（测试空态 / 弹幕空态）、芝麻（生词本空态）、咕噜（词库空态）、棉花、团子 / 云朵 / 小柚（仅 Design Gallery 预览）
-- iCloud 同步 / FSRS / Anki 导入（PRD 里明确不做，留到 1.x 之后再说）
+**素材类**
+- 动物表情：20 只主立绘齐了，表情只出了 21 个图集（happy 8 / blink 5 / sleepy 8 / surprised 0）。还缺约 39 张 + 6 张 surprised，按 [Docs/07](Docs/07-动效与素材清单.md) 的流水线用 AI 出（以主立绘为参考、只改眼睛和嘴）。缺的一侧 `AnimalView` 自动回落主立绘，不影响功能。
+- 动作帧：按 `Docs/07` 的决策**不做帧序列**——呼吸用 `scaleEffect`、眨眼用切图、跳/挤压用位移+缩放，改参数不用重出图。
+- 深色模式：token 和对比度有单测守着，但「逐页好不好看」仍需人眼过一遍（CI 现在会多拍一张深色今日页）。
+
+**账号 / 真机类**
+- 内购还没在真机 / 沙盒里跑过：需要在 App Store Connect 建好 `com.yourname.beanman.pro` 才能验。
+- 本地提醒、通知授权文案、GB18030 导入样本、听音题语音包：都要真机复核。
+
+**环境**
+- 图片生成依赖本机的 `Scripts/haoee_gemini_relay.py`（计划任务 `haoee-gemini-relay`，端口 8791）；换机器要重新配。
+- 界面里已接入 9 只：橘子（首页气泡 / 付费墙）、雪球（错词本空态）、布丁（完成页庆祝）、泡泡（测试空态 / 弹幕空态）、芝麻（生词本空态）、咕噜（词库空态）、棉花、团子 / 云朵 / 小柚（仅 Design Gallery 预览）。
+- iCloud 同步 / FSRS / Anki 导入（PRD 里明确不做，留到 1.x 之后再说）。
