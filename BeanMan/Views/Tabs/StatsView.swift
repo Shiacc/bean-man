@@ -231,26 +231,93 @@ struct StatsView: View {
     }
 
     private var masteryCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .firstTextBaseline) {
                 Text("掌握度")
                     .font(Theme.Font.cardTitle)
                     .foregroundStyle(Theme.Palette.textPrimary)
                 Spacer()
-                Text(viewModel.masteryText)
-                    .font(Theme.Font.statNumber)
-                    .foregroundStyle(Theme.Palette.success)
+                Text("\(viewModel.snapshot.masteredWords) / \(viewModel.snapshot.totalWords) 个")
+                    .font(Theme.Font.caption)
+                    .foregroundStyle(Theme.Palette.textTertiary)
                     .monospacedDigit()
             }
 
-            ProgressTrack(progress: viewModel.snapshot.masteredProgress, height: 10)
+            if viewModel.hasMasteryData {
+                HStack(spacing: 20) {
+                    masteryRing
+                    masteryLegend
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                Text("还没有词，先去「词库」导入或加词")
+                    .font(Theme.Font.bodySmall)
+                    .foregroundStyle(Theme.Palette.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
 
-            Text("\(viewModel.snapshot.masteredWords) 个词已经记牢（连续复习 3 次以上、间隔超过 3 周）")
+            Text("连续复习 3 次以上、间隔超过 3 周才算掌握")
                 .font(Theme.Font.caption)
-                .foregroundStyle(Theme.Palette.textSecondary)
+                .foregroundStyle(Theme.Palette.textTertiary)
         }
         .padding(Theme.Spacing.cardPadding)
         .cardStyle(shadowed: false)
+    }
+
+    /// 三段环：未学 / 学习中 / 已掌握（PRD §5.8）。
+    private var masteryRing: some View {
+        ZStack {
+            Chart {
+                ForEach(viewModel.visibleMasterySegments) { segment in
+                    SectorMark(angle: .value("词", segment.value),
+                               innerRadius: .ratio(0.66),
+                               angularInset: 1.5)
+                    .cornerRadius(3)
+                    .foregroundStyle(masteryColor(segment.kind))
+                }
+            }
+            .chartLegend(.hidden)
+            .frame(width: 126, height: 126)
+
+            VStack(spacing: 2) {
+                Text(viewModel.masteryText)
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(Theme.Palette.success)
+                    .monospacedDigit()
+                Text("已掌握")
+                    .font(Theme.Font.caption)
+                    .foregroundStyle(Theme.Palette.textTertiary)
+            }
+        }
+    }
+
+    private var masteryLegend: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ForEach(viewModel.masterySegments) { segment in
+                HStack(spacing: 8) {
+                    Circle()
+                        .fill(masteryColor(segment.kind))
+                        .frame(width: 8, height: 8)
+                    Text(segment.label)
+                        .font(Theme.Font.bodySmall)
+                        .foregroundStyle(Theme.Palette.textSecondary)
+                    Spacer(minLength: 0)
+                    Text("\(segment.value)")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(Theme.Palette.textPrimary)
+                        .monospacedDigit()
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func masteryColor(_ kind: MasterySegment.Kind) -> Color {
+        switch kind {
+        case .untouched: return Theme.Palette.surfaceAlt
+        case .learning: return Theme.Palette.brand
+        case .mastered: return Theme.Palette.success
+        }
     }
 
     private func legend(color: Color, text: String) -> some View {

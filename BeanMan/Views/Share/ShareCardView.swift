@@ -17,7 +17,7 @@ struct ShareCardView: View {
 
             Spacer(minLength: 12)
 
-            AnimalView(animal: .juzi, size: 104, expression: .happy, animated: false)
+            hero
                 .frame(maxWidth: .infinity, alignment: .center)
 
             Text(content.headline)
@@ -54,6 +54,26 @@ struct ShareCardView: View {
                alignment: .topLeading)
         .background(background)
         .clipped()
+    }
+
+    /// 打卡卡画小动物，成就卡画徽章——同一版式，两种「主角」。
+    @ViewBuilder
+    private var hero: some View {
+        if let symbol = content.symbol {
+            ZStack {
+                Circle()
+                    .fill(Theme.Palette.brandTint)
+                Circle()
+                    .strokeBorder(Theme.Palette.brandSoft, lineWidth: 2)
+                Image(systemName: symbol)
+                    .font(.system(size: 42, weight: .semibold))
+                    .foregroundStyle(Theme.Palette.brand)
+            }
+            .frame(width: 104, height: 104)
+        } else {
+            AnimalView(animal: .juzi, size: 104, expression: .happy, animated: false)
+                .frame(width: 104, height: 104)
+        }
     }
 
     private var header: some View {

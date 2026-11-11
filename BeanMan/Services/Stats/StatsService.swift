@@ -52,6 +52,14 @@ struct StatsSnapshot: Equatable {
     }
 
     var weekTotal: Int { last7Days.reduce(0) { $0 + $1.total } }
+
+    // MARK: - 掌握度三段（PRD §5.8：未学 / 学习中 / 已掌握）
+
+    /// 还没开始学的词
+    var untouchedWords: Int { max(0, totalWords - learnedWords) }
+
+    /// 学过但还没达到「掌握」阈值的词
+    var learningWords: Int { max(0, learnedWords - masteredWords) }
 }
 
 /// 统计口径都在这里，界面只负责画。

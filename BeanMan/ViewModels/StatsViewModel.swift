@@ -41,6 +41,24 @@ final class StatsViewModel {
         return "按现在的节奏，一周还算轻松"
     }
 
+    // MARK: - 掌握度三段环
+
+    /// 三段：未学 / 学习中 / 已掌握（PRD §5.8）。顺序就是图例顺序。
+    var masterySegments: [MasterySegment] {
+        [
+            MasterySegment(kind: .untouched, value: snapshot.untouchedWords),
+            MasterySegment(kind: .learning, value: snapshot.learningWords),
+            MasterySegment(kind: .mastered, value: snapshot.masteredWords)
+        ]
+    }
+
+    /// 环只画有值的段：0 值扇区在 Chart 里没有意义，还会留一道缝。
+    var visibleMasterySegments: [MasterySegment] {
+        masterySegments.filter { $0.value > 0 }
+    }
+
+    var hasMasteryData: Bool { snapshot.totalWords > 0 }
+
     var xiaodouMoment: XiaodouMoment {
         if snapshot.streak >= 7 {
             return .todayDone(streak: snapshot.streak)
@@ -59,4 +77,30 @@ final class StatsViewModel {
             errorMessage = error.localizedDescription
         }
     }
+}
+
+// MARK: - 掌握度段
+
+/// 掌握度环的一段。颜色留在视图层，这里只负责「叫什么、多少」。
+struct MasterySegment: Identifiable, Equatable {
+
+    enum Kind: String {
+        case untouched
+        case learning
+        case mastered
+
+        var label: String {
+            switch self {
+            case .untouched: return "未学"
+            case .learning: return "学习中"
+            case .mastered: return "已掌握"
+            }
+        }
+    }
+
+    let kind: Kind
+    let value: Int
+
+    var id: String { kind.rawValue }
+    var label: String { kind.label }
 }

@@ -26,6 +26,8 @@ struct ShareCardContent: Equatable {
     var quote: String
     var dateText: String
     var watermark: String
+    /// 单条成就卡用 SF Symbol 当徽章；打卡卡为 nil，画小动物。
+    var symbol: String? = nil
 
     /// 从今日页的数字里拼出一张卡。
     ///
@@ -93,6 +95,46 @@ struct ShareCardContent: Equatable {
         formatter.timeZone = calendar.timeZone
         formatter.dateFormat = "yyyy 年 M 月 d 日"
         return formatter.string(from: now)
+    }
+
+    /// 单条成就的分享卡（成就墙里点分享）。
+    static func makeAchievement(title: String,
+                                detail: String,
+                                symbol: String,
+                                unlockedCount: Int,
+                                totalAchievements: Int,
+                                streak: Int,
+                                learnedWords: Int,
+                                now: Date = Date(),
+                                calendar: Calendar = .current) -> ShareCardContent {
+        let unlocked = max(0, unlockedCount)
+        let total = max(1, totalAchievements)
+        let safeStreak = max(0, streak)
+        let safeLearned = max(0, learnedWords)
+
+        let quote: String
+        if unlocked >= total {
+            quote = "全部拿到了，收工"
+        } else if safeStreak >= 7 {
+            quote = "一周了，别断"
+        } else {
+            quote = "每一个里程碑都是自己走出来的"
+        }
+
+        return ShareCardContent(
+            kicker: "豆卡单词 · 里程碑",
+            headline: title,
+            subtitle: detail,
+            stats: [
+                ShareCardStat(id: "badge", label: "已解锁", value: "\(unlocked)", unit: "/ \(total)"),
+                ShareCardStat(id: "streak", label: "连续打卡", value: "\(safeStreak)", unit: "天"),
+                ShareCardStat(id: "total", label: "累计学过", value: "\(safeLearned)", unit: "词")
+            ],
+            quote: quote,
+            dateText: dateText(now: now, calendar: calendar),
+            watermark: "BeanMan · 豆卡单词",
+            symbol: symbol
+        )
     }
 }
 

@@ -5,6 +5,8 @@ import SwiftUI
 struct AchievementsView: View {
     @Environment(\.modelContext) private var context
     @State private var center = AchievementCenter.shared
+    /// 正在分享的那条成就（nil = 不显示分享面板）
+    @State private var sharingAchievement: Achievement?
 
     private let columns = [GridItem(.flexible(), spacing: 12),
                            GridItem(.flexible(), spacing: 12)]
@@ -18,7 +20,10 @@ struct AchievementsView: View {
                         AchievementCard(achievement: achievement,
                                         unlockedAt: center.unlockedAt(achievement),
                                         progress: center.progress(for: achievement),
-                                        progressText: center.progressText(for: achievement))
+                                        progressText: center.progressText(for: achievement),
+                                        onShare: center.isUnlocked(achievement) ? {
+                                            sharingAchievement = achievement
+                                        } : nil)
                     }
                 }
                 Text("里程碑只在这台设备上判定，不排名、不上传。卸载重装后按你的学习记录重新算。")
@@ -33,6 +38,20 @@ struct AchievementsView: View {
         .navigationTitle("成就")
         .navigationBarTitleDisplayMode(.inline)
         .task { center.check(context: context) }
+        .sheet(item: $sharingAchievement) { achievement in
+            ShareCardSheet(content: shareContent(for: achievement))
+        }
+    }
+
+    /// 单条成就的分享卡：数字用成就中心最近一次判定的结果。
+    private func shareContent(for achievement: Achievement) -> ShareCardContent {
+        ShareCardContent.makeAchievement(title: achievement.title,
+                                         detail: achievement.detail,
+                                         symbol: achievement.icon,
+                                         unlockedCount: center.unlockedCount,
+                                         totalAchievements: Achievement.allCases.count,
+                                         streak: center.metrics.streak,
+                                         learnedWords: center.metrics.learnedWords)
     }
 
     private var header: some View {
@@ -60,6 +79,8 @@ private struct AchievementCard: View {
     let unlockedAt: Date?
     let progress: Double
     let progressText: String
+    /// 已解锁才给分享入口；锁着的时候传 nil
+    var onShare: (() -> Void)? = nil
 
     private var unlocked: Bool { unlockedAt != nil }
 
@@ -76,6 +97,16 @@ private struct AchievementCard: View {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 13))
                         .foregroundStyle(Theme.Palette.success)
+                }
+                if let onShare {
+                    Button(action: onShare) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(Theme.Palette.brand)
+                            .frame(width: 26, height: 26)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("分享「\(achievement.title)」")
                 }
             }
 

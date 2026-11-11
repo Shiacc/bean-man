@@ -73,4 +73,40 @@ final class StatsServiceTests: XCTestCase {
         XCTAssertEqual(snapshot.forecast.total, 0)
         XCTAssertNil(snapshot.forecast.peak)
     }
+
+    func testMasteryPartitionAddsUp() throws {
+        let all = try words()
+        XCTAssertGreaterThanOrEqual(all.count, 3)
+
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+
+        // 第 0 个：已掌握（连续 3 次 + 间隔 21 天）
+        let mastered = ReviewState(wordID: all[0].id, deckID: all[0].deckID,
+                                   easeFactor: 2.5, intervalDays: 21, repetitions: 3,
+                                   dueDate: today, phase: .review)
+        mastered.word = all[0]
+        all[0].reviewState = mastered
+        context.insert(mastered)
+
+        // 第 1 个：学过但没掌握
+        let learning = ReviewState(wordID: all[1].id, deckID: all[1].deckID,
+                                   easeFactor: 2.5, intervalDays: 2, repetitions: 1,
+                                   dueDate: today, phase: .learning)
+        learning.word = all[1]
+        all[1].reviewState = learning
+        context.insert(learning)
+        try context.save()
+
+        let snapshot = try StatsService.snapshot(context: context)
+
+        XCTAssertEqual(snapshot.totalWords, all.count)
+        XCTAssertEqual(snapshot.learnedWords, 2)
+        XCTAssertEqual(snapshot.masteredWords, 1)
+        XCTAssertEqual(snapshot.learningWords, 1)
+        XCTAssertEqual(snapshot.untouchedWords, all.count - 2)
+        // 三段必须正好铺满，环上不能多也不能漏
+        XCTAssertEqual(snapshot.untouchedWords + snapshot.learningWords + snapshot.masteredWords,
+                       snapshot.totalWords)
+    }
 }

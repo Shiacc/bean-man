@@ -81,6 +81,48 @@ final class ShareCardContentTests: XCTestCase {
         XCTAssertEqual(content.watermark, "BeanMan · 豆卡单词")
         XCTAssertEqual(content.kicker, "豆卡单词 · 打卡")
     }
+
+    // MARK: - 单条成就卡
+
+    func testAchievementCardCopy() {
+        let content = ShareCardContent.makeAchievement(title: "连续 7 天",
+                                                       detail: "连续 7 天有学习",
+                                                       symbol: "flame.fill",
+                                                       unlockedCount: 3,
+                                                       totalAchievements: 8,
+                                                       streak: 7,
+                                                       learnedWords: 236,
+                                                       now: fixedNow,
+                                                       calendar: calendar)
+
+        XCTAssertEqual(content.kicker, "豆卡单词 · 里程碑")
+        XCTAssertEqual(content.headline, "连续 7 天")
+        XCTAssertEqual(content.subtitle, "连续 7 天有学习")
+        XCTAssertEqual(content.symbol, "flame.fill")
+        XCTAssertEqual(content.stats.map(\.value), ["3", "7", "236"])
+        XCTAssertEqual(content.stats.map(\.unit), ["/ 8", "天", "词"])
+        XCTAssertEqual(content.quote, "一周了，别断")
+        XCTAssertEqual(content.dateText, "2026 年 11 月 11 日")
+    }
+
+    func testAchievementCardWhenAllUnlocked() {
+        let content = ShareCardContent.makeAchievement(title: "首次导入",
+                                                       detail: "导入第一个自己的词库",
+                                                       symbol: "square.and.arrow.down.fill",
+                                                       unlockedCount: 8,
+                                                       totalAchievements: 8,
+                                                       streak: 2,
+                                                       learnedWords: 40,
+                                                       now: fixedNow,
+                                                       calendar: calendar)
+
+        XCTAssertEqual(content.quote, "全部拿到了，收工")
+    }
+
+    func testDailyCardHasNoSymbol() {
+        let content = make(streak: 3, learnedToday: 6, learnedWords: 90, dueToday: 0)
+        XCTAssertNil(content.symbol)
+    }
 }
 
 /// 导出尺寸必须是 1080 × 1350（AC-80），不靠截图工具裁。
