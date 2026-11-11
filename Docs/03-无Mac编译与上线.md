@@ -101,6 +101,18 @@ xcrun simctl io "$UDID" screenshot shots/today.png
    - `The operation couldn't be completed. Failed to locate any simulator` —— 模拟器 runtime 没装，改用 `macos-15` 或指定 `-destination 'platform=iOS Simulator,name=iPhone 16'`；
    - `Signing for "BeanMan" requires a development team` —— 模拟器构建忘了加 `CODE_SIGNING_ALLOWED=NO`。
 
+**不想开浏览器 / 在另一台机器上时**：失败步骤（`摘出编译错误`）会把每条 `*.swift:行:列: error:` 再发成 check-run annotation。公开仓库下 annotation 不需要 token 就能读，而作业日志（`/actions/jobs/<id>/logs`）要 admin 权限、读不到：
+
+```bash
+SHA=$(git rev-parse HEAD)
+curl -s "https://api.github.com/repos/Shiacc/bean-man/commits/$SHA/check-runs" \
+  | python3 -c "import json,sys; [print(c['id'], c['conclusion'], c['annotations_url']) for c in json.load(sys.stdin)['check_runs']]"
+# 拿上一步的 annotations_url
+curl -s "<annotations_url>" | python3 -c "import json,sys; [print(a['annotation_level'], a['path'], a['start_line'], a['message'][:200]) for a in json.load(sys.stdin)]"
+```
+
+单测失败的断言也会走这条通道——XCTest 的失败行同样是 `BeanManTests/Foo.swift:42: error: ...` 格式，会被同一个 grep 捞到。
+
 ### 2.5 分钟数与排队
 
 - 公开仓库基本秒起；私有仓库高峰期可能排队。
