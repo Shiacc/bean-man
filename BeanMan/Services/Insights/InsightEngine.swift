@@ -34,11 +34,25 @@ struct WordRecommendation: Identifiable, Equatable {
 struct InsightSnapshot: Equatable {
     var insights: [Insight] = []
     var recommendations: [WordRecommendation] = []
+    /// 四个时段的样本与正确率（设置 → 小豆分析 的柱图用）
+    var hourBuckets: [HourBucket] = []
     var recommendedIDs: [UUID] { recommendations.map(\.id) }
     /// 推荐词里有几个今天其实不到期（这些是额外加进来的）
     var extraCount: Int = 0
 
     static let empty = InsightSnapshot()
+}
+
+/// 一个时段的正确率样本。时段划分见 `InsightEngine.hourBuckets`。
+struct HourBucket: Identifiable, Equatable {
+    let index: Int
+    let label: String
+    let answered: Int
+    let correct: Int
+
+    var id: Int { index }
+    var accuracy: Double { answered == 0 ? 0 : Double(correct) / Double(answered) }
+    var accuracyPercent: Int { Int((accuracy * 100).rounded()) }
 }
 
 /// 小豆的分析引擎：只读数据库，规则固定、可解释、可测试。
@@ -75,7 +89,8 @@ enum InsightEngine {
         var snapshot = InsightSnapshot()
 
         // 1. 时段洞察：按 4 个时段统计正确率，样本 < 10 不开口
-        snapshot.insights.append(contentsOf: hourInsights(records: records, calendar: calendar))
+        snapshot.hourBuckets = hourBuckets(records: records, calendar: calendar)
+        snapshot.insights.append(contentsOf: hourInsights(buckets: snapshot.hourBuckets))
 
         // 2. 积压：到期词太多
         let dueStates = states.filter { !$0.isSuspended && $0.dueDate <= startOfToday }
@@ -159,41 +174,49 @@ enum InsightEngine {
 
     private static let bucketNames = ["早上", "下午", "晚上", "深夜"]
 
-    private static func hourInsights(records: [StudyRecord], calendar: Calendar) -> [Insight] {
-        guard records.count >= 10 else { return [] }
+    /// 四个时段的样本统计（设置 → 小豆分析 的柱图数据源；也是洞察的原料）。
+    static func hourBuckets(records: [StudyRecord], calendar: Calendar = .current) -> [HourBucket] {
+        var totals = [Int](repeating: 0, count: bucketNames.count)
+        var corrects = [Int](repeating: 0, count: bucketNames.count)
 
-        struct Tally { var total = 0; var correct = 0 }
-        var tallies: [Int: Tally] = [:]
         for record in records {
             let index = bucket(of: record.reviewedAt, calendar: calendar)
-            var tally = tallies[index] ?? Tally()
-            tally.total += 1
-            if record.rating.isCorrect { tally.correct += 1 }
-            tallies[index] = tally
+            guard totals.indices.contains(index) else { continue }
+            totals[index] += 1
+            if record.rating.isCorrect { corrects[index] += 1 }
         }
 
-        let ranked = tallies
-            .filter { $0.value.total >= 5 }
-            .map { (index: $0.key, accuracy: Double($0.value.correct) / Double($0.value.total), total: $0.value.total) }
+        return (0..<bucketNames.count).map { index in
+            HourBucket(index: index,
+                       label: bucketNames[index],
+                       answered: totals[index],
+                       correct: corrects[index])
+        }
+    }
+
+    private static func hourInsights(buckets: [HourBucket]) -> [Insight] {
+        guard buckets.reduce(0, { $0 + $1.answered }) >= 10 else { return [] }
+
+        let ranked = buckets
+            .filter { $0.answered >= 5 }
             .sorted { $0.accuracy > $1.accuracy }
 
         guard let best = ranked.first else { return [] }
-        let percent = Int((best.accuracy * 100).rounded())
+        let percent = best.accuracyPercent
         var insights: [Insight] = [
             Insight(id: "bestHour",
                     kind: .bestHour,
-                    title: "你\(bucketNames[best.index])记得最牢",
+                    title: "你\(best.label)记得最牢",
                     detail: "这段时间正确率 \(percent)%，比其他时段高。",
                     actionTitle: "改提醒时间")
         ]
 
         // 最差时段明显更低时，再补一条（差距 ≥ 15 个百分点才说）
         if ranked.count >= 2, let worst = ranked.last, best.accuracy - worst.accuracy >= 0.15 {
-            let worstPercent = Int((worst.accuracy * 100).rounded())
             insights.append(Insight(id: "worstHour",
                                     kind: .bestHour,
-                                    title: "\(bucketNames[worst.index])状态一般",
-                                    detail: "正确率 \(worstPercent)%，这个时段适合复习旧词，别塞新词。",
+                                    title: "\(worst.label)状态一般",
+                                    detail: "正确率 \(worst.accuracyPercent)%，这个时段适合复习旧词，别塞新词。",
                                     actionTitle: nil))
         }
         return insights

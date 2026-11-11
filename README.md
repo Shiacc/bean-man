@@ -143,6 +143,7 @@ BeanMan/
     WrongBook/WrongBookCardsView.swift 单词本卡片流：轻点下一个 / 左滑移出 / 右滑收藏
     Settings/SettingsView.swift    计划 / 提醒 / 发音 / 导出恢复 / 重置 / 关于
     Settings/PaywallView.swift     买断付费墙（只在到额度或主动升级时出现）
+    Settings/InsightPanelView.swift 小豆分析面板：四时段正确率 / 常错 Top3 / 规则说明
     Achievements/AchievementsView.swift 成就墙 + 达成时的全屏庆祝
     Share/ShareCardView.swift      打卡分享卡版式 + 预览/分享面板（今日页长按统计块）
     Debug/DesignGalleryView.swift  设计验收页：气泡 / 动物 / 引导动画 / 分享卡 / 素材自检
@@ -223,6 +224,7 @@ Scripts/
 - [ ] 系统切到深色外观：今日 / 统计 / 设置 / 学习卡的底色、文字、卡片都跟着变（不是白底黑字）
 - [ ] 学习卡轻点已翻面 → 下一张（不评分）；上滑也能跳过；跳过的词不进错词本、不能撤销
 - [ ] 小豆分析每条都有「去做 / 知道了」；点「知道了」7 天内不再出现，时段洞察的「去做」落在设置页
+- [ ] 设置 → 小豆分析：四个时段正确率柱图、常错 Top3、规则说明；「知道了」后那条显示「已收起 · 7 天后再提」
 - [ ] 无词库时今日页按钮是「去词库选一个」，点了切到词库标签
 - [ ] 打开「减少动态效果」：翻面变成淡入淡出，没有 3D 翻转
 - [ ] 今日页长按三连统计块（或点「分享打卡图」）→ 出预览 → 分享出去的图是 1080 × 1350

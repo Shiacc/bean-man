@@ -125,6 +125,19 @@ private struct SettingsForm: View {
             }
 
             Section {
+                NavigationLink {
+                    InsightPanelView()
+                } label: {
+                    Label("小豆分析", systemImage: "sparkles")
+                }
+            } header: {
+                Text("小豆")
+            } footer: {
+                Text("看小豆是怎么得出结论的：时段正确率、常错词和规则。全部在本机计算。")
+                    .font(Theme.Font.caption)
+            }
+
+            Section {
                 Button {
                     prepareExport()
                 } label: {

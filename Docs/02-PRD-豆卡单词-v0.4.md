@@ -1418,7 +1418,7 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | 15 | 弹幕复习（F16） | 已交付 | `Views/Danmaku/*`、`ViewModels/DanmakuReviewViewModel.swift` | 「只看错词/生词/全部」筛选已上顶栏 |
 | 16 | 手势交互（F17） | 已交付 | `StudyView` 的 swipe / long press / 上滑跳过 + `StudyViewModel.undo`、`skip` | — |
 | 17 | 单词本卡片流（F18） | 已交付 | `Views/WrongBook/WrongBookCardsView.swift` | 无 |
-| 18 | 小豆分析推荐（F19） | 已交付 | `Services/Insights/InsightEngine.swift`、`InsightCenter.swift` + `StudyRepository` 推荐段 | —（洞察带「去做/知道了」，dismiss 7 天冷却；时段洞察的动作落到设置页改提醒） |
+| 18 | 小豆分析推荐（F19） | 已交付 | `Services/Insights/InsightEngine.swift`、`InsightCenter.swift`、`Views/Settings/InsightPanelView.swift` | —（洞察带「去做/知道了」+ 7 天冷却；设置 → 小豆分析有四个时段柱图、常错 Top3 和规则说明） |
 | 19 | 账户与收费（F20） | 已交付 | `Services/Purchase/*`、`Views/Settings/PaywallView.swift` | 沙盒待 App Store Connect 建商品 |
 | 20 | 成就与里程碑（F21） | 已交付 | `Services/Achievements/*`、`Views/Achievements/*`、`Services/Share/*` | —（分享两种：打卡卡 + 单条成就卡） |
 
