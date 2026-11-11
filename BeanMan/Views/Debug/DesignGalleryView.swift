@@ -30,6 +30,8 @@ enum AssetAudit {
 struct DesignGalleryView: View {
     @State private var frames: [String: CGRect] = [:]
     @State private var demoRequest: HintRequest?
+    /// 渲染自检的结果（点「渲染并检查尺寸」后出现）
+    @State private var renderInfo: String?
 
     private let center = HintCenter.shared
 
@@ -41,6 +43,7 @@ struct DesignGalleryView: View {
                 companionSection
                 animalSection
                 sceneSection
+                shareSection
                 hintSection
                 auditSection
             }
@@ -168,6 +171,76 @@ struct DesignGalleryView: View {
                 }
             }
         }
+    }
+
+    // MARK: 分享卡
+
+    private var shareSection: some View {
+        section("分享卡 · 打卡 / 成就") {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(spacing: 12) {
+                    cardPreview(checkinSample)
+                    cardPreview(achievementSample)
+                }
+
+                Button {
+                    renderCheck()
+                } label: {
+                    Text("渲染并检查尺寸")
+                }
+                .buttonStyle(SecondaryButtonStyle())
+
+                if let renderInfo {
+                    Text(renderInfo)
+                        .font(Theme.Font.caption)
+                        .foregroundStyle(Theme.Palette.success)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Text("左：打卡卡（小动物）。右：成就卡（SF Symbol 徽章）。导出都是 1080 × 1350，本地渲染、不上传。")
+                    .font(Theme.Font.caption)
+                    .foregroundStyle(Theme.Palette.textTertiary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private var checkinSample: ShareCardContent {
+        ShareCardContent.make(streak: 7, learnedToday: 18, learnedWords: 236, dueToday: 0)
+    }
+
+    private var achievementSample: ShareCardContent {
+        ShareCardContent.makeAchievement(title: "连续 7 天",
+                                         detail: "连续 7 天有学习",
+                                         symbol: "flame.fill",
+                                         unlockedCount: 3,
+                                         totalAchievements: 8,
+                                         streak: 7,
+                                         learnedWords: 236)
+    }
+
+    /// 半尺寸预览：卡片是 360×450，缩到一半正好两列并排。
+    private func cardPreview(_ content: ShareCardContent) -> some View {
+        ShareCardView(content: content)
+            .scaleEffect(0.5, anchor: .topLeading)
+            .frame(width: ShareCardSpec.pointSize.width / 2,
+                   height: ShareCardSpec.pointSize.height / 2,
+                   alignment: .topLeading)
+            .clipped()
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.Radius.tile, style: .continuous)
+                    .strokeBorder(Theme.Palette.border, lineWidth: 1)
+            )
+    }
+
+    private func renderCheck() {
+        guard let result = ShareCardRenderer.makeShareFile(for: checkinSample) else {
+            renderInfo = "渲染失败：拿不到 PNG"
+            return
+        }
+        let pixels = Int(result.image.size.width * result.image.scale)
+        let pixelsHigh = Int(result.image.size.height * result.image.scale)
+        renderInfo = "已生成 \(pixels) × \(pixelsHigh) px · \(result.url.lastPathComponent)"
     }
 
     // MARK: 引导
