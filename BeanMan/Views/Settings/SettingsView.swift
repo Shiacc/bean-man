@@ -36,6 +36,8 @@ private struct SettingsForm: View {
     @State private var isImporting = false
     @State private var pendingRestore: BackupFile?
     @State private var isConfirmingReset = false
+    /// AC-42：重置要手打「重置」两个字
+    @State private var resetConfirmText = ""
     @State private var notice: String?
     @State private var errorMessage: String?
     @State private var reminderDenied = false
@@ -217,10 +219,20 @@ private struct SettingsForm: View {
             }
         }
         .alert("重置学习进度？", isPresented: $isConfirmingReset) {
-            Button("重置", role: .destructive) { performReset() }
-            Button("取消", role: .cancel) {}
+            // AC-42：破坏性操作要输入确认词，不能一键误触
+            TextField("输入「重置」确认", text: $resetConfirmText)
+            Button("重置", role: .destructive) {
+                let typed = resetConfirmText.trimmingCharacters(in: .whitespacesAndNewlines)
+                resetConfirmText = ""
+                guard typed == "重置" else {
+                    notice = "确认词不对，什么都没有改。"
+                    return
+                }
+                performReset()
+            }
+            Button("取消", role: .cancel) { resetConfirmText = "" }
         } message: {
-            Text("所有词会回到「没学过」，连续的打卡记录也会清空。词库和词条本身保留。")
+            Text("所有词会回到「没学过」，连续的打卡记录也会清空。词库和词条本身保留。\n输入「重置」两个字才会真的执行。")
         }
         .alert("通知没有打开", isPresented: $reminderDenied) {
             Button("去设置") {

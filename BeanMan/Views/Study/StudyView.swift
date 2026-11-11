@@ -136,6 +136,7 @@ struct StudyView: View {
             if let item = viewModel.current {
                 CardFront(word: item.word,
                           isVisible: !viewModel.isFlipped,
+                          isRecommended: item.isRecommended,
                           onSpeak: { speak(item.word.word) },
                           onTap: { flip() })
 
@@ -355,6 +356,8 @@ struct StudyView: View {
 private struct CardFront: View {
     let word: Word
     let isVisible: Bool
+    /// 小豆额外推进来的重点词，正面挂一个 chip（AC-67）
+    var isRecommended: Bool = false
     let onSpeak: () -> Void
     let onTap: () -> Void
 
@@ -363,6 +366,19 @@ private struct CardFront: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            if isRecommended {
+                HStack(spacing: 4) {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 10, weight: .semibold))
+                    Text("小豆推荐")
+                        .font(.system(size: 11, weight: .semibold))
+                }
+                .foregroundStyle(Theme.Palette.brand)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(Theme.Palette.brandTint, in: Capsule())
+            }
+
             Spacer(minLength: 0)
             Text(word.word)
                 .font(Theme.Font.wordLarge)

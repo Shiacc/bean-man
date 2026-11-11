@@ -156,6 +156,20 @@ struct TodayView: View {
             }
             .padding(.top, 6)
 
+            if viewModel.counts.recommended > 0 {
+                HStack(spacing: 5) {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 10, weight: .semibold))
+                    Text("+\(viewModel.counts.recommended) 小豆推荐")
+                        .font(.system(size: 11, weight: .semibold))
+                }
+                .foregroundStyle(Theme.Palette.brand)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(Theme.Palette.brandTint, in: Capsule())
+                .padding(.top, 10)
+            }
+
             ProgressTrack(progress: viewModel.todayProgress)
                 .padding(.top, 20)
             Text("今日进度 \(viewModel.counts.learnedToday) / \(viewModel.counts.learnedToday + viewModel.counts.total)")

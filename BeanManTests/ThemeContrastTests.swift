@@ -44,29 +44,15 @@ final class ThemeContrastTests: XCTestCase {
         return (max(a, b) + 0.05) / (min(a, b) + 0.05)
     }
 
-    /// 全部 19 个 token。加新 token 时记得一起加进来。
+    /// 全部 19 个 token。加新 token 时 `Theme.Palette.allTokens` 会一起长大。
     private var tokens: [(String, UIColor)] {
-        [
-            ("brand", Theme.Palette.brandUI),
-            ("brandPressed", Theme.Palette.brandPressedUI),
-            ("brandTint", Theme.Palette.brandTintUI),
-            ("brandSoft", Theme.Palette.brandSoftUI),
-            ("bg", Theme.Palette.bgUI),
-            ("surface", Theme.Palette.surfaceUI),
-            ("surfaceAlt", Theme.Palette.surfaceAltUI),
-            ("border", Theme.Palette.borderUI),
-            ("textPrimary", Theme.Palette.textPrimaryUI),
-            ("textSecondary", Theme.Palette.textSecondaryUI),
-            ("textTertiary", Theme.Palette.textTertiaryUI),
-            ("success", Theme.Palette.successUI),
-            ("successTint", Theme.Palette.successTintUI),
-            ("warning", Theme.Palette.warningUI),
-            ("warningTint", Theme.Palette.warningTintUI),
-            ("danger", Theme.Palette.dangerUI),
-            ("dangerTint", Theme.Palette.dangerTintUI),
-            ("overlay", Theme.Palette.overlayUI),
-            ("onBrand", Theme.Palette.onBrandUI)
-        ]
+        Theme.Palette.allTokens.map { ($0.name, $0.ui) }
+    }
+
+    func testTokenListIsComplete() {
+        XCTAssertEqual(tokens.count, 19, "加 token 时记得同步 allTokens，否则新 token 没被对比度守着")
+        let names = Set(tokens.map(\.0))
+        XCTAssertEqual(names.count, tokens.count, "token 名字不能重复")
     }
 
     func testEveryTokenHasBothAppearances() {

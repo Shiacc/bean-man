@@ -44,6 +44,7 @@ struct DesignGalleryView: View {
                 animalSection
                 sceneSection
                 shareSection
+                themeSection
                 hintSection
                 auditSection
             }
@@ -241,6 +242,48 @@ struct DesignGalleryView: View {
         let pixels = Int(result.image.size.width * result.image.scale)
         let pixelsHigh = Int(result.image.size.height * result.image.scale)
         renderInfo = "已生成 \(pixels) × \(pixelsHigh) px · \(result.url.lastPathComponent)"
+    }
+
+    // MARK: 颜色 token
+
+    private struct Swatch: Identifiable {
+        let name: String
+        let color: Color
+        var id: String { name }
+    }
+
+    private var swatches: [Swatch] {
+        Theme.Palette.allTokens.map { Swatch(name: $0.name, color: $0.color) }
+    }
+
+    private var themeSection: some View {
+        section("颜色 token · 切系统外观看两套") {
+            VStack(alignment: .leading, spacing: 10) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 92), spacing: 10)], spacing: 10) {
+                    ForEach(swatches) { token in
+                        VStack(alignment: .leading, spacing: 4) {
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(token.color)
+                                .frame(height: 44)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                        .strokeBorder(Theme.Palette.border, lineWidth: 0.5)
+                                )
+                            Text(token.name)
+                                .font(.system(size: 10))
+                                .foregroundStyle(Theme.Palette.textSecondary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                        }
+                    }
+                }
+
+                Text("每个 token 都是亮/暗双值：切到深色外观后这一屏会整体换成暗色那套，对比度由单测守着（正文 ≥ 7:1）。")
+                    .font(Theme.Font.caption)
+                    .foregroundStyle(Theme.Palette.textTertiary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 
     // MARK: 引导

@@ -62,6 +62,31 @@ enum Theme {
         static let overlay      = Color(uiColor: overlayUI)
 
         static let onBrand      = Color(uiColor: onBrandUI)
+
+        /// 全部 token（设计验收页的色板、对比度单测共用）。加 token 时一起加进来。
+        static var allTokens: [(name: String, color: Color, ui: UIColor)] {
+            [
+                ("brand", brand, brandUI),
+                ("brandPressed", brandPressed, brandPressedUI),
+                ("brandTint", brandTint, brandTintUI),
+                ("brandSoft", brandSoft, brandSoftUI),
+                ("bg", bg, bgUI),
+                ("surface", surface, surfaceUI),
+                ("surfaceAlt", surfaceAlt, surfaceAltUI),
+                ("border", border, borderUI),
+                ("textPrimary", textPrimary, textPrimaryUI),
+                ("textSecondary", textSecondary, textSecondaryUI),
+                ("textTertiary", textTertiary, textTertiaryUI),
+                ("success", success, successUI),
+                ("successTint", successTint, successTintUI),
+                ("warning", warning, warningUI),
+                ("warningTint", warningTint, warningTintUI),
+                ("danger", danger, dangerUI),
+                ("dangerTint", dangerTint, dangerTintUI),
+                ("overlay", overlay, overlayUI),
+                ("onBrand", onBrand, onBrandUI)
+            ]
+        }
     }
 
     // MARK: - 圆角
