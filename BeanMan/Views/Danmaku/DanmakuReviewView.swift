@@ -17,6 +17,8 @@ struct DanmakuReviewView: View {
     @State private var viewModel = DanmakuReviewViewModel()
     @State private var dragOffset: CGFloat = 0
     @State private var showsExitHint = false
+    /// 提示的「场次」：每次暂停都重新闪一次，旧场次的隐藏任务自动作废
+    @State private var hintSequence = 0
 
     var body: some View {
         GeometryReader { geo in
@@ -56,15 +58,29 @@ struct DanmakuReviewView: View {
         }
         .task {
             viewModel.load(context: context)
+            // 第一次进来提示一次「右滑退出」，之后每次暂停都再闪一次（3 秒淡出）
             if viewModel.shouldShowExitHint {
-                showsExitHint = true
                 viewModel.markExitHintShown()
-                try? await Task.sleep(nanoseconds: 3_000_000_000)
-                withAnimation(.easeInOut(duration: 0.3)) { showsExitHint = false }
+                flashHint()
             }
+        }
+        .onChange(of: viewModel.isPaused) { _, paused in
+            if paused { flashHint() }
         }
         .onDisappear { viewModel.savePosition() }
         .statusBarHidden()
+    }
+
+    /// 闪一条「← 右滑退出」，3 秒后淡出。连续暂停/继续时只保留最后一次的隐藏任务。
+    private func flashHint() {
+        hintSequence += 1
+        let sequence = hintSequence
+        withAnimation(.easeInOut(duration: 0.2)) { showsExitHint = true }
+        Task {
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            guard sequence == hintSequence else { return }
+            withAnimation(.easeInOut(duration: 0.3)) { showsExitHint = false }
+        }
     }
 
     // MARK: - 滚动主体

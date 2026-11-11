@@ -21,6 +21,21 @@ final class TodayViewModel {
     /// 小豆的分析结果（洞察 + 推荐词）
     var insight = InsightSnapshot.empty
 
+    /// 「知道了」的冷却与每日条数
+    private let insightCenter = InsightCenter.shared
+
+    /// 真正该展示的洞察（dismiss 冷却 + 每天最多 3 条）
+    var visibleInsights: [Insight] {
+        insightCenter.visible(insight.insights)
+    }
+
+    /// 今日页小豆卡只展示最高优先级的那一条
+    var headlineInsight: Insight? { visibleInsights.first }
+
+    func dismiss(_ insight: Insight) {
+        insightCenter.dismiss(insight.kind)
+    }
+
     var hasAnyDueOrNew: Bool { counts.total > 0 }
     var hasRecommendations: Bool { !insight.recommendations.isEmpty }
 

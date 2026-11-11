@@ -3,7 +3,7 @@ import SwiftData
 
 /// 小豆的一条洞察。文案必须可解释、可执行——不能是「你很棒」这种废话。
 struct Insight: Identifiable, Equatable {
-    enum Kind: String {
+    enum Kind: String, CaseIterable {
         case bestHour
         case backlog
         case streakRisk

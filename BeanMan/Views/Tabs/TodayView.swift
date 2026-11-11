@@ -44,7 +44,7 @@ struct TodayView: View {
                     .padding(.horizontal, Theme.Spacing.screenH)
                 taskCard
                     .padding(.horizontal, Theme.Spacing.screenH)
-                if !viewModel.insight.insights.isEmpty || viewModel.hasRecommendations {
+                if !viewModel.visibleInsights.isEmpty || viewModel.hasRecommendations {
                     insightCard
                         .padding(.horizontal, Theme.Spacing.screenH)
                 }
@@ -171,16 +171,19 @@ struct TodayView: View {
             }
 
             Button {
-                if viewModel.hasAnyDueOrNew {
+                if viewModel.deckName.isEmpty {
+                    // 没有词库时这个按钮不是「开始学习」，直接把人送到词库页（AC-10）
+                    router?.tab = .decks
+                } else if viewModel.hasAnyDueOrNew {
                     isStudying = true
                 } else {
                     isShowingWrongBook = true
                 }
             } label: {
-                Text(viewModel.hasAnyDueOrNew ? "开始学习" : "复习错词")
+                Text(viewModel.deckName.isEmpty ? "去词库选一个"
+                     : (viewModel.hasAnyDueOrNew ? "开始学习" : "复习错词"))
             }
             .buttonStyle(PrimaryButtonStyle(enabled: true))
-            .disabled(viewModel.deckName.isEmpty)
             .padding(.top, 18)
             .captureFrame(HintID.todayStartStudy)
         }
@@ -201,7 +204,7 @@ struct TodayView: View {
             }
             .foregroundStyle(Theme.Palette.brand)
 
-            if let insight = viewModel.insight.insights.first {
+            if let insight = viewModel.headlineInsight {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(insight.title)
                         .font(.system(size: 15, weight: .semibold))
@@ -210,6 +213,26 @@ struct TodayView: View {
                         .font(Theme.Font.bodySmall)
                         .foregroundStyle(Theme.Palette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
+                }
+
+                // 每条洞察都得能「去做」或「知道了」（PRD §5.14.4）
+                HStack(spacing: 12) {
+                    if let actionTitle = insight.actionTitle {
+                        Button(actionTitle) {
+                            perform(insight)
+                        }
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(Theme.Palette.onBrand)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 7)
+                        .background(Theme.Palette.brand, in: Capsule())
+                    }
+
+                    Button("知道了") {
+                        viewModel.dismiss(insight)
+                    }
+                    .font(.system(size: 12))
+                    .foregroundStyle(Theme.Palette.textTertiary)
                 }
             }
 
@@ -236,6 +259,19 @@ struct TodayView: View {
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Theme.Palette.brandTint, in: RoundedRectangle(cornerRadius: Theme.Radius.tile, style: .continuous))
+    }
+
+    /// 洞察的「去做」：按类型把人送到该去的地方（PRD §5.14.4）。
+    /// 时段洞察落到设置页，因为它的动作就是「改提醒时间」。
+    private func perform(_ insight: Insight) {
+        switch insight.kind {
+        case .bestHour:
+            router?.tab = .settings
+        case .backlog, .streakRisk, .firstWeek:
+            isStudying = true
+        case .wrongWords:
+            isShowingWrongBook = true
+        }
     }
 
     // MARK: - 三连统计

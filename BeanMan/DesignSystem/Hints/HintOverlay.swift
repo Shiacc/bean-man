@@ -40,6 +40,8 @@ struct HintOverlay: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var pulse = false
+    /// 读屏焦点：引导出现时直接落在说明标题上（AC-49）
+    @AccessibilityFocusState private var bubbleFocused: Bool
 
     private let holePadding: CGFloat = 8
     private let holeRadius: CGFloat = 18
@@ -80,6 +82,13 @@ struct HintOverlay: View {
         .ignoresSafeArea()
         .contentShape(Rectangle())
         .onTapGesture { onDismiss() }
+        // 蒙层是模态的：读屏时焦点不跑到下面的页面里去
+        .accessibilityAddTraits(.isModal)
+        .task {
+            // 等蒙层挂上无障碍树再抢焦点，否则会被系统忽略
+            try? await Task.sleep(nanoseconds: 600_000_000)
+            bubbleFocused = true
+        }
         .onAppear {
             guard !reduceMotion else { return }
             withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
@@ -144,6 +153,8 @@ struct HintOverlay: View {
                     Text(copy.title)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(Theme.Palette.textPrimary)
+                        .accessibilityFocused($bubbleFocused)
+                        .accessibilityAddTraits(.isHeader)
                     if !copy.message.isEmpty {
                         Text(copy.message)
                             .font(Theme.Font.body)

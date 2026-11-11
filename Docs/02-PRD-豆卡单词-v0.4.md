@@ -301,7 +301,8 @@ front --翻面--> back --四档--> (还有卡) front（下一张，自动发音�
 
 | 手势 | 作用区 | 行为 | 触觉 | 可撤销 |
 |---|---|---|---|---|
-| 轻点 | 卡片 | 未翻面 → 翻面；已翻面 → 下一个（不评分，按「模糊」跳过不写记录） | `.light` | — |
+| 轻点 | 卡片 | 未翻面 → 翻面；已翻面 → 下一张（**跳过**，不评分、不写记录） | `.light` | — |
+| 上滑 | 卡片 | 跳过当前这张（与「轻点已翻面」等效），不评分、不写记录 | `.light` | — |
 | 左滑 | 卡片 | 判定「不认识」（Rating 1），卡片左移，右侧露出 dangerTint 动作层 | `.rigid` | 2 秒内可撤销 |
 | 右滑 | 卡片 | 判定「认识」（Rating 4），卡片右移，左侧露出 successTint 动作层 | `.light` | 2 秒内可撤销 |
 | 长按 | 卡片 | 朗读当前单词 + 一键收藏到生词本（`isFavorite = true`），弹出 2 秒 toast | `.medium` | 点 toast 取消收藏 |
@@ -1401,8 +1402,8 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | # | 功能 | 状态 | 代码 | 缺什么 |
 |---|---|---|---|---|
 | 1 | 首次引导（4 步） | 已交付 | `Views/Onboarding/OnboardingView.swift` | 通知授权文案需真机复核 |
-| 2 | 今日页 | 已交付 | `Views/Tabs/TodayView.swift` | 空态「无词库」跳转可更明确 |
-| 3 | 学习卡（翻面/四档/发音/完成页/手势） | 已交付 | `Views/Study/StudyView.swift` | 手势只做了左/右滑与长按，无「上滑跳过」 |
+| 2 | 今日页 | 已交付 | `Views/Tabs/TodayView.swift` | —（无词库时按钮直接跳词库） |
+| 3 | 学习卡（翻面/四档/发音/完成页/手势） | 已交付 | `Views/Study/StudyView.swift` | —（轻点已翻面/上滑都能跳过，不写记录） |
 | 4 | 复习算法 SM-2 | 已交付 | `Services/SRS/SRSAlgorithm.swift` | — |
 | 5 | 词库管理 | 已交付 | `Views/Deck/*` | —（恢复内置库在设置页） |
 | 6 | CSV / JSON 导入导出 | 已交付 | `Services/ImportExport/*` | GB18030 真机样本 |
@@ -1415,9 +1416,9 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | 13 | 小豆文案 / 气泡 / 引导 | 已交付 | `DesignSystem/Assistant/*`、`Bubbles/*`、`Hints/*` | 更多场景文案 |
 | 14 | 小动物（20 只） | **主立绘 + 表情 20/20** | `DesignSystem/Animals/*`、`Assets.xcassets/Animals/*`（80 个图集） | 动作帧（idle/跳/挥手）未做 |
 | 15 | 弹幕复习（F16） | 已交付 | `Views/Danmaku/*`、`ViewModels/DanmakuReviewViewModel.swift` | 「只看错词/生词/全部」筛选已上顶栏 |
-| 16 | 手势交互（F17） | 已交付 | `StudyView` 的 swipe / long press + `StudyViewModel.undo` | 无 |
+| 16 | 手势交互（F17） | 已交付 | `StudyView` 的 swipe / long press / 上滑跳过 + `StudyViewModel.undo`、`skip` | — |
 | 17 | 单词本卡片流（F18） | 已交付 | `Views/WrongBook/WrongBookCardsView.swift` | 无 |
-| 18 | 小豆分析推荐（F19） | 已交付 | `Services/Insights/InsightEngine.swift` + `StudyRepository` 推荐段 | 仅四条规则，未做「时段提醒联动设置页」 |
+| 18 | 小豆分析推荐（F19） | 已交付 | `Services/Insights/InsightEngine.swift`、`InsightCenter.swift` + `StudyRepository` 推荐段 | —（洞察带「去做/知道了」，dismiss 7 天冷却；时段洞察的动作落到设置页改提醒） |
 | 19 | 账户与收费（F20） | 已交付 | `Services/Purchase/*`、`Views/Settings/PaywallView.swift` | 沙盒待 App Store Connect 建商品 |
 | 20 | 成就与里程碑（F21） | 已交付 | `Services/Achievements/*`、`Views/Achievements/*`、`Services/Share/*` | —（分享两种：打卡卡 + 单条成就卡） |
 
@@ -1432,9 +1433,9 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 
 **已知偏差（相对 v0.4 规格）**
 
-- 弹幕复习的「点按暂停」实现了，但「暂停后自动淡出提示」用了 3 秒一次性提示，不是每次暂停都提示。
 - 拼写题写回用的是 `Rating.again`，会让 ease 下降、进错词本；这正是 §5.7.1 想要的效果。
-- 学习卡右滑「认识」仅在翻面后可评，未翻面时右滑只翻面（防止瞎评）。
+- 学习卡左/右滑评分只在翻面后生效（未翻面左滑提示「先看答案」，右滑只翻面），防止盲评。
+- 弹幕复习的暂停提示从「一次性」改成「每次暂停闪 3 秒」，与 AC-57 的「只出现一行提示」对齐。
 
 ---
 

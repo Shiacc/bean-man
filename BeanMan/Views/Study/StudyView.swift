@@ -12,6 +12,10 @@ struct StudyView: View {
     @State private var accent: VoiceAccent = .american
     @State private var autoPlay = true
     @State private var dragX: CGFloat = 0
+    @State private var dragY: CGFloat = 0
+    /// 底部小提示（「先看答案」这类），1.6 秒后自己消失
+    @State private var toast: String?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// 引导目标位置（全局坐标）
     @State private var frames: [String: CGRect] = [:]
@@ -80,6 +84,24 @@ struct StudyView: View {
             bottomBar
         }
         .padding(.top, 8)
+        .overlay(alignment: .bottom) { toastView }
+    }
+
+    private var toastView: some View {
+        Group {
+            if let toast {
+                Text(toast)
+                    .font(Theme.Font.bodySmall)
+                    .foregroundStyle(Theme.Palette.bg)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(Theme.Palette.textPrimary.opacity(0.9), in: Capsule())
+                    .padding(.bottom, 108)
+                    .transition(.opacity)
+                    .accessibilityAddTraits(.isStaticText)
+            }
+        }
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: toast)
     }
 
     private var topBar: some View {
@@ -120,26 +142,34 @@ struct StudyView: View {
                 CardBack(word: item.word,
                          isVisible: viewModel.isFlipped,
                          onSpeak: { speak(item.word.word) },
-                         onTap: { flip() })
+                         onTap: { skip() })
             }
         }
         .frame(minHeight: 440)
-        .offset(x: dragX)
-        .rotationEffect(.degrees(Double(dragX / 28)), anchor: .bottom)
+        .offset(x: dragX, y: reduceMotion ? 0 : dragY * 0.22)
+        .rotationEffect(.degrees(reduceMotion ? 0 : Double(dragX / 28)), anchor: .bottom)
         .overlay(alignment: .top) { swipeBadge }
         .simultaneousGesture(swipeGesture)
         .onLongPressGesture(minimumDuration: 0.45) {
             longPressAction()
         }
-        .animation(.easeInOut(duration: 0.42), value: viewModel.isFlipped)
-        .animation(.spring(response: 0.3, dampingFraction: 0.85), value: dragX)
+        // 读屏时静态卡片 + 四个动作，滑动判定在 gesture 里被关掉（PRD §5.3.1 边界）
+        .accessibilityAction(named: "朗读") { speakCurrent() }
+        .accessibilityAction(named: "跳过这个") { skip() }
+        .accessibilityAction(named: "不认识") { rate(.again) }
+        .accessibilityAction(named: "认识") { rate(.good) }
+        .animation(reduceMotion ? .easeInOut(duration: 0.15) : .easeInOut(duration: 0.42), value: viewModel.isFlipped)
+        .animation(reduceMotion ? .easeInOut(duration: 0.15) : .spring(response: 0.3, dampingFraction: 0.85), value: dragX)
+        .animation(reduceMotion ? .easeInOut(duration: 0.15) : .spring(response: 0.3, dampingFraction: 0.85), value: dragY)
         .captureFrame(HintID.studyFlipCard)
     }
 
-    /// 拖动时浮在最上面的「不认识 / 认识」，松手就消失。
+    /// 拖动时浮在最上面的「不认识 / 认识 / 跳过」，松手就消失。
     private var swipeBadge: some View {
         Group {
-            if dragX < -24 {
+            if isSkipGesture {
+                badge("跳过", color: Theme.Palette.textSecondary, tint: Theme.Palette.surfaceAlt)
+            } else if dragX < -24 {
                 badge("不认识", color: Theme.Palette.danger, tint: Theme.Palette.dangerTint)
             } else if dragX > 24 {
                 badge("认识", color: Theme.Palette.success, tint: Theme.Palette.successTint)
@@ -150,9 +180,14 @@ struct StudyView: View {
         .allowsHitTesting(false)
     }
 
+    /// 上滑判定：纵向位移够大，且明显大于横向（避免和左右滑抢）。
+    private var isSkipGesture: Bool {
+        dragY < -24 && abs(dragY) > abs(dragX) * 1.2
+    }
+
     /// 拖动距离映射成 0...1 的透明度。写死类型，避免 CGFloat / Int 混算的歧义。
     private var swipeBadgeOpacity: Double {
-        let distance: CGFloat = abs(dragX)
+        let distance: CGFloat = max(abs(dragX), abs(dragY))
         let ratio: CGFloat = distance / 90.0
         return Double(min(max(ratio, 0), 1))
     }
@@ -166,18 +201,32 @@ struct StudyView: View {
             .background(tint, in: Capsule())
     }
 
-    /// 左滑 = 不认识，右滑 = 认识（没翻面时右滑只翻面，避免瞎评「认识」）。
+    /// 左滑 = 不认识，右滑 = 认识，上滑 = 跳过（不写记录）。
+    ///
+    /// 没翻面时左滑只提示「先看答案」，不评分（AC-64）；VoiceOver 开着时整块判定让位给读屏手势。
     private var swipeGesture: some Gesture {
         DragGesture(minimumDistance: 18)
             .onChanged { value in
                 dragX = value.translation.width
+                dragY = value.translation.height
             }
             .onEnded { value in
                 let threshold: CGFloat = 72
                 let dx = value.translation.width
+                let dy = value.translation.height
                 dragX = 0
+                dragY = 0
 
-                if dx < -threshold {
+                guard !UIAccessibility.isVoiceOverRunning else { return }
+
+                if dy < -threshold, abs(dy) > abs(dx) * 1.5 {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    skip()
+                } else if dx < -threshold {
+                    guard viewModel.isFlipped else {
+                        showToast("先看答案再评判")
+                        return
+                    }
                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     rate(.again)
                 } else if dx > threshold {
@@ -211,7 +260,7 @@ struct StudyView: View {
                     rate(rating)
                 }
             } else {
-                Text("轻点翻面 · 左滑不认识 · 长按朗读")
+                Text("轻点翻面 · 左滑不认识 · 上滑跳过 · 长按朗读")
                     .font(Theme.Font.bodySmall)
                     .foregroundStyle(Theme.Palette.textTertiary)
                 Button {
@@ -254,9 +303,28 @@ struct StudyView: View {
         }
     }
 
+    /// 跳过这张：不评分、不写记录（PRD §5.3.1）。
+    private func skip() {
+        viewModel.skip()
+        speakCurrentIfNeeded()
+    }
+
     private func rate(_ rating: Rating) {
+        // 没翻面不允许评价：按钮只在背面出现，左滑 / 读屏动作走同一条判定
+        guard viewModel.isFlipped else {
+            flip()
+            return
+        }
         viewModel.rate(rating, context: context)
         speakCurrentIfNeeded()
+    }
+
+    private func showToast(_ text: String) {
+        toast = text
+        Task {
+            try? await Task.sleep(nanoseconds: 1_600_000_000)
+            if toast == text { toast = nil }
+        }
     }
 
     private func loadSettings() {
@@ -270,8 +338,14 @@ struct StudyView: View {
         SpeechService.shared.speak(text, accent: accent)
     }
 
+    private func speakCurrent() {
+        guard let word = viewModel.current?.word.word else { return }
+        speak(word)
+    }
+
     private func speakCurrentIfNeeded() {
-        guard autoPlay, let word = viewModel.current?.word.word else { return }
+        // 读屏开着时不自动朗读，避免两路语音打架（PRD §9）
+        guard autoPlay, !UIAccessibility.isVoiceOverRunning, let word = viewModel.current?.word.word else { return }
         speak(word)
     }
 }
@@ -283,6 +357,9 @@ private struct CardFront: View {
     let isVisible: Bool
     let onSpeak: () -> Void
     let onTap: () -> Void
+
+    /// 减少动态：翻面改成淡入淡出，不做 3D 翻转（PRD §8.1）
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(spacing: 0) {
@@ -324,7 +401,7 @@ private struct CardFront: View {
         .contentShape(RoundedRectangle(cornerRadius: Theme.Radius.studyCard, style: .continuous))
         .onTapGesture(perform: onTap)
         .opacity(isVisible ? 1 : 0)
-        .rotation3DEffect(.degrees(isVisible ? 0 : -90), axis: (x: 0, y: 1, z: 0))
+        .rotation3DEffect(.degrees(reduceMotion ? 0 : (isVisible ? 0 : -90)), axis: (x: 0, y: 1, z: 0))
         .accessibilityHidden(!isVisible)
     }
 }
@@ -336,6 +413,9 @@ private struct CardBack: View {
     let isVisible: Bool
     let onSpeak: () -> Void
     let onTap: () -> Void
+
+    /// 减少动态：翻面改成淡入淡出，不做 3D 翻转（PRD §8.1）
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -411,7 +491,7 @@ private struct CardBack: View {
         .contentShape(RoundedRectangle(cornerRadius: Theme.Radius.studyCard, style: .continuous))
         .onTapGesture(perform: onTap)
         .opacity(isVisible ? 1 : 0)
-        .rotation3DEffect(.degrees(isVisible ? 0 : 90), axis: (x: 0, y: 1, z: 0))
+        .rotation3DEffect(.degrees(reduceMotion ? 0 : (isVisible ? 0 : 90)), axis: (x: 0, y: 1, z: 0))
         .accessibilityHidden(!isVisible)
     }
 

@@ -16,6 +16,8 @@ final class StudyViewModel {
     private(set) var started = false
     private(set) var correctCount = 0
     private(set) var answeredCount = 0
+    /// 跳过了几张（轻点已翻面 / 上滑），不写记录、不算分。
+    private(set) var skippedCount = 0
     private(set) var lastOutcome: SRSOutcome?
 
     var isFlipped = false
@@ -108,6 +110,20 @@ final class StudyViewModel {
     func flip() {
         guard current != nil else { return }
         isFlipped.toggle()
+    }
+
+    /// 跳过当前这张：不动记忆曲线、不写 `StudyRecord`，只把位置往前挪。
+    ///
+    /// 轻点已翻面的卡片、上滑都走这里（PRD §5.3.1）。
+    /// 跳过不产生记录，所以也不该给「撤销」——撤销只回滚真评过的那一张。
+    func skip() {
+        guard current != nil else { return }
+        skippedCount += 1
+        canUndo = false
+        undoState = nil
+        undoRecord = nil
+        undoHint = nil
+        advance()
     }
 
     /// 评分并进入下一张。返回是否还有下一张。
