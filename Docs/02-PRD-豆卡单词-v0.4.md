@@ -1394,7 +1394,7 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 
 > 口径：**已交付** = 代码在仓库且有单测/CI 编译通过；**部分** = 主体可用但缺入口或缺交互；**待做** = 只有设计。
 >
-> v0.6（2026-11）：补上「到期预测曲线」与「打卡分享图」；`恢复内置词库`入口确认已在设置页。
+> v0.6（2026-11）：补上「到期预测曲线」「掌握度三段环」「打卡分享图」「单条成就分享卡」；`恢复内置词库`入口确认已在设置页。
 
 | # | 功能 | 状态 | 代码 | 缺什么 |
 |---|---|---|---|---|
@@ -1402,13 +1402,13 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | 2 | 今日页 | 已交付 | `Views/Tabs/TodayView.swift` | 空态「无词库」跳转可更明确 |
 | 3 | 学习卡（翻面/四档/发音/完成页/手势） | 已交付 | `Views/Study/StudyView.swift` | 手势只做了左/右滑与长按，无「上滑跳过」 |
 | 4 | 复习算法 SM-2 | 已交付 | `Services/SRS/SRSAlgorithm.swift` | — |
-| 5 | 词库管理 | 已交付 | `Views/Deck/*` | 恢复内置库入口 |
+| 5 | 词库管理 | 已交付 | `Views/Deck/*` | —（恢复内置库在设置页） |
 | 6 | CSV / JSON 导入导出 | 已交付 | `Services/ImportExport/*` | GB18030 真机样本 |
 | 7 | 错词本（含卡片流） | 已交付 | `Services/WrongBook/*`、`Views/WrongBook/*` | 卡片流筛选沿用列表筛选 |
 | 8 | 生词本（手动收藏） | 已交付 | `Views/Favorites/FavoritesView.swift` + 学习卡长按 | — |
 | 9 | 测试（三题型，拼写错题写回） | 已交付 | `Views/Quiz/*`、`Services/Quiz/*`、`QuizViewModel.submitTyped` | 听音题语音包在真机复核 |
 | 10 | 统计（含到期预测 AC-81、掌握度三段环 AC-82） | 已交付 | `Views/Tabs/StatsView.swift`、`Services/Stats/ForecastService.swift` | — |
-| 11 | 设置（含升级入口） | 已交付 | `Views/Settings/SettingsView.swift` | 恢复内置库、深色模式逐页校对 |
+| 11 | 设置（含升级入口） | 已交付 | `Views/Settings/SettingsView.swift` | 深色模式逐页校对 |
 | 12 | 本地提醒 | 部分 | `Services/Notification/NotificationService.swift` | 设置页开关已连，真机未验 |
 | 13 | 小豆文案 / 气泡 / 引导 | 已交付 | `DesignSystem/Assistant/*`、`Bubbles/*`、`Hints/*` | 更多场景文案 |
 | 14 | 小动物（20 只） | **主立绘 + 表情 20/20** | `DesignSystem/Animals/*`、`Assets.xcassets/Animals/*`（80 个图集） | 动作帧（idle/跳/挥手）未做 |
@@ -1417,7 +1417,7 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | 17 | 单词本卡片流（F18） | 已交付 | `Views/WrongBook/WrongBookCardsView.swift` | 无 |
 | 18 | 小豆分析推荐（F19） | 已交付 | `Services/Insights/InsightEngine.swift` + `StudyRepository` 推荐段 | 仅四条规则，未做「时段提醒联动设置页」 |
 | 19 | 账户与收费（F20） | 已交付 | `Services/Purchase/*`、`Views/Settings/PaywallView.swift` | 沙盒待 App Store Connect 建商品 |
-| 20 | 成就与里程碑（F21） | 已交付 | `Services/Achievements/*`、`Views/Achievements/*`、`Services/Share/*` | 分享图两种：今日页长按统计块 → 打卡卡；成就墙已解锁卡片右上角 → 单条成就卡（都是 1080×1350） |
+| 20 | 成就与里程碑（F21） | 已交付 | `Services/Achievements/*`、`Views/Achievements/*`、`Services/Share/*` | —（分享两种：打卡卡 + 单条成就卡） |
 
 **下一步顺序（按用户「先完善功能/设计/程序/素材」）**
 
