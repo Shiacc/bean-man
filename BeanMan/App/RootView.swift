@@ -6,6 +6,17 @@ enum AppTab: Int, CaseIterable, Identifiable {
 
     var id: Int { rawValue }
 
+    /// 启动参数里的英文名（`-startTab stats`）
+    init?(name: String) {
+        switch name.lowercased() {
+        case "today": self = .today
+        case "decks": self = .decks
+        case "stats": self = .stats
+        case "settings": self = .settings
+        default: return nil
+        }
+    }
+
     var title: String {
         switch self {
         case .today:    return "今日"
@@ -27,9 +38,10 @@ enum AppTab: Int, CaseIterable, Identifiable {
 
 /// 根视图：自定义底部标签栏（与 Figma `DS/TabBar` 对齐）。
 /// 四个页面都已是真实实现；`AppRouter` 通过环境注入，供子页面切换标签。
+@MainActor
 struct RootView: View {
     @Environment(\.modelContext) private var context
-    @State private var router = AppRouter()
+    @State private var router = AppRouter(tab: AppRouter.initialTab())
     @State private var isOnboardingPresented = false
     @State private var achievements = AchievementCenter.shared
 

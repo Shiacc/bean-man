@@ -78,6 +78,7 @@ struct TodayView: View {
             viewModel.refresh(context: context)
             // 第一次进今日页，指一下「开始学习」；看过就不再打扰
             hintCenter.request(HintCopy.request(HintID.todayStartStudy))
+            applyLaunchArguments()
         }
         .onPreferenceChange(FramePreferenceKey.self) { frames = $0 }
         .overlay {
@@ -287,6 +288,25 @@ struct TodayView: View {
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Theme.Palette.brandTint, in: RoundedRectangle(cornerRadius: Theme.Radius.tile, style: .continuous))
+    }
+
+    /// 截图 / 深色校对用：`-openScreen study|wrongBook|quiz|achievements|favorites|danmaku|share`
+    /// 直接落到某个全屏页或 sheet，CI 的 screenshots job 靠它逐页拍。
+    private func applyLaunchArguments() {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard let index = arguments.firstIndex(of: "-openScreen"),
+              arguments.indices.contains(index + 1) else { return }
+
+        switch arguments[index + 1] {
+        case "study": isStudying = true
+        case "wrongBook": isShowingWrongBook = true
+        case "quiz": isShowingQuiz = true
+        case "achievements": isShowingAchievements = true
+        case "favorites": isShowingFavorites = true
+        case "danmaku": isReviewingDanmaku = true
+        case "share": isShowingShare = true
+        default: break
+        }
     }
 
     /// 洞察的「去做」：按类型把人送到该去的地方（PRD §5.14.4）。

@@ -89,7 +89,18 @@ sleep 4
 xcrun simctl io "$UDID" screenshot shots/today.png
 ```
 
-局限：只能截「启动后第一屏」。要看学习卡、完成页，需要 UI Test 驱动（点按钮再截图），或用 URL scheme / 启动参数直达某个页面。后者更简单：加一个 `-uiTestScreen study` 启动参数，在 `BeanManApp` 里读到就直接进学习页（仅 DEBUG 生效）。
+局限与解法：`-startTab` 直接落到某个标签，`-openScreen` 直接打开某个全屏页/sheet——不需要 UI Test：
+
+```bash
+# 四个标签
+xcrun simctl launch "$UDID" com.yourname.beanman -skipOnboarding -startTab stats
+# 今日页上的全屏页（study / wrongBook / quiz / achievements / favorites / danmaku / share）
+xcrun simctl launch "$UDID" com.yourname.beanman -skipOnboarding -openScreen study
+```
+
+`screenshots` job 现在就是这么批量拍的：**4 个标签 × 亮/暗 + 3 个全屏页 × 亮/暗 = 14 张**，
+文件名 `tab-<名字>-<light|dark>.png` / `screen-<名字>-<light|dark>.png`。
+深色模式要不要返工，看这一份 artifact 就够了（`ThemeContrastTests` 只管对比度数值，管不了好不好看）。
 
 ### 2.4 失败了怎么看
 

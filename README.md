@@ -172,6 +172,7 @@ BeanManTests/
   StudyViewModelSkipTests.swift 跳过不写记录 / 跳到最后会结束 / 跳过之后仍能正常评分
   InsightCenterTests.swift   洞察 dismiss 7 天冷却 / 每天最多 3 条 / 重启后仍然记得
   TodayViewModelTests.swift  跨夜回到前台：日期与今日已学要跟着换（AC-08）
+  LaunchArgumentTests.swift  截图启动参数（-startTab / -openScreen）解析
 Design/
   beanman-ios-今日与学习卡-v1.png  Figma 稿截图
   Preview/bubbles.{html,png}       气泡与引导的像素对照图（HTML 1:1 复刻 SwiftUI 数值）
@@ -225,7 +226,7 @@ Scripts/
 - [ ] 成就墙显示 8 个里程碑，首次达到时全屏庆祝一次，之后不再弹
 - [ ] 统计页「未来 7 天到期」曲线：7 个点、今天高亮；逾期词算进今天，挂起词不计
 - [ ] 统计页「掌握度」是未学 / 学习中 / 已掌握三段环，三个数字加起来等于总词数
-- [ ] 系统切到深色外观：今日 / 统计 / 设置 / 学习卡的底色、文字、卡片都跟着变（不是白底黑字）
+- [ ] 切到深色外观后逐页走一遍（CI 手动跑 screenshots job 会出「4 个标签 + 3 个全屏页」各亮/暗共 14 张，直接看 artifact）
 - [ ] 学习卡轻点已翻面 → 下一张（不评分）；上滑也能跳过；跳过的词不进错词本、不能撤销
 - [ ] 小豆分析每条都有「去做 / 知道了」；点「知道了」7 天内不再出现，时段洞察的「去做」落在设置页
 - [ ] 设置 → 小豆分析：四个时段正确率柱图、常错 Top3、规则说明；「知道了」后那条显示「已收起 · 7 天后再提」

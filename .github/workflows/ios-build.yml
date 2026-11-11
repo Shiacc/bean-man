@@ -204,6 +204,30 @@ jobs:
           xcrun simctl io "$UDID" screenshot shots/03-today-dark.png || true
           xcrun simctl ui "$UDID" appearance light || true
 
+          # ④ 逐页 × 亮暗：靠 -startTab / -openScreen 启动参数直达，
+          #    一份 artifact 就能把「深色下每页都正常」看完。
+          shot() {  # shot <名字> <亮/暗> <启动参数...>
+            local name="$1"; local mode="$2"; shift 2
+            xcrun simctl ui "$UDID" appearance "$mode" || true
+            xcrun simctl terminate "$UDID" "$BUNDLE_ID" || true
+            sleep 1
+            xcrun simctl launch "$UDID" "$BUNDLE_ID" -skipOnboarding "$@" || true
+            sleep 5
+            xcrun simctl io "$UDID" screenshot "shots/${name}-${mode}.png" || true
+          }
+
+          for TAB in today decks stats settings; do
+            shot "tab-$TAB" light -startTab "$TAB"
+            shot "tab-$TAB" dark  -startTab "$TAB"
+          done
+
+          for SCREEN in study achievements share; do
+            shot "screen-$SCREEN" light -openScreen "$SCREEN"
+            shot "screen-$SCREEN" dark  -openScreen "$SCREEN"
+          done
+
+          xcrun simctl ui "$UDID" appearance light || true
+
           # 如果启动崩了，把崩溃日志抓出来（比看截图有用）
           xcrun simctl spawn "$UDID" log show --last 3m --style compact \
             --predicate 'process == "BeanMan"' 2>/dev/null | tail -80 \
