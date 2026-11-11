@@ -1414,7 +1414,7 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | 11 | 设置（含升级入口） | 已交付 | `Views/Settings/SettingsView.swift` | 深色模式 token 已动态化（单测守对比度），逐页人工校对仍需真机 |
 | 12 | 本地提醒 | 部分 | `Services/Notification/NotificationService.swift` | 设置页开关已连，真机未验 |
 | 13 | 小豆文案 / 气泡 / 引导 | 已交付 | `DesignSystem/Assistant/*`、`Bubbles/*`、`Hints/*` | 更多场景文案 |
-| 14 | 小动物（20 只） | **主立绘 + 表情 20/20** | `DesignSystem/Animals/*`、`Assets.xcassets/Animals/*`（80 个图集） | 动作帧（idle/跳/挥手）未做 |
+| 14 | 小动物（20 只） | 主立绘 20/20、表情 8/20 | `DesignSystem/Animals/*`、`Assets.xcassets/Animals/*`（20 主立绘 + 21 表情图集） | 12 只还缺表情（happy/blink/sleepy），`surprised` 一张没出；动作帧按 `Docs/07` 的决策用代码（呼吸/眨眼）+ 主立绘代替，不出帧序列 |
 | 15 | 弹幕复习（F16） | 已交付 | `Views/Danmaku/*`、`ViewModels/DanmakuReviewViewModel.swift` | 「只看错词/生词/全部」筛选已上顶栏 |
 | 16 | 手势交互（F17） | 已交付 | `StudyView` 的 swipe / long press / 上滑跳过 + `StudyViewModel.undo`、`skip` | — |
 | 17 | 单词本卡片流（F18） | 已交付 | `Views/WrongBook/WrongBookCardsView.swift` | 无 |

@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import UIKit
+import Combine
 
 /// 今日页 —— 对应 Figma `T-01-01 今日·有任务` / `T-01-02 今日·已完成`。
 ///
@@ -12,6 +13,11 @@ struct TodayView: View {
     @Environment(\.modelContext) private var context
     /// 由 `RootView` 注入；直接预览时为 nil，所以写成可选
     @Environment(AppRouter.self) private var router: AppRouter?
+    /// 回到前台时检查是不是跨夜了（AC-08）
+    @Environment(\.scenePhase) private var scenePhase
+
+    /// 停留过夜（没有切后台）也要换天：每分钟看一眼日期
+    private let dayChangeTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
     @State private var viewModel = TodayViewModel()
     @State private var isStudying = false
@@ -89,6 +95,14 @@ struct TodayView: View {
         }
         .onChange(of: isShowingQuiz) { _, showing in
             if !showing { viewModel.refresh(context: context) }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            // 跨夜回到前台：日期和计数都要换（AC-08）
+            guard phase == .active else { return }
+            viewModel.refreshIfDayChanged(context: context)
+        }
+        .onReceive(dayChangeTimer) { _ in
+            viewModel.refreshIfDayChanged(context: context)
         }
         .fullScreenCover(isPresented: $isStudying) {
             StudyView()

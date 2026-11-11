@@ -61,23 +61,34 @@ final class TodayViewModel {
     /// 今日计划总量 = 今天已学 + 还剩（用于进度条分母）。
     private var planTotal: Int { counts.learnedToday + counts.total }
 
-    func refresh(context: ModelContext) {
+    /// 上次刷新时的日期（yyyy-MM-dd）：用来发现「跨夜了」（AC-08）
+    private(set) var lastDayKey: String?
+
+    /// 回到前台 / 停留过夜时调用：只有日期变了才重算。
+    func refreshIfDayChanged(context: ModelContext, now: Date = Date()) {
+        let key = DayKey.string(for: now)
+        guard key != lastDayKey else { return }
+        refresh(context: context, now: now)
+    }
+
+    func refresh(context: ModelContext, now: Date = Date()) {
         let isPro = PurchaseService.shared.isPro
         let configuredNewLimit = (try? AppSettingsStore.settings(in: context))?.dailyNewLimit ?? 20
         let newLimit = TierGate.maxDailyNew(isPro: isPro, requested: configuredNewLimit)
+        lastDayKey = DayKey.string(for: now)
 
         do {
-            counts = try StudyRepository.todayCounts(context: context, newLimitOverride: newLimit)
+            counts = try StudyRepository.todayCounts(context: context, now: now, newLimitOverride: newLimit)
             deckName = (try StudyRepository.currentDeck(context: context)?.name) ?? "还没有词库"
 
-            let startOfToday = DayKey.startOfDay(Date())
+            let startOfToday = DayKey.startOfDay(now)
             let records = try context.fetch(FetchDescriptor<StudyRecord>())
             let todays = records.filter { $0.reviewedAt >= startOfToday }
             let correct = todays.filter { $0.rating.isCorrect }.count
             answered = todays.count
             accuracy = answered == 0 ? 0 : Int((Double(correct) / Double(answered) * 100).rounded())
 
-            streak = DayKey.streak(from: try StudyRepository.studiedDayKeys(context: context))
+            streak = DayKey.streak(from: try StudyRepository.studiedDayKeys(context: context), today: now)
 
             let words = try context.fetch(FetchDescriptor<Word>())
             totalWordCount = words.count
