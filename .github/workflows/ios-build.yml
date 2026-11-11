@@ -71,6 +71,15 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+          # 同一批错误再发成 check-run annotation：公开仓库下不带 token 也能从 REST API 读到，
+          # 这样「没有 Mac 的一侧」（本项目在 Windows 上开发）也能直接看到失败断言。
+          # 读法：/repos/{owner}/{repo}/commits/{sha}/check-runs → /check-runs/{id}/annotations
+          grep -E "^.*\.swift:[0-9]+:[0-9]+: error" build.log test.log 2>/dev/null \
+            | grep -v "^ld: " | head -40 \
+            | while IFS= read -r line; do
+                echo "::error title=xcodebuild::$line"
+              done
+
       - name: 上传完整日志
         if: always()
         uses: actions/upload-artifact@v4

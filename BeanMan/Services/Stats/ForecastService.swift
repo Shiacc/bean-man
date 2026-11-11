@@ -15,22 +15,14 @@ struct ForecastDay: Identifiable, Equatable {
     let offset: Int
     /// 落在这一天的到期词数（逾期词压在今天）
     var due: Int
+    /// 横轴标签：今天 / 明天 / 11/13
+    ///
+    /// 生成快照时就按调用方给的日历/时区算好。不能等到显示时再格式化——
+    /// 否则测试里传了 `Asia/Shanghai`、设备却在 UTC，同一个 Date 会显示成前一天。
+    let label: String
 
     var id: String { dayKey }
     var isToday: Bool { offset == 0 }
-
-    /// 横轴标签：今天 / 明天 / 11/13
-    var label: String {
-        switch offset {
-        case 0: return "今天"
-        case 1: return "明天"
-        default:
-            let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "en_US_POSIX")
-            formatter.dateFormat = "M/d"
-            return formatter.string(from: date)
-        }
-    }
 }
 
 /// 未来 N 天的到期预测。
@@ -88,7 +80,11 @@ enum ForecastService {
             let date = DayKey.adding(days: offset, to: today, calendar: calendar)
             let key = DayKey.string(for: date, calendar: calendar)
             indexByKey[key] = offset
-            days.append(ForecastDay(dayKey: key, date: date, offset: offset, due: 0))
+            days.append(ForecastDay(dayKey: key,
+                                    date: date,
+                                    offset: offset,
+                                    due: 0,
+                                    label: label(for: date, offset: offset, calendar: calendar)))
         }
 
         var overdue = 0
@@ -110,5 +106,20 @@ enum ForecastService {
     /// 把持久层状态转成纯输入。
     static func entries(from states: [ReviewState]) -> [DueEntry] {
         states.map { DueEntry(dueDate: $0.dueDate, isSuspended: $0.isSuspended) }
+    }
+
+    /// 横轴标签；时区/日历跟快照保持一致。
+    static func label(for date: Date, offset: Int, calendar: Calendar) -> String {
+        switch offset {
+        case 0: return "今天"
+        case 1: return "明天"
+        default:
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+            formatter.calendar = calendar
+            formatter.timeZone = calendar.timeZone
+            formatter.dateFormat = "M/d"
+            return formatter.string(from: date)
+        }
     }
 }
