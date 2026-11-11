@@ -182,7 +182,7 @@ private struct SettingsForm: View {
             } header: {
                 Text("关于")
             } footer: {
-                Text("豆卡单词不收集任何个人信息：没有账号、没有网络请求，所有数据只存在这台设备上。")
+                Text("豆卡单词不收集任何个人信息：没有账号、没有网络请求，所有数据只存在这台设备上。\n内置词库是我们自己写的 24 个示例词；导入的词库内容由你自己负责版权。")
                     .font(Theme.Font.caption)
             }
         }
