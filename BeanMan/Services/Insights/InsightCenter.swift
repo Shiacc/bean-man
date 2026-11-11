@@ -1,6 +1,15 @@
 import Foundation
 import Observation
 
+/// 洞察展示规则。刻意放在 `@MainActor` 的类外面：
+/// 默认参数、测试都在非隔离上下文里用得到，放类里会触发并发隔离警告。
+enum InsightRules {
+    /// dismiss 后 7 天不再主动弹（PRD §5.14.5）
+    static let cooldown: TimeInterval = 7 * 24 * 60 * 60
+    /// 每天最多几条（PRD AC-66）
+    static let dailyLimit = 3
+}
+
 /// 小豆洞察的「展示状态」：dismiss 冷却、每天最多几条。
 ///
 /// 引擎（`InsightEngine`）只负责算出洞察；能不能给用户看，由这里决定——
@@ -13,11 +22,6 @@ final class InsightCenter {
 
     /// `kind.rawValue` → 上次 dismiss 的时刻
     private(set) var dismissedAt: [String: Date] = [:]
-
-    /// dismiss 后 7 天不再主动弹（PRD §5.14.5）
-    static let cooldown: TimeInterval = 7 * 24 * 60 * 60
-    /// 每天最多几条（PRD AC-66）
-    static let dailyLimit = 3
 
     private let defaults: UserDefaults
     private let prefix = "insight.dismissed."
@@ -41,13 +45,13 @@ final class InsightCenter {
 
     func isDismissed(_ kind: Insight.Kind, now: Date = Date()) -> Bool {
         guard let at = dismissedAt[kind.rawValue] else { return false }
-        return now.timeIntervalSince(at) < Self.cooldown
+        return now.timeIntervalSince(at) < InsightRules.cooldown
     }
 
     /// 真正可以展示的洞察：去掉冷却中的、一天最多 `dailyLimit` 条。
     func visible(_ insights: [Insight],
                  now: Date = Date(),
-                 limit: Int = InsightCenter.dailyLimit) -> [Insight] {
+                 limit: Int = InsightRules.dailyLimit) -> [Insight] {
         Array(insights.filter { !isDismissed($0.kind, now: now) }.prefix(max(0, limit)))
     }
 

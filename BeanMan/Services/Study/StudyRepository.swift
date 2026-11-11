@@ -15,7 +15,7 @@ struct QueueItem: Identifiable, Equatable {
 }
 
 /// 今日任务的数字。
-struct TodayCounts {
+struct TodayCounts: Equatable {
     var due: Int = 0          // 还剩多少到期词
     var new: Int = 0          // 还能学多少新词
     var learnedToday: Int = 0 // 今天已经评过多少张

@@ -180,7 +180,7 @@ enum DeckImporter {
         var nextIndex = (targetDeck.words.map(\.sortIndex).max() ?? -1) + 1
         var imported = 0
         var duplicates = 0
-        var invalid = parsed.issues.count
+        let invalid = parsed.issues.count
         var issues = parsed.issues
         var capped = false
         let budget = maxNewWords.map { max(0, $0) } ?? Int.max
