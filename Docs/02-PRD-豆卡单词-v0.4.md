@@ -585,9 +585,10 @@ abandon,/əˈbændən/,v.,放弃；抛弃,He abandoned the plan.,他放弃了这
 
 - 无数据时显示空态插画（雪球）+「还没有记录，今天开个头」。
 - 柱状图不显示 0 值柱子的数字标签，避免视觉噪音。
+- 到期曲线（2026-11 补）：逾期词**全部压到今天**（不摊到未来），挂起词不计，第 8 天及以后的到期词不进窗口；曲线下方一行写清「逾期几个 / 最忙哪天」。
 - 统计只读，不可编辑。
 
-**验收**：AC-37 ~ AC-39。
+**验收**：AC-37 ~ AC-39、AC-81。
 
 ---
 
@@ -1339,6 +1340,7 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | AC-78 | 付费墙不出现在启动路径上；任何页面都能关闭并继续使用免费版 | 手动 |
 | AC-79 | 成就达成时全屏庆祝 1.2 秒自动消失，不阻塞学习；同一成就只触发一次 | 单测/手动 |
 | AC-80 | 分享图 1080×1350 本地生成，不上传、不需要账号 | 手动 |
+| AC-81 | 到期曲线：逾期压到今天、挂起不计、窗口外不出现；今天这一格与「今日待复习」一致 | 单测 |
 
 ---
 
@@ -1386,9 +1388,11 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 
 ---
 
-## 17. 功能完成度审计（v0.5）
+## 17. 功能完成度审计（v0.6）
 
 > 口径：**已交付** = 代码在仓库且有单测/CI 编译通过；**部分** = 主体可用但缺入口或缺交互；**待做** = 只有设计。
+>
+> v0.6（2026-11）：补上「到期预测曲线」与「打卡分享图」；`恢复内置词库`入口确认已在设置页。
 
 | # | 功能 | 状态 | 代码 | 缺什么 |
 |---|---|---|---|---|
@@ -1401,7 +1405,7 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | 7 | 错词本（含卡片流） | 已交付 | `Services/WrongBook/*`、`Views/WrongBook/*` | 卡片流筛选沿用列表筛选 |
 | 8 | 生词本（手动收藏） | 已交付 | `Views/Favorites/FavoritesView.swift` + 学习卡长按 | — |
 | 9 | 测试（三题型，拼写错题写回） | 已交付 | `Views/Quiz/*`、`Services/Quiz/*`、`QuizViewModel.submitTyped` | 听音题语音包在真机复核 |
-| 10 | 统计 | 已交付 | `Views/Tabs/StatsView.swift` | 到期曲线未画 |
+| 10 | 统计（含到期预测 AC-81） | 已交付 | `Views/Tabs/StatsView.swift`、`Services/Stats/ForecastService.swift` | 掌握度仍是单条进度条，未做「未学/学习中/已掌握」三段环 |
 | 11 | 设置（含升级入口） | 已交付 | `Views/Settings/SettingsView.swift` | 恢复内置库、深色模式逐页校对 |
 | 12 | 本地提醒 | 部分 | `Services/Notification/NotificationService.swift` | 设置页开关已连，真机未验 |
 | 13 | 小豆文案 / 气泡 / 引导 | 已交付 | `DesignSystem/Assistant/*`、`Bubbles/*`、`Hints/*` | 更多场景文案 |
@@ -1411,7 +1415,7 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | 17 | 单词本卡片流（F18） | 已交付 | `Views/WrongBook/WrongBookCardsView.swift` | 无 |
 | 18 | 小豆分析推荐（F19） | 已交付 | `Services/Insights/InsightEngine.swift` + `StudyRepository` 推荐段 | 仅四条规则，未做「时段提醒联动设置页」 |
 | 19 | 账户与收费（F20） | 已交付 | `Services/Purchase/*`、`Views/Settings/PaywallView.swift` | 沙盒待 App Store Connect 建商品 |
-| 20 | 成就与里程碑（F21） | 已交付 | `Services/Achievements/*`、`Views/Achievements/*` | 分享图未做 |
+| 20 | 成就与里程碑（F21） | 已交付 | `Services/Achievements/*`、`Views/Achievements/*`、`Services/Share/*` | 分享图已补（今日页长按统计块 / 「分享打卡图」行 → 1080×1350）；成就墙里还没有单条成就的分享 |
 
 **下一步顺序（按用户「先完善功能/设计/程序/素材」）**
 
@@ -1420,6 +1424,7 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 3. ~~弹幕复习补「只看错词 / 只看生词」筛选~~（已完成）。
 4. 内购回到 App Store Connect：建商品、沙盒购买/恢复/退款各验一次（依赖账号）。
 5. 上架：截图、隐私标签、TestFlight（M6）。
+6. v0.6 审计留下的两个小口子：统计页掌握度三段环、成就墙单条成就的分享图。
 
 **已知偏差（相对 v0.4 规格）**
 
@@ -1451,6 +1456,8 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | 引导 | `BeanMan/DesignSystem/Hints/HintCenter.swift`、`HintOverlay.swift` |
 | 动物 | `BeanMan/DesignSystem/Animals/Animal.swift`、`AnimalView.swift` |
 | 算法 | `BeanMan/Services/SRS/SRSAlgorithm.swift` |
+| 统计与到期预测 | `BeanMan/Services/Stats/StatsService.swift`、`BeanMan/Services/Stats/ForecastService.swift` |
+| 打卡分享图 | `BeanMan/Services/Share/ShareCardService.swift`、`BeanMan/Views/Share/ShareCardView.swift` |
 | 队列与写回 | `BeanMan/Services/Study/StudyRepository.swift` |
 | 演示数据 | `BeanMan/Persistence/SeedLibrary.swift`、`BeanManStore.swift` |
 | 设计验收 | `BeanMan/Views/Debug/DesignGalleryView.swift` |

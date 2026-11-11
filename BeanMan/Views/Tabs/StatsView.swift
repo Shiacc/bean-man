@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 import Charts
 
-/// 统计页：连续打卡、今日、7 天柱状图、掌握度。
+/// 统计页：连续打卡、今日、7 天柱状图、未来 7 天到期曲线、掌握度。
 @MainActor
 struct StatsView: View {
     @Environment(\.modelContext) private var context
@@ -15,6 +15,7 @@ struct StatsView: View {
                     streakCard
                     statGrid
                     weekCard
+                    forecastCard
                     masteryCard
                 }
                 .padding(.horizontal, Theme.Spacing.screenH)
@@ -139,6 +140,94 @@ struct StatsView: View {
         }
         .frame(maxWidth: .infinity)
         .frame(height: 168)
+    }
+
+    // MARK: - 未来 7 天到期
+
+    private var forecastCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .firstTextBaseline, spacing: 2) {
+                Text("未来 7 天到期")
+                    .font(Theme.Font.cardTitle)
+                    .foregroundStyle(Theme.Palette.textPrimary)
+                Spacer()
+                Text(viewModel.forecastTotalText)
+                    .font(Theme.Font.statNumber)
+                    .foregroundStyle(Theme.Palette.brand)
+                    .monospacedDigit()
+                Text("个")
+                    .font(Theme.Font.caption)
+                    .foregroundStyle(Theme.Palette.textTertiary)
+            }
+
+            if viewModel.hasForecast {
+                forecastChart
+            } else {
+                emptyForecast
+            }
+
+            Text(viewModel.forecastNote)
+                .font(Theme.Font.caption)
+                .foregroundStyle(Theme.Palette.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(Theme.Spacing.cardPadding)
+        .cardStyle(shadowed: false)
+    }
+
+    private var forecastChart: some View {
+        Chart {
+            ForEach(viewModel.snapshot.forecast.days) { day in
+                AreaMark(x: .value("日期", day.label),
+                         y: .value("到期", day.due))
+                .foregroundStyle(
+                    LinearGradient(colors: [Theme.Palette.brand.opacity(0.26),
+                                            Theme.Palette.brand.opacity(0.02)],
+                                   startPoint: .top,
+                                   endPoint: .bottom)
+                )
+
+                LineMark(x: .value("日期", day.label),
+                         y: .value("到期", day.due))
+                .foregroundStyle(Theme.Palette.brand)
+                .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
+
+                PointMark(x: .value("日期", day.label),
+                          y: .value("到期", day.due))
+                .foregroundStyle(day.isToday ? Theme.Palette.brandPressed : Theme.Palette.brand)
+                .symbolSize(day.isToday ? 64 : 24)
+            }
+        }
+        .chartYAxis {
+            AxisMarks(position: .leading) { _ in
+                AxisGridLine().foregroundStyle(Theme.Palette.border)
+                AxisValueLabel()
+                    .font(Theme.Font.caption)
+                    .foregroundStyle(Theme.Palette.textTertiary)
+            }
+        }
+        .chartXAxis {
+            AxisMarks { _ in
+                AxisValueLabel()
+                    .font(Theme.Font.caption)
+                    .foregroundStyle(Theme.Palette.textSecondary)
+            }
+        }
+        .frame(height: 150)
+    }
+
+    private var emptyForecast: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "calendar.badge.checkmark")
+                .font(.system(size: 26))
+                .foregroundStyle(Theme.Palette.textTertiary)
+            Text("未来一周没有到期词，先学新词")
+                .font(Theme.Font.bodySmall)
+                .foregroundStyle(Theme.Palette.textSecondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 150)
     }
 
     private var masteryCard: some View {

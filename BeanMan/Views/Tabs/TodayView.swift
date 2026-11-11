@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 /// 今日页 —— 对应 Figma `T-01-01 今日·有任务` / `T-01-02 今日·已完成`。
 ///
@@ -18,7 +19,7 @@ struct TodayView: View {
     @State private var isShowingQuiz = false
     @State private var isShowingAchievements = false
     @State private var isShowingFavorites = false
-    @State private var isShowingDanmaku = false
+    @State private var isShowingShare = false
     @State private var isReviewingDanmaku = false
 
     /// 引导目标的位置（全局坐标），由 `.captureFrame` 上报
@@ -50,6 +51,15 @@ struct TodayView: View {
                 statTiles
                     .padding(.horizontal, Theme.Spacing.screenH)
                     .captureFrame(HintID.todayStatTiles)
+                    // 长按统计块 → 生成打卡分享图（PRD §5.16 / AC-80）
+                    .contentShape(Rectangle())
+                    .onLongPressGesture(minimumDuration: 0.5) {
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        isShowingShare = true
+                    }
+                    .accessibilityAction(named: "分享打卡图") {
+                        isShowingShare = true
+                    }
                 actions
                     .padding(.horizontal, Theme.Spacing.screenH)
             }
@@ -95,11 +105,11 @@ struct TodayView: View {
         .sheet(isPresented: $isShowingFavorites) {
             FavoritesView()
         }
-        .fullScreenCover(isPresented: $isShowingDanmaku) {
-            DanmakuReviewView()
-        }
         .fullScreenCover(isPresented: $isReviewingDanmaku) {
             DanmakuReviewView()
+        }
+        .sheet(isPresented: $isShowingShare) {
+            ShareCardSheet(content: shareContent)
         }
     }
 
@@ -244,6 +254,16 @@ struct TodayView: View {
         }
     }
 
+    // MARK: - 分享
+
+    /// 分享卡的内容：与统计块同源，避免「统计显示 18、分享图写 17」。
+    private var shareContent: ShareCardContent {
+        ShareCardContent.make(streak: viewModel.streak,
+                              learnedToday: viewModel.counts.learnedToday,
+                              learnedWords: viewModel.learnedWordCount,
+                              dueToday: viewModel.counts.due)
+    }
+
     // MARK: - 快捷入口
 
     private var actions: some View {
@@ -273,10 +293,10 @@ struct TodayView: View {
                       subtitle: viewModel.favoriteCount > 0 ? "\(viewModel.favoriteCount) 个" : "暂无") {
                 isShowingFavorites = true
             }
-            ActionRow(icon: "text.alignleft",
-                      title: "弹幕复习",
-                      subtitle: "像片尾字幕一样刷一遍") {
-                isShowingDanmaku = true
+            ActionRow(icon: "square.and.arrow.up",
+                      title: "分享打卡图",
+                      subtitle: viewModel.learnedWordCount > 0 ? "生成 1080 × 1350 图片" : "先学几个词再来") {
+                isShowingShare = true
             }
             ActionRow(icon: "rosette",
                       title: "成就与里程碑",

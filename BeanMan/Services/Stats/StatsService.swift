@@ -40,6 +40,8 @@ struct StatsSnapshot: Equatable {
     var accuracy: Double = 0
     var reviewedTotal: Int = 0
     var last7Days: [DayStat] = []
+    /// 未来 7 天到期预测（统计页「到期曲线」）
+    var forecast: ForecastSnapshot = .empty
 
     static let empty = StatsSnapshot()
 
@@ -83,6 +85,12 @@ enum StatsService {
         snapshot.dueToday = due
         snapshot.learnedWords = learned
         snapshot.masteredWords = mastered
+
+        // 未来 7 天到期：逾期词压到今天，和 dueToday 的口径一致
+        snapshot.forecast = ForecastService.snapshot(
+            entries: ForecastService.entries(from: words.compactMap(\.reviewState)),
+            now: now,
+            calendar: calendar)
 
         // 只算当前词库的会话
         let allSessions = try context.fetch(FetchDescriptor<StudySession>(sortBy: [SortDescriptor(\.startedAt)]))

@@ -19,8 +19,8 @@ git push origin dev       # 推 Gitee
 git push github dev       # 推 GitHub（CI 在这里跑）
 ```
 
-当前进度：**M1–M4 + F16–F21 已交付** —— 今日页、学习卡（四档 + 发音 + 手势 + 撤销 + 完成页）、错词本（列表/卡片流）、测试（三种题型 + 拼写错写回）、词库（列表/详情/导入/导出/恢复内置库）、统计（7 天柱图）、设置、本地提醒、气泡与引导、片尾字幕式弹幕复习（竖/横屏 + 黑白主题）、小豆分析推荐、买断内购与免费额度、成就里程碑、生词本列表、**20 只小动物主立绘（AI 极简贴纸 v2）**、**16 张场景插画**。
-待做：4 只动物的表情（竹竹 / 慢慢 / 呱呱 / 咔咔）、动作帧与小动画、内购沙盒验证、上架材料。
+当前进度：**M1–M4 + F16–F21 已交付** —— 今日页、学习卡（四档 + 发音 + 手势 + 撤销 + 完成页）、错词本（列表/卡片流）、测试（三种题型 + 拼写错写回）、词库（列表/详情/导入/导出/恢复内置库）、统计（7 天柱图 + **未来 7 天到期曲线**）、设置、本地提醒、气泡与引导、片尾字幕式弹幕复习（竖/横屏 + 黑白主题）、小豆分析推荐、买断内购与免费额度、成就里程碑、**打卡分享图（1080×1350，本地渲染）**、生词本列表、**20 只小动物主立绘（AI 极简贴纸 v2）**、**16 张场景插画**。
+待做：动作帧与小动画、单条成就的分享、内购沙盒验证、上架材料。
 代码已由 GitHub Actions 在 macOS runner 上编译 + 跑单测（最近一次全绿：`42388641803`）。
 
 设计稿：Figma 文件 `app-design`，两个页面分工——
@@ -103,6 +103,8 @@ BeanMan/
     Notification/NotificationService.swift  每日本地提醒（固定 identifier，先删后加）
     Speech/SpeechService.swift   AVSpeechSynthesizer 封装
     Stats/StatsService.swift     统计快照：打卡 / 7 天数据 / 掌握度 / 正确率
+    Stats/ForecastService.swift  未来 7 天到期预测（逾期压今天、挂起不计、窗口外不借数字）
+    Share/ShareCardService.swift 打卡分享图：文案拼装 + 1080×1350 渲染 + 临时文件
     Quiz/QuizService.swift       抽题（4:3:3）、判分、可复现随机源
   Support/
     DayKey.swift             yyyy-MM-dd、startOfDay、连续打卡
@@ -142,6 +144,7 @@ BeanMan/
     Settings/SettingsView.swift    计划 / 提醒 / 发音 / 导出恢复 / 重置 / 关于
     Settings/PaywallView.swift     买断付费墙（只在到额度或主动升级时出现）
     Achievements/AchievementsView.swift 成就墙 + 达成时的全屏庆祝
+    Share/ShareCardView.swift      打卡分享卡版式 + 预览/分享面板（今日页长按统计块）
     Debug/DesignGalleryView.swift  设计验收页：气泡 / 动物 / 引导动画 / 素材自检
   Services/
     Purchase/TierGate.swift        免费额度闸门（1 库 / 500 词 / 每日 20 新词）
@@ -160,6 +163,8 @@ BeanManTests/
   ImportExportTests.swift    CSV 解析 / 列名别名 / 去重 / 无效行 / 备份往返 / 重置
   ProFeatureTests.swift      额度闸门 / 洞察推荐 / 成就解锁
   DanmakuReviewViewModelTests.swift 弹幕时钟 / 暂停 / 循环 / 换速 / 主题
+  ForecastServiceTests.swift 到期预测：逾期压今天 / 挂起不计 / 窗口外 / 最忙一天 / 标签
+  ShareCardTests.swift       分享图文案与尺寸（1080×1350）
 Design/
   beanman-ios-今日与学习卡-v1.png  Figma 稿截图
   Preview/bubbles.{html,png}       气泡与引导的像素对照图（HTML 1:1 复刻 SwiftUI 数值）
@@ -208,6 +213,8 @@ Scripts/
 - [ ] 开始学习后，推荐词出现在队列末尾（不计入每日新词额度）
 - [ ] 设置 → 升级：免费额度文案与实际一致；点「解锁全部功能」弹出付费墙
 - [ ] 成就墙显示 8 个里程碑，首次达到时全屏庆祝一次，之后不再弹
+- [ ] 统计页「未来 7 天到期」曲线：7 个点、今天高亮；逾期词算进今天，挂起词不计
+- [ ] 今日页长按三连统计块（或点「分享打卡图」）→ 出预览 → 分享出去的图是 1080 × 1350
 - [ ] 免费额度用满（建第 2 个词库 / 导入超 500 词）时弹付费墙而不是直接报错
 
 ---
