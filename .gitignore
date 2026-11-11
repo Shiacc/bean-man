@@ -40,3 +40,6 @@ Thumbs.db
 *.log
 .commit-msg.txt
 *.orig
+
+# AI 出表情的中间产物（1024 白底原图与参考图，可重新生成，不进仓库）
+Design/Animals/_ai/expr/

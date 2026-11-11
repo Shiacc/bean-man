@@ -19,8 +19,8 @@ git push origin dev       # 推 Gitee
 git push github dev       # 推 GitHub（CI 在这里跑）
 ```
 
-当前进度：**M1–M4 + F16–F21 已交付** —— 今日页（含跨夜刷新）、学习卡（四档 + 发音 + 手势 + 撤销 + 上滑跳过 + 完成页）、错词本（列表/卡片流）、测试（三种题型 + 拼写错写回）、词库（列表/详情/导入/导出/恢复内置库）、统计（7 天柱图 + **未来 7 天到期曲线** + **掌握度三段环**）、设置、本地提醒、气泡与引导、片尾字幕式弹幕复习（竖/横屏 + 黑白主题）、小豆分析（今日页洞察 + **设置里的分析面板**，带「去做/知道了」+ 7 天冷却）、买断内购与免费额度、成就里程碑（**单条里程碑可分享**）、**打卡分享图（1080×1350，本地渲染）**、生词本列表、**深色模式（19 个 token 亮/暗双值 + 对比度自检）**、**20 只小动物主立绘（AI 极简贴纸 v2，其中 8 只带表情变体）**、**16 张场景插画**。
-待做：12 只动物的表情（happy / blink / sleepy）+ 6 张 surprised、内购沙盒验证、上架材料。动作帧按 `Docs/07` 的决策不做帧序列（呼吸、眨眼、挤压都用代码）。
+当前进度：**M1–M4 + F16–F21 已交付** —— 今日页（含跨夜刷新）、学习卡（四档 + 发音 + 手势 + 撤销 + 上滑跳过 + 完成页）、错词本（列表/卡片流）、测试（三种题型 + 拼写错写回）、词库（列表/详情/导入/导出/恢复内置库）、统计（7 天柱图 + **未来 7 天到期曲线** + **掌握度三段环**）、设置、本地提醒、气泡与引导、片尾字幕式弹幕复习（竖/横屏 + 黑白主题）、小豆分析（今日页洞察 + **设置里的分析面板**，带「去做/知道了」+ 7 天冷却）、买断内购与免费额度、成就里程碑（**单条里程碑可分享**）、**打卡分享图（1080×1350，本地渲染）**、生词本列表、**深色模式（19 个 token 亮/暗双值 + 对比度自检）**、**20 只小动物主立绘 + 60 个表情图集（happy / blink / sleepy 各 20 只，AI 极简贴纸 v2）**、**16 张场景插画**。
+待做：内购沙盒验证、上架材料。`surprised` 表情等哪天接上「答错时小豆惊讶」再补 6 张；动作帧按 `Docs/07` 的决策不做帧序列（呼吸、眨眼、挤压都用代码）。
 代码已由 GitHub Actions 在 macOS runner 上编译 + 跑单测（最近一次全绿：`43039370581`，随时可用 `bash Scripts/ci_status.sh` 复核）。没有 Mac 也能看 CI 状态与失败细节——脚本会从 check-run annotation 和 run 页面 HTML 里把 `*.swift:行:列: error` 摘出来。
 
 设计稿：Figma 文件 `app-design`，两个页面分工——
@@ -155,7 +155,7 @@ BeanMan/
     Insights/InsightCenter.swift   洞察的「知道了」冷却（7 天）与每日条数
   Resources/
     Assets.xcassets/Animals/…     20 只主立绘（AI 极简贴纸 v2，256/512/768，PNG8 共约 0.6MB）
-    Assets.xcassets/Animals/…*Happy|Blink|Sleepy  表情变体（512 单档）
+    Assets.xcassets/Animals/…*Happy|Blink|Sleepy  表情变体（512 单档，20 只 × 3 种 = 60 个图集，1.4 MB）
     Assets.xcassets/Illustrations/… 16 张场景插画（引导 / 空状态 / 庆祝，1024 单档）
 BeanManTests/
   SRSAlgorithmTests.swift    算法 7 组断言
@@ -179,6 +179,7 @@ Design/
 Scripts/
   animal_pipeline.py         SVG → PNG → imageset 的自动化流水线（v1 矢量风格）
   ai_cutout.py / ai_batch.py AI 出图抠白底 → imageset（v2 风格，当前在用）
+  ai_expression_frames.py     表情图取景对齐（内容高度 = 主立绘、底边对齐，否则眨眼会「胖一圈」）
   ai_check_edges.py          橙/深/米三底检查抠图白边与小尺寸可读性
   haoee_gemini_relay.py      把插件的 x-goog-api-key 转成 Bearer，转发到 haoee 网关
   sync.sh / sync.ps1         多设备同步
@@ -316,7 +317,7 @@ Actions 页面的 **Artifacts → screenshots** 就是不用 Mac 也能看到的
 ## 六、已知待办
 
 **素材类**
-- 动物表情：20 只主立绘齐了，表情只出了 21 个图集（happy 8 / blink 5 / sleepy 8 / surprised 0）。还缺约 39 张 + 6 张 surprised，按 [Docs/07](Docs/07-动效与素材清单.md) 的流水线用 AI 出（以主立绘为参考、只改眼睛和嘴）。缺的一侧 `AnimalView` 自动回落主立绘，不影响功能。
+- 动物表情：60 个图集齐了（happy / blink / sleepy 各 20 只），对照图 [Design/Animals/expressions-2026-11.png](Design/Animals/expressions-2026-11.png)。`surprised` 只有枚举和资源名，代码里还没使用场景，先不出图。
 - 动作帧：按 `Docs/07` 的决策**不做帧序列**——呼吸用 `scaleEffect`、眨眼用切图、跳/挤压用位移+缩放，改参数不用重出图。
 - 深色模式：token 和对比度有单测守着，但「逐页好不好看」仍需人眼过一遍（CI 现在会多拍一张深色今日页）。
 
