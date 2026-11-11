@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # 校验所有 workflow 的 YAML 是否可解析，并打印 job 名。
 set -u
-cd /mnt/d/deepseek-harness/resources/dsh-profiles/beanman-ios || exit 1
+# 相对脚本位置定位仓库根：仓库已从 DSH 工作区搬到 D:\repos\beanman-ios
+cd "$(dirname "$0")/.." || exit 1
 python3 - <<'PY'
 import glob
 import yaml
