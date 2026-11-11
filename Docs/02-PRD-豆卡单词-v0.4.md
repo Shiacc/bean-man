@@ -1202,7 +1202,7 @@ queue = reviewQueue.prefix(reviewLimit).map { Item($0, isNew: false) }
 
 ### 8.5 深色模式与字体
 
-- 颜色一律走 `Theme.Palette`，不写死十六进制；深色下 `bg #111114`、`surface #1B1B1F`、`textPrimary #F5F3EE`（由变量集派生，见 `Theme.swift`）。
+- 颜色一律走 `Theme.Palette`，不写死十六进制；19 个 token 全部亮/暗成对（暗色 `bg #151311`、`surface #1E1B18`、`textPrimary #F3EFE8`），跟随系统外观切换，对比度由 `BeanManTests/ThemeContrastTests.swift` 守着。
 - 动态字体：正文用 `.font(Theme.Font.body)` 的相对字号，最大到 `.accessibility3` 不破版；单词卡片在大字号下自动 `minimumScaleFactor(0.6)`。
 - 所有可点区域 ≥ 44×44pt。
 
@@ -1214,7 +1214,7 @@ queue = reviewQueue.prefix(reviewLimit).map { Item($0, isNew: false) }
 |---|---|
 | VoiceOver | 卡片：朗读「单词、音标、释义」；评分按钮带 `.accessibilityLabel("不认识，1 天后再见")`；引导蒙层出现时 `accessibilityViewIsModal = true`，焦点落在说明上 |
 | 动态字体 | 支持到 AX3；卡片可滚动 |
-| 对比度 | 正文 ≥ 4.5:1；次要文字 ≥ 3:1 |
+| 对比度 | 正文 ≥ 7:1（AAA）；次要文字 ≥ 4.5:1；图标 / 大字号 ≥ 3:1；亮暗两种外观都要满足 |
 | 减少动态 | 见 §8.1 |
 | 朗读冲突 | VoiceOver 开启时**不自动朗读**（避免两路语音打架），改为按钮触发 |
 | 语言 | v1 仅简体中文界面；词条内容可中英混排；TTS 支持 `en-US` / `en-GB` |
@@ -1343,6 +1343,8 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | AC-80 | 分享图 1080×1350 本地生成，不上传、不需要账号 | 手动 |
 | AC-81 | 到期曲线：逾期压到今天、挂起不计、窗口外不出现；今天这一格与「今日待复习」一致 | 单测 |
 | AC-82 | 掌握度三段环：未学 + 学习中 + 已掌握 = 总词数，0 值段不画 | 单测 |
+| AC-83 | 深色模式：19 个 token 都有暗色值，正文对比度 ≥ 7:1、次要 ≥ 4.5:1；页面不出现写死颜色 | 单测 |
+| AC-84 | 学习卡轻点已翻面 → 下一张（不写记录）；上滑同样跳过；跳过不算评分 | 单测/手动 |
 
 ---
 
@@ -1408,7 +1410,7 @@ v1 不联网，因此只做**本地看板**（设置 → 关于 → 学习数据
 | 8 | 生词本（手动收藏） | 已交付 | `Views/Favorites/FavoritesView.swift` + 学习卡长按 | — |
 | 9 | 测试（三题型，拼写错题写回） | 已交付 | `Views/Quiz/*`、`Services/Quiz/*`、`QuizViewModel.submitTyped` | 听音题语音包在真机复核 |
 | 10 | 统计（含到期预测 AC-81、掌握度三段环 AC-82） | 已交付 | `Views/Tabs/StatsView.swift`、`Services/Stats/ForecastService.swift` | — |
-| 11 | 设置（含升级入口） | 已交付 | `Views/Settings/SettingsView.swift` | 深色模式逐页校对 |
+| 11 | 设置（含升级入口） | 已交付 | `Views/Settings/SettingsView.swift` | 深色模式 token 已动态化（单测守对比度），逐页人工校对仍需真机 |
 | 12 | 本地提醒 | 部分 | `Services/Notification/NotificationService.swift` | 设置页开关已连，真机未验 |
 | 13 | 小豆文案 / 气泡 / 引导 | 已交付 | `DesignSystem/Assistant/*`、`Bubbles/*`、`Hints/*` | 更多场景文案 |
 | 14 | 小动物（20 只） | **主立绘 + 表情 20/20** | `DesignSystem/Animals/*`、`Assets.xcassets/Animals/*`（80 个图集） | 动作帧（idle/跳/挥手）未做 |

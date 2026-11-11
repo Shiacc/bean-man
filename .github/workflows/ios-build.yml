@@ -184,6 +184,13 @@ jobs:
           sleep 6
           xcrun simctl io "$UDID" screenshot shots/02-today.png || true
 
+          # ③ 深色模式：同一屏再拍一张。Theme 的亮/暗 token 改完靠它肉眼校对，
+          #    单测只保证对比度数值，保证不了「好不好看」。
+          xcrun simctl ui "$UDID" appearance dark || true
+          sleep 2
+          xcrun simctl io "$UDID" screenshot shots/03-today-dark.png || true
+          xcrun simctl ui "$UDID" appearance light || true
+
           # 如果启动崩了，把崩溃日志抓出来（比看截图有用）
           xcrun simctl spawn "$UDID" log show --last 3m --style compact \
             --predicate 'process == "BeanMan"' 2>/dev/null | tail -80 \

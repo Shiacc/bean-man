@@ -81,7 +81,7 @@ struct PrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(Theme.Font.button)
-            .foregroundStyle(Theme.Palette.bg)
+            .foregroundStyle(enabled ? Theme.Palette.onBrand : Theme.Palette.textTertiary)
             .frame(maxWidth: .infinity)
             .frame(height: 52)
             .background(

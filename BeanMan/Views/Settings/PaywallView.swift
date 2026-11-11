@@ -142,7 +142,7 @@ struct PaywallView: View {
                 }
             } label: {
                 if purchase.isLoading {
-                    ProgressView().tint(.white)
+                    ProgressView().tint(Theme.Palette.onBrand)
                 } else {
                     Text("\(purchase.displayPrice) 解锁全部")
                 }

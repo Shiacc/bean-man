@@ -124,7 +124,7 @@ struct OnboardingView: View {
                         } label: {
                             Text("\(option)")
                                 .font(Theme.Font.cardTitle)
-                                .foregroundStyle(dailyNew == option && !usesCustomNew ? Color.white : Theme.Palette.textPrimary)
+                                .foregroundStyle(dailyNew == option && !usesCustomNew ? Theme.Palette.onBrand : Theme.Palette.textPrimary)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 18)
                                 .background(dailyNew == option && !usesCustomNew ? Theme.Palette.brand : Theme.Palette.surface,
@@ -139,7 +139,7 @@ struct OnboardingView: View {
                     } label: {
                         Text("自定义")
                             .font(Theme.Font.button)
-                            .foregroundStyle(usesCustomNew ? Color.white : Theme.Palette.textPrimary)
+                            .foregroundStyle(usesCustomNew ? Theme.Palette.onBrand : Theme.Palette.textPrimary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 22)
                             .background(usesCustomNew ? Theme.Palette.brand : Theme.Palette.surface,
@@ -240,7 +240,7 @@ struct OnboardingView: View {
                                 .font(Theme.Font.caption)
                                 .foregroundStyle(Theme.Palette.textTertiary)
                         }
-                        .foregroundStyle(accent == option ? Color.white : Theme.Palette.textPrimary)
+                        .foregroundStyle(accent == option ? Theme.Palette.onBrand : Theme.Palette.textPrimary)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 20)
                         .background(accent == option ? Theme.Palette.brand : Theme.Palette.surface,
